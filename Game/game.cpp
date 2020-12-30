@@ -35,7 +35,7 @@ void Game::Init()
 	TextureDesine(800, 800);
 
 	AddMaterial(texIDs,slots, 2);
-	AddMaterial(texIDs+1,slots+1, 2);
+	//AddMaterial(texIDs+1,slots+1, 2);
 	AddShape(Cube, -1, TRIANGLES);
 	AddShape(Cube, -1, TRIANGLES);
 	AddShape(Plane, -1, TRIANGLES);

@@ -1,4 +1,4 @@
-#include "game2.h"
+#include "bezier.h"
 #include <iostream>
 #include "GL/glew.h"
 
@@ -13,17 +13,17 @@ static void printMat(const glm::mat4 mat)
 	}
 }
 
-Game2::Game2() : Scene()
+bezier::bezier() : Scene()
 {
 	counter = 1;
 	
 }
 
-//Game2::Game2(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
+//bezier::bezier(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
 //{ 	
 //}
 
-void Game2::Init()
+void bezier::Init()
 {		
 	unsigned int texIDs[3] = { 0 , 1, 0};
 	unsigned int slots[3] = { 0 , 1, 0 };
@@ -59,9 +59,44 @@ void Game2::Init()
 	ShapeTransformation(xTranslate, 7);
 	pickedShape = -1;
 	//SetShapeMaterial(0, 0);
+
+
+
+	unsigned int texIDs[3] = { 0 , 1, 0 };
+	unsigned int slots[3] = { 0 , 1, 0 };
+
+	AddShader("../res/shaders/pickingShader");
+	AddShader("../res/shaders/basicShader2");
+	AddShader("../res/shaders/basicShader");
+
+	AddTexture("../res/textures/box0.bmp", 2);
+	//AddTexture("../res/textures/grass.bmp", 2);
+	TextureDesine(800, 800);
+
+	AddMaterial(texIDs, slots, 2);
+	AddMaterial(texIDs + 1, slots + 1, 2);
+	AddShape(Cube, -1, TRIANGLES);
+	AddShape(Cube, -1, TRIANGLES);
+	AddShape(Plane, -1, TRIANGLES);
+	AddShapeViewport(2, 1);
+	RemoveShapeViewport(2, 0);
+	SetShapeShader(2, 2);
+
+	pickedShape = 0;
+	SetShapeMaterial(0, 0);
+	ShapeTransformation(xTranslate, -1);
+
+	pickedShape = 1;
+	ShapeTransformation(xTranslate, 1);
+	SetShapeMaterial(1, 1);
+	pickedShape = -1;
+
+	pickedShape = 2;
+	SetShapeMaterial(2, 2);
+	pickedShape = -1;
 }
 
-void Game2::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shaderIndx)
+void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shaderIndx)
 {	
 	if(counter)
 		counter++;
@@ -87,7 +122,7 @@ void Game2::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shader
 	s->Unbind();
 }
 
-void Game2::UpdatePosition(float xpos,  float ypos)
+void bezier::UpdatePosition(float xpos,  float ypos)
 {
 	int viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -95,19 +130,19 @@ void Game2::UpdatePosition(float xpos,  float ypos)
 	y =  1 - ypos / viewport[3]; 
 }
 
-void Game2::WhenRotate()
+void bezier::WhenRotate()
 {
 	std::cout << "x "<<x<<", y "<<y<<std::endl;
 	
 }
 
-void Game2::WhenTranslate()
+void bezier::WhenTranslate()
 {
 }
 
 
 
-void Game2::Motion()
+void bezier::Motion()
 {
 	if(isActive)
 	{
@@ -116,7 +151,7 @@ void Game2::Motion()
 	}
 }
 
-unsigned int Game2::TextureDesine(int width, int height)
+unsigned int bezier::TextureDesine(int width, int height)
 {
 	unsigned char* data = new unsigned char[width * height * 4];
 	for (int i = 0; i < width; i++)
@@ -136,7 +171,7 @@ unsigned int Game2::TextureDesine(int width, int height)
 	return(textures.size() - 1);
 }
 
-Game2::~Game2(void)
+bezier::~bezier(void)
 {
 
 }

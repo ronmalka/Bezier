@@ -1,14 +1,14 @@
 #pragma once   //maybe should be static class
 #include "display.h"
 #include "renderer.h"
-#include "game2.h"
+#include "bezier.h"
 #include <iostream>
 
 
 	void mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
-		Game2* scn = (Game2*)rndr->GetScene();
+		bezier* scn = (bezier*)rndr->GetScene();
 		if (action == GLFW_PRESS)
 		{
 			double x2, y2;
@@ -29,7 +29,7 @@
 	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
-		Game2* scn = (Game2*)rndr->GetScene();
+		bezier* scn = (bezier*)rndr->GetScene();
 
 		scn->MyTranslate(glm::vec3(0,0,xoffset),0);
 		
@@ -38,7 +38,7 @@
 	void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
-		Game2* scn = (Game2*)rndr->GetScene();
+		bezier* scn = (bezier*)rndr->GetScene();
 		
 		rndr->UpdatePosition((float)xpos,(float)ypos);
 
@@ -65,7 +65,7 @@
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
-		Game2* scn = (Game2*)rndr->GetScene();
+		bezier* scn = (bezier*)rndr->GetScene();
 
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
