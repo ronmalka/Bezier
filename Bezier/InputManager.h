@@ -13,6 +13,7 @@
 		{
 			double x2, y2;
 			glfwGetCursorPos(window, &x2, &y2);
+			std::cout << "x : " << x2 << " y : " << y2 << std::endl;
 			if (rndr->Picking((int)x2, (int)y2))
 			{
 				rndr->UpdatePosition(x2, y2);
@@ -28,10 +29,15 @@
 	
 	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	{
-		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
+		/*Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		bezier* scn = (bezier*)rndr->GetScene();
 
-		scn->MyTranslate(glm::vec3(0,0,xoffset),0);
+		if (yoffset > 0) {
+			rndr->MoveCamera(0, scn->zTranslate, 0.4f);
+		}
+		else {
+			rndr->MoveCamera(0, scn->zTranslate, -0.4f);
+		}*/
 		
 	}
 	

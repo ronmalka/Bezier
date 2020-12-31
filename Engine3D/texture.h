@@ -10,6 +10,7 @@ public:
 	Texture(int width, int height,unsigned char *data);
 	Texture(int width, int height);
 	void Bind(int slot);
+	void loadCubemap(std::string dir[]);
 
 	inline int GetSlot(){return m_texture;}
 	 ~Texture();

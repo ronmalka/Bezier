@@ -118,7 +118,6 @@ bool Renderer::Picking(int x, int y)
 	glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
 	glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glReadPixels(x, viewport[3] - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-	
 	return scn->Picking(data);
 	//return depth;
 
