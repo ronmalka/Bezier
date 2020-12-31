@@ -30,70 +30,51 @@ void bezier::Init()
 	
 	AddShader("../res/shaders/pickingShader");	
 	AddShader("../res/shaders/basicShader");
-	AddTexture("../res/textures/box0.bmp", 2);
+	AddShader("../res/shaders/basicShader2");
+	AddTexture("", 3);
 	//TextureDesine(840, 840);
 
-	AddMaterial(texIDs,slots, 1);
-	
-	AddShape(Cube, -1, TRIANGLES);
-	AddShape(Octahedron, -1, TRIANGLES);
-	
 	AddShape(Axis, -1, LINES);
+	AddShape(Cube, -1, TRIANGLES);
+
+	AddMaterial(texIDs,slots, 1);
+	//AddMaterial(texIDs+1, slots + 1, 2);
+	//AddMaterial(texIDs + 2, slots + 2, 3);
+
+
 	
-	AddShapeCopy(0, -1, TRIANGLES);
 
+	//AddShapeCopy(0, -1, TRIANGLES);
+
+	//SetShapeShader(0, 1);
+	//SetShapeShader(1, 1);
 	SetShapeShader(0, 1);
-	SetShapeShader(1, 1);
-	SetShapeShader(2, 1);
-	SetShapeShader(3, 1);
+	AddShapeViewport(0, 1);
+	RemoveShapeViewport(0, 0);
+	//SetShapeShader(3, 1);
 
-	pickedShape = 0;
-	ShapeTransformation(zTranslate, -4);
+	SetShapeShader(1, 2);
+	AddShapeViewport(1, 0);
+	RemoveShapeViewport(1, 1);
+
+	//pickedShape = 0;
+	//ShapeTransformation(zTranslate, -4);
+	//pickedShape = 1;
+	//ShapeTransformation(yTranslate, 4);
 	pickedShape = 1;
-	ShapeTransformation(yTranslate, 4);
-	pickedShape = 2;
-	ShapeTransformation(xScale, 5);
-	ShapeTransformation(yScale, 5);
-	ShapeTransformation(zScale, 5);
-	pickedShape = 3;
-	ShapeTransformation(xTranslate, 7);
+	ShapeTransformation(xScale, 100);
+	ShapeTransformation(yScale, 100);
+	ShapeTransformation(zScale, 100);
+	//pickedShape = 3;
+	//ShapeTransformation(xTranslate, 7);
 	pickedShape = -1;
 	//SetShapeMaterial(0, 0);
+	SetShapeMaterial(1, 0);
 
 
 
-	unsigned int texIDs[3] = { 0 , 1, 0 };
-	unsigned int slots[3] = { 0 , 1, 0 };
 
-	AddShader("../res/shaders/pickingShader");
-	AddShader("../res/shaders/basicShader2");
-	AddShader("../res/shaders/basicShader");
 
-	AddTexture("../res/textures/box0.bmp", 2);
-	//AddTexture("../res/textures/grass.bmp", 2);
-	TextureDesine(800, 800);
-
-	AddMaterial(texIDs, slots, 2);
-	AddMaterial(texIDs + 1, slots + 1, 2);
-	AddShape(Cube, -1, TRIANGLES);
-	AddShape(Cube, -1, TRIANGLES);
-	AddShape(Plane, -1, TRIANGLES);
-	AddShapeViewport(2, 1);
-	RemoveShapeViewport(2, 0);
-	SetShapeShader(2, 2);
-
-	pickedShape = 0;
-	SetShapeMaterial(0, 0);
-	ShapeTransformation(xTranslate, -1);
-
-	pickedShape = 1;
-	ShapeTransformation(xTranslate, 1);
-	SetShapeMaterial(1, 1);
-	pickedShape = -1;
-
-	pickedShape = 2;
-	SetShapeMaterial(2, 2);
-	pickedShape = -1;
 }
 
 void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shaderIndx)
@@ -101,6 +82,7 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 	if(counter)
 		counter++;
 	Shader *s = shaders[shaderIndx];
+
 	int r = ((pickedShape+1) & 0x000000FF) >>  0;
 	int g = ((pickedShape+1) & 0x0000FF00) >>  8;
 	int b = ((pickedShape+1) & 0x00FF0000) >> 16;
@@ -108,9 +90,11 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 		BindMaterial(s, shapes[pickedShape]->GetMaterial());
 	//textures[0]->Bind(0);
 	s->Bind();
-	
-		s->SetUniformMat4f("MVP", MVP);
-		s->SetUniformMat4f("Normal", Model);
+
+
+	s->SetUniformMat4f("Projection", glm::mat4(1));
+	s->SetUniformMat4f("MVP", MVP);
+	s->SetUniformMat4f("Normal", Model);
 	
 	s->SetUniform1i("sampler1", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
 	if(shaderIndx!=1)
@@ -120,6 +104,11 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 	s->SetUniform1f("x", x);
 	s->SetUniform1f("y", y);
 	s->Unbind();
+
+
+	
+
+	// ... draw rest of the scene
 }
 
 void bezier::UpdatePosition(float xpos,  float ypos)
@@ -144,11 +133,11 @@ void bezier::WhenTranslate()
 
 void bezier::Motion()
 {
-	if(isActive)
-	{
-		pickedShape = 3;
-		ShapeTransformation(yRotate, 0.07);
-	}
+	//if(isActive)
+	//{
+	//	pickedShape = 3;
+	//	ShapeTransformation(yRotate, 0.07);
+	//}
 }
 
 unsigned int bezier::TextureDesine(int width, int height)

@@ -35,12 +35,15 @@ void Game::Init()
 	TextureDesine(800, 800);
 
 	AddMaterial(texIDs,slots, 2);
-	//AddMaterial(texIDs+1,slots+1, 2);
+	AddMaterial(texIDs+1,slots+1, 2);
 	AddShape(Cube, -1, TRIANGLES);
 	AddShape(Cube, -1, TRIANGLES);
-	AddShape(Plane, -1, TRIANGLES);
-	AddShapeViewport(2, 1);
+    AddShape(Plane, -1, TRIANGLES);
+	AddShape(Axis, 1, LINES);
+	AddShapeViewport(1, 1);
+	AddShapeViewport(2, 2);
 	RemoveShapeViewport(2, 0);
+	SetShapeShader(1, 1);
 	SetShapeShader(2, 2);
 
 	pickedShape = 0;

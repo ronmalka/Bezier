@@ -44,12 +44,12 @@
 
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
-				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
+				//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
-				scn->UpdatePosition((float)xpos, (float)ypos);
-				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
+			/*	scn->UpdatePosition((float)xpos, (float)ypos);
+				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);*/
 			}
 
 	}

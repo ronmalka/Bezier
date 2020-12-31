@@ -126,15 +126,16 @@ IndexedModel CubeTriangles()
 IndexedModel AxisGenerator()
 {
 	IndexedModel model;
+	int size = 9; 
 
 	LineVertex axisVertices[] = 
 	{
-		LineVertex(glm::vec3(1,0,0),glm::vec3(1,0,0)),
-		LineVertex(glm::vec3(-1,0,0),glm::vec3(1,0,0)),
-		LineVertex(glm::vec3(0,1,0),glm::vec3(0,1,0)),
-		LineVertex(glm::vec3(0,-1,0),glm::vec3(0,1,0)),
-		LineVertex(glm::vec3(0,0,1),glm::vec3(0,0,1)),
-		LineVertex(glm::vec3(0,0,-1),glm::vec3(0,0,1)),
+		LineVertex(glm::vec3(size,0,0),glm::vec3(size,0,0)),
+		LineVertex(glm::vec3(-size,0,0),glm::vec3(size,0,0)),
+		LineVertex(glm::vec3(0,size,0),glm::vec3(0,size,0)),
+		LineVertex(glm::vec3(0,-size,0),glm::vec3(0,size,0)),
+		LineVertex(glm::vec3(0,0,size),glm::vec3(0,0,size)),
+		LineVertex(glm::vec3(0,0,-size),glm::vec3(0,0,size)),
 	};
 
 

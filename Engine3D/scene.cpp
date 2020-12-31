@@ -133,6 +133,15 @@ void Scene::ShapeTransformation(int type, float amt)
 		case zRotate:
 			shapes[pickedShape]->MyRotate(amt, glm::vec3(0, 0, 1), 0);
 			break;
+		case xScale:
+			shapes[pickedShape]->MyScale(glm::vec3(amt, 0, 0));
+			break;
+		case yScale:
+			shapes[pickedShape]->MyScale(glm::vec3(0, amt, 0));
+			break;
+		case zScale:
+			shapes[pickedShape]->MyScale(glm::vec3(0, 0, amt));
+			break;
 		default:
 			break;
 		}

@@ -7,10 +7,24 @@
 Texture::Texture(const std::string& fileName, const int dim)
 {
 	int width, height, numComponents;
-    unsigned char* data = stbi_load((fileName).c_str(), &width, &height, &numComponents, 4);
+	std::string dir[] = {
+			"../res/textures/right.jpg",
+			"../res/textures/left.jpg",
+			"../res/textures/top.jpg",
+			"../res/textures/bottom.jpg",
+			"../res/textures/front.jpg",
+			"../res/textures/back.jpg"
+	};
+	unsigned char* data;
+
+	if (fileName != "")
+	{
+		data = stbi_load((fileName).c_str(), &width, &height, &numComponents, 4);
+
+		if (data == NULL)
+			std::cerr << "Unable to load texture: " << fileName << std::endl;
+	}
 	
-    if(data == NULL)
-		std::cerr << "Unable to load texture: " << fileName << std::endl;
         
     glGenTextures(1, &m_texture);
 	texDimention = dim;
@@ -23,7 +37,24 @@ Texture::Texture(const std::string& fileName, const int dim)
 		glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, width, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		break;
-	case 2:
+	case 3:
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.4f);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		for (unsigned int i = 0; i < 6; i++)
+		{
+			data = stbi_load(dir[i].c_str(), &width, &height, &numComponents, 0);
+			glTexImage2D(
+				GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+			);
+		}
+		break;
 	default:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -32,6 +63,8 @@ Texture::Texture(const std::string& fileName, const int dim)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		break;
+	
 	}
 	stbi_image_free(data);
 }
@@ -101,10 +134,13 @@ void Texture::Bind(int slot)
 	case 1:
 		glBindTexture(GL_TEXTURE_1D, m_texture);
 		break;
-	case 2:
+	case 3:
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
+		break;
 	default:
 		//int tex = 1;
 		glBindTexture(GL_TEXTURE_2D, m_texture);
+	
 	}
 }
 

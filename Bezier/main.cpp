@@ -3,8 +3,8 @@
 
 int main(int argc,char *argv[])
 {
-	const int DISPLAY_WIDTH = 840;
-	const int DISPLAY_HEIGHT = 840;
+	const int DISPLAY_WIDTH = 1200;
+	const int DISPLAY_HEIGHT = 600;
 	const float CAMERA_ANGLE = 60.0f;
 	const float NEAR = 1.0f;
 	const float FAR = 100.0f;

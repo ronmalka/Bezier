@@ -46,6 +46,7 @@ void  MovableGLM::MyRotate(float angle,const glm::vec3 &vec,int mode)
 void  MovableGLM::MyScale(const glm::vec3 scale)
 {
 	scl = glm::scale(scl,scale);
+	
 }
 
 void MovableGLM::ZeroTrans()
