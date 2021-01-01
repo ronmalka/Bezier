@@ -4,12 +4,12 @@
 
 static void printMat(const glm::mat4 mat)
 {
-	std::cout<<" matrix:"<<std::endl;
+	std::cout << " matrix:" << std::endl;
 	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < 4; j++)
-			std::cout<< mat[j][i]<<" ";
-		std::cout<<std::endl;
+			std::cout << mat[j][i] << " ";
+		std::cout << std::endl;
 	}
 }
 
@@ -22,28 +22,25 @@ Game::Game() : Scene()
 //}
 
 void Game::Init()
-{		
-	unsigned int texIDs[3] = { 0 , 1, 0};
+{
+	unsigned int texIDs[3] = { 0 , 1, 0 };
 	unsigned int slots[3] = { 0 , 1, 0 };
-	
-	AddShader("../res/shaders/pickingShader");	
+
+	AddShader("../res/shaders/pickingShader");
 	AddShader("../res/shaders/basicShader2");
 	AddShader("../res/shaders/basicShader");
-	
-	AddTexture("../res/textures/box0.bmp",2);
+
+	AddTexture("../res/textures/box0.bmp", 2);
 	//AddTexture("../res/textures/grass.bmp", 2);
 	TextureDesine(800, 800);
 
-	AddMaterial(texIDs,slots, 2);
-	AddMaterial(texIDs+1,slots+1, 2);
+	AddMaterial(texIDs, slots, 2);
+	AddMaterial(texIDs + 1, slots + 1, 2);
 	AddShape(Cube, -1, TRIANGLES);
 	AddShape(Cube, -1, TRIANGLES);
-    AddShape(Plane, -1, TRIANGLES);
-	AddShape(Axis, 1, LINES);
-	AddShapeViewport(1, 1);
-	AddShapeViewport(2, 2);
+	AddShape(Plane, -1, TRIANGLES);
+	AddShapeViewport(2, 1);
 	RemoveShapeViewport(2, 0);
-	SetShapeShader(1, 1);
 	SetShapeShader(2, 2);
 
 	pickedShape = 0;
@@ -58,16 +55,16 @@ void Game::Init()
 	pickedShape = 2;
 	SetShapeMaterial(2, 2);
 	pickedShape = -1;
-	
+
 	//ReadPixel(); //uncomment when you are reading from the z-buffer
 }
 
-void Game::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shaderIndx)
+void Game::Update(const glm::mat4& MVP, const glm::mat4& Model, const int  shaderIndx)
 {
-	Shader *s = shaders[shaderIndx];
-	int r = ((pickedShape+1) & 0x000000FF) >>  0;
-	int g = ((pickedShape+1) & 0x0000FF00) >>  8;
-	int b = ((pickedShape+1) & 0x00FF0000) >> 16;
+	Shader* s = shaders[shaderIndx];
+	int r = ((pickedShape + 1) & 0x000000FF) >> 0;
+	int g = ((pickedShape + 1) & 0x0000FF00) >> 8;
+	int b = ((pickedShape + 1) & 0x00FF0000) >> 16;
 	if (shapes[pickedShape]->GetMaterial() >= 0 && !materials.empty())
 		BindMaterial(s, shapes[pickedShape]->GetMaterial());
 	//textures[0]->Bind(0);
@@ -83,7 +80,7 @@ void Game::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shaderI
 		s->SetUniformMat4f("Normal", glm::mat4(1));
 	}
 	s->SetUniform1i("sampler1", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
-	if(shaderIndx!=2)
+	if (shaderIndx != 2)
 		s->SetUniform1i("sampler2", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(1));
 
 	s->Unbind();
@@ -99,7 +96,7 @@ void Game::WhenTranslate()
 
 void Game::Motion()
 {
-	if(isActive)
+	if (isActive)
 	{
 	}
 }

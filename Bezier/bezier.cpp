@@ -40,16 +40,16 @@ void bezier::Init()
 
 	AddShape(Cube, -1, TRIANGLES);
 	AddShape(Axis, -1, LINES);
-
+	AddShape(Curve, -1, LINES);
 
 	for (int i = 0; i < (3 * N) + 1; ++i) {
 		AddShape(Octahedron, -1, TRIANGLES);
-		pickedShape = i + 2;
+		pickedShape = i + 3;
 		float angle = PI * i / points;
 		ShapeTransformation(xTranslate, -points / 2 + i);
 		ShapeTransformation(yTranslate, i == points - 1 || i == 0 ? 0 : 2 * sin(angle));
-		AddShapeViewport(i + 2, 1);
-		RemoveShapeViewport(i + 2, 0);
+		AddShapeViewport(i + 3, 1);
+		RemoveShapeViewport(i + 3, 0);
 		
 		pickedShape = -1;
 	}
@@ -61,7 +61,7 @@ void bezier::Init()
 
 	SetShapeMaterial(0, 0);
 	SetShapeMaterial(1, 1);
-
+	SetShapeMaterial(2, 1);
 	//AddShapeCopy(0, -1, TRIANGLES);
 
 	//SetShapeShader(0, 1);
@@ -74,6 +74,10 @@ void bezier::Init()
 	SetShapeShader(1, 1);
 	AddShapeViewport(1, 1);
 	RemoveShapeViewport(1, 0);
+
+	SetShapeShader(2, 1);
+	AddShapeViewport(2, 1);
+	RemoveShapeViewport(2, 0);
 
 	pickedShape = 0;
 	ShapeTransformation(zTranslate, 10);

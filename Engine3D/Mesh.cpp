@@ -135,8 +135,8 @@ IndexedModel AxisGenerator()
 		LineVertex(glm::vec3(-size,0,0),glm::vec3(size,0,0)),
 		LineVertex(glm::vec3(0,size,0),glm::vec3(0,size,0)),
 		LineVertex(glm::vec3(0,-size,0),glm::vec3(0,size,0)),
-		LineVertex(glm::vec3(0,0,size),glm::vec3(0,0,size)),
-		LineVertex(glm::vec3(0,0,-size),glm::vec3(0,0,size)),
+		//LineVertex(glm::vec3(0,0,size),glm::vec3(0,0,size)),
+		//LineVertex(glm::vec3(0,0,-size),glm::vec3(0,0,size)),
 	};
 
 
@@ -144,16 +144,16 @@ IndexedModel AxisGenerator()
 	{
 		0,1,
 		2,3,
-		4,5
+		//4,5
 	};
 
-	for (unsigned int i = 0; i < 6; i++)
+	for (unsigned int i = 0; i < 4; i++)
 	{
 		model.positions.push_back(*axisVertices[i].GetPos());
 		model.colors.push_back(*axisVertices[i].GetColor());
 
 	}
-	for (unsigned int i = 0; i < 6; i++)
+	for (unsigned int i = 0; i < 4; i++)
 		model.indices.push_back(axisIndices[i]);
 
 	return model;
@@ -270,5 +270,42 @@ IndexedModel OctahedronGenerator()
 		model.indices.push_back(indices[i]);
 
 	return model;
+}
+
+IndexedModel CurveGenerator()
+{
+	//std::cout << "here" << std::endl;
+	IndexedModel model;
+	int N = 3;
+	int points = (3 * N) + 1;
+	float PI = 3.141592654;
+	int size = -5;
+	float angle = PI / points;
+
+	LineVertex axisVertices[] =
+	{
+		LineVertex(glm::vec3(size,0,0),glm::vec3(1,0,0)),
+		LineVertex(glm::vec3(size + 1 ,2 * sin(angle * 1),0),glm::vec3(1,0,0)),
+		LineVertex(glm::vec3(size + 2,2 * sin(angle * 2),0),glm::vec3(0,1,0)),
+		LineVertex(glm::vec3(size + 2,2 * sin(angle * 3),0),glm::vec3(0,1,0))
+	};
+
+	unsigned int axisIndices[] =
+	{
+		0,1,
+		2,3
+	};
+
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		model.positions.push_back(*axisVertices[i].GetPos());
+		model.colors.push_back(*axisVertices[i].GetColor());
+
+	}
+	for (unsigned int i = 0; i < 4; i++)
+		model.indices.push_back(axisIndices[i]);
+
+	return model;
+
 }
 

@@ -71,3 +71,5 @@ IndexedModel AxisGenerator();
 IndexedModel TethrahedronGenerator();
 
 IndexedModel OctahedronGenerator();
+
+IndexedModel CurveGenerator();

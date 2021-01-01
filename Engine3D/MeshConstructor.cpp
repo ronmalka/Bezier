@@ -36,6 +36,9 @@ MeshConstructor::MeshConstructor(const int type)
 	case Tethrahedron:
 		InitMesh(TethrahedronGenerator());
 		break;
+	case 7:
+		InitLine(CurveGenerator());
+		break;
 	default:
 		break;
 	}
