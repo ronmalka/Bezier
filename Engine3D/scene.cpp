@@ -3,6 +3,7 @@
 #include "scene.h"
 #include <iostream>
 
+
 static void printMat(const glm::mat4 mat)
 {
 	printf(" matrix: \n");
@@ -34,6 +35,12 @@ void Scene::AddShape(int type, int parent, unsigned int mode)
 {
 	chainParents.push_back(parent);
 	shapes.push_back(new Shape(type, mode));
+}
+
+void Scene::AddShape(int segNum, int parent, unsigned int mode, std::vector<glm::vec3> controlPoints)
+{
+	chainParents.push_back(parent);
+	shapes.push_back(new Bezier1D(segNum, mode, controlPoints));
 }
 
 void Scene::AddShapeCopy(int indx, int parent, unsigned int mode)

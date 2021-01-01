@@ -22,6 +22,7 @@ public:
 
 	void AddShapeFromFile(const std::string& fileName, int parent, unsigned int mode);
 	virtual void AddShape(int type, int parent, unsigned int mode);
+	virtual void AddShape(int type, int parent, unsigned int mode, std::vector<glm::vec3> controlPoints);
 	void AddShapeCopy(int indx, int parent, unsigned int mode);
 
 	int AddShader(const std::string& fileName);

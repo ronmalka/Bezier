@@ -30,6 +30,7 @@ void bezier::Init()
 	int N = 3;
 	int points = (3 * N) + 1;
 	float PI = 3.141592654;
+	std::vector<glm::vec3> controlPoints; 
 
 	AddShader("../res/shaders/pickingShader");	
 	AddShader("../res/shaders/basicShader");
@@ -40,17 +41,19 @@ void bezier::Init()
 
 	AddShape(Cube, -1, TRIANGLES);
 	AddShape(Axis, -1, LINES);
-	AddShape(Curve, -1, LINES);
+	AddShape(Curve, -1, LINE_STRIP);
 
 	for (int i = 0; i < (3 * N) + 1; ++i) {
 		AddShape(Octahedron, -1, TRIANGLES);
 		pickedShape = i + 3;
 		float angle = PI * i / points;
-		ShapeTransformation(xTranslate, -points / 2 + i);
-		ShapeTransformation(yTranslate, i == points - 1 || i == 0 ? 0 : 2 * sin(angle));
+		float xTrans = -points / 2 + i;
+		float yTrans = i == points - 1 || i == 0 ? 0 : 2 * sin(angle);
+		ShapeTransformation(xTranslate, xTrans);
+		ShapeTransformation(yTranslate, yTrans);
+		controlPoints.push_back(glm::vec3(xTrans, yTrans, pickedShape));
 		AddShapeViewport(i + 3, 1);
 		RemoveShapeViewport(i + 3, 0);
-		
 		pickedShape = -1;
 	}
 	
