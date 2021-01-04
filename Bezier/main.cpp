@@ -14,13 +14,14 @@ int main(int argc,char *argv[])
 	//y.push_back(DISPLAY_HEIGHT / 2);
 	Display display(DISPLAY_WIDTH, DISPLAY_HEIGHT, "OpenGL");
 	Renderer* rndr = new Renderer(CAMERA_ANGLE, (float)DISPLAY_WIDTH / 2  / DISPLAY_HEIGHT, NEAR, FAR); // adding a camera
+
 	bezier *scn = new bezier();  //initializing scene
 	
 	Init(display); //adding callback functions
 	scn->Init();    //adding shaders, textures, shapes to scene
 	rndr->Init(scn,x,y); // adding scene and viewports to the renderer
 	display.SetRenderer(rndr);  // updating renderer in as a user pointer in glfw
-	
+
 	while(!display.CloseWindow())
 	{
 		rndr->DrawAll();

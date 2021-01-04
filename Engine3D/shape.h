@@ -8,11 +8,9 @@ class Shape : public MovableGLM
 {
 private:
 
-	MeshConstructor* mesh;
 	unsigned int materialID;
 	int shaderID;
 	bool isCopy;
-	unsigned int mode;
 	unsigned int viewports;
 
 public:
@@ -22,6 +20,8 @@ public:
 	Shape(const std::string& fileName, unsigned int mode);
 
 	Shape(const int SimpleShapeType, unsigned int mode);
+
+	Shape(int segNum, int mode, std::vector<glm::vec3> controlPoints, int viewport);
 
 	void Draw(const Shader* shaders, bool isPicking);
 
@@ -40,5 +40,12 @@ public:
 	inline unsigned int GetMaterial() { return materialID; }
 
 	virtual ~Shape(void);
+
+protected:
+	std::vector<glm::vec3> controlPoints;
+	int segNum;
+	unsigned int mode;
+	MeshConstructor* mesh;
 };
+
 

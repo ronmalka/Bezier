@@ -29,7 +29,7 @@
 	
 	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	{
-		/*Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
+	/*	Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		bezier* scn = (bezier*)rndr->GetScene();
 
 		if (yoffset > 0) {

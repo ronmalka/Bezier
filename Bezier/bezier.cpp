@@ -39,24 +39,25 @@ void bezier::Init()
 	AddTexture("../res/textures/box0.bmp", 2);
 	//TextureDesine(840, 840);]
 
-	AddShape(Cube, -1, TRIANGLES);
-	AddShape(Axis, -1, LINES);
-	AddShape(Curve, -1, LINE_STRIP);
+	AddShape(Cube, -1, TRIANGLES); //0
+	AddShape(Axis, -1, LINES); // 1
+	
 
-	for (int i = 0; i < (3 * N) + 1; ++i) {
+	for (int i = 0; i < points; ++i) { //  1 < id <10 + 2
 		AddShape(Octahedron, -1, TRIANGLES);
-		pickedShape = i + 3;
+		pickedShape = i + 2;
 		float angle = PI * i / points;
 		float xTrans = -points / 2 + i;
 		float yTrans = i == points - 1 || i == 0 ? 0 : 2 * sin(angle);
 		ShapeTransformation(xTranslate, xTrans);
 		ShapeTransformation(yTranslate, yTrans);
 		controlPoints.push_back(glm::vec3(xTrans, yTrans, pickedShape));
-		AddShapeViewport(i + 3, 1);
-		RemoveShapeViewport(i + 3, 0);
+		AddShapeViewport(i + 2, 1);
+		RemoveShapeViewport(i + 2, 0);
 		pickedShape = -1;
 	}
 	
+	//AddShape(N, -1, LINE_STRIP, controlPoints);
 
 	AddMaterial(texIDs,slots, 1);
 	AddMaterial(texIDs+1, slots + 1, 1);
@@ -64,7 +65,7 @@ void bezier::Init()
 
 	SetShapeMaterial(0, 0);
 	SetShapeMaterial(1, 1);
-	SetShapeMaterial(2, 1);
+	//SetShapeMaterial(points + 2, 1);
 	//AddShapeCopy(0, -1, TRIANGLES);
 
 	//SetShapeShader(0, 1);
@@ -78,9 +79,9 @@ void bezier::Init()
 	AddShapeViewport(1, 1);
 	RemoveShapeViewport(1, 0);
 
-	SetShapeShader(2, 1);
-	AddShapeViewport(2, 1);
-	RemoveShapeViewport(2, 0);
+	/*SetShapeShader(points + 2, 1);
+	AddShapeViewport(points + 2, 1);
+	RemoveShapeViewport(points + 2, 0);*/
 
 	pickedShape = 0;
 	ShapeTransformation(zTranslate, 10);
