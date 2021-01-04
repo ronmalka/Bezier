@@ -303,7 +303,8 @@ IndexedModel CurveGenerator()
 
 	unsigned int axisIndices[] =
 	{
-		0,1,1,2,
+		0,1,
+		1,2,
 		2,3
 	};
 

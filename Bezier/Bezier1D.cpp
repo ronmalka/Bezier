@@ -1,6 +1,6 @@
 #include "Bezier/Bezier1D.h"
 
-Bezier1D::Bezier1D(int segNum, int mode, std::vector<glm::vec3> controlPoints, int viewport ) : Shape(segNum,mode,controlPoints, viewport)
+Bezier1D::Bezier1D(int segNum, int mode, std::vector<glm::vec3> controlPoints, int viewport) : Shape(segNum,mode,controlPoints, viewport)
 {
 	this->mesh = new MeshConstructor(GetLine(), false);
 }
@@ -8,17 +8,20 @@ Bezier1D::Bezier1D(int segNum, int mode, std::vector<glm::vec3> controlPoints, i
 IndexedModel Bezier1D::GetLine()
 {
 	IndexedModel model;
-	glm::vec3 color = glm::vec3(1, 0,0);
+	glm::vec3 color = glm::vec3(1,1,0);
 	for (size_t i = 0; i < segNum; i++)
 	{
 		GetControlPoint(i, i * 3, model.positions);
 	}
 
-	for (unsigned int i = 0; i < model.positions.size(); i++)
+	model.colors.push_back(color);
+	for (unsigned int i = 1; i < model.positions.size(); i++) 
 	{
 		model.colors.push_back(color);
+		model.indices.push_back(i-1);
+		model.indices.push_back(i);
 	}
-
+	
 	return model;
 }
 
@@ -27,7 +30,6 @@ void Bezier1D::GetControlPoint(int segment, int indx, std::vector<glm::vec3> &li
 {
 	glm::vec3 p;
 	
-
 	for (float t = 0.0; t < 1.0; t += 0.001)
 	{
 		p = GetPointOnCurve(indx, t);
@@ -48,6 +50,17 @@ glm::vec3 Bezier1D::GetPointOnCurve(int indx, float t)
 	bezier.y = powf((1.0f - t), 3.0f) * p0.y + 3.0f * t * powf((1.0f - t), 2.0f) * p1.y + 3.0f * (1.0f - t) * powf(t, 2.0f) * p2.y + powf(t, 3.0f) * p3.y;
 
 	return bezier;
+}
+
+void Bezier1D::AddSegment(int seg)
+{
+	segNum = seg;
+	this->mesh = new MeshConstructor(GetLine(), false);
+}
+
+void Bezier1D::RemoveSegment() 
+{
+
 }
 
 Bezier1D::~Bezier1D() {}

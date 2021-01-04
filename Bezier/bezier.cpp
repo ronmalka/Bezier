@@ -27,8 +27,10 @@ void bezier::Init()
 {		
 	unsigned int texIDs[3] = { 0 , 1, 0};
 	unsigned int slots[3] = { 0 , 1, 0 };
-	int N = 3;
-	int points = (3 * N) + 1;
+	int N = 6;  // max segments
+	int seg = 3;
+	int points = (3 * seg) + 1;
+	int maxPoints = (6 * N) + 1;
 	float PI = 3.141592654;
 	std::vector<glm::vec3> controlPoints; 
 
@@ -41,10 +43,17 @@ void bezier::Init()
 
 	AddShape(Cube, -1, TRIANGLES); //0
 	AddShape(Axis, -1, LINES); // 1
-	
+
+	for (size_t i = 0; i < maxPoints; i++) // init max points shape
+	{
+		AddShape(Octahedron, -1, TRIANGLES);
+		pickedShape = i + 2;
+		RemoveShapeViewport(i + 2, 0);
+		RemoveShapeViewport(i + 2, 1);
+		pickedShape = -1;
+	}
 
 	for (int i = 0; i < points; ++i) { //  1 < id <10 + 2
-		AddShape(Octahedron, -1, TRIANGLES);
 		pickedShape = i + 2;
 		float angle = PI * i / points;
 		float xTrans = -points / 2 + i;
@@ -53,11 +62,10 @@ void bezier::Init()
 		ShapeTransformation(yTranslate, yTrans);
 		controlPoints.push_back(glm::vec3(xTrans, yTrans, pickedShape));
 		AddShapeViewport(i + 2, 1);
-		RemoveShapeViewport(i + 2, 0);
 		pickedShape = -1;
 	}
-	
-	//AddShape(N, -1, LINE_STRIP, controlPoints);
+
+	AddShape(seg, -1, LINE_STRIP, controlPoints);
 
 	AddMaterial(texIDs,slots, 1);
 	AddMaterial(texIDs+1, slots + 1, 1);
@@ -65,7 +73,7 @@ void bezier::Init()
 
 	SetShapeMaterial(0, 0);
 	SetShapeMaterial(1, 1);
-	//SetShapeMaterial(points + 2, 1);
+	SetShapeMaterial(maxPoints + 2, 1);
 	//AddShapeCopy(0, -1, TRIANGLES);
 
 	//SetShapeShader(0, 1);
@@ -79,14 +87,13 @@ void bezier::Init()
 	AddShapeViewport(1, 1);
 	RemoveShapeViewport(1, 0);
 
-	/*SetShapeShader(points + 2, 1);
-	AddShapeViewport(points + 2, 1);
-	RemoveShapeViewport(points + 2, 0);*/
+	SetShapeShader(maxPoints + 2, 1);
+	AddShapeViewport(maxPoints + 2, 1);
+	RemoveShapeViewport(maxPoints + 2, 0);
 
 	pickedShape = 0;
 	ShapeTransformation(zTranslate, 10);
-	//pickedShape = 1;
-	//ShapeTransformation(yTranslate, 4);
+
 	//pickedShape = 1;
 	//ShapeTransformation(xScale, 100);
 	//ShapeTransformation(yScale, 100);

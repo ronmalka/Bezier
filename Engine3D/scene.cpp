@@ -40,7 +40,8 @@ void Scene::AddShape(int type, int parent, unsigned int mode)
 void Scene::AddShape(int segNum, int parent, unsigned int mode, std::vector<glm::vec3> controlPoints)
 {
 	chainParents.push_back(parent);
-	shapes.push_back(new Bezier1D(segNum, mode, controlPoints,1));
+	bezier1D = new Bezier1D(segNum, mode, controlPoints, 1);
+	shapes.push_back(bezier1D);
 }
 
 void Scene::AddShapeCopy(int indx, int parent, unsigned int mode)

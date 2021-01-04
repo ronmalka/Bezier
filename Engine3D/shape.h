@@ -2,7 +2,7 @@
 #include "MovableGLM.h"
 #include "VertexArray.hpp"
 #include "shader.h"
-#include "MeshConstructor.h"
+#include "MeshConstructor.h" 
 
 class Shape : public MovableGLM
 {
@@ -38,6 +38,8 @@ public:
 	inline void SetMaterial(const unsigned int id) { materialID = id; }
 
 	inline unsigned int GetMaterial() { return materialID; }
+
+	inline std::vector<glm::vec3>& GetControlPoints() { return controlPoints; }
 
 	virtual ~Shape(void);
 

@@ -1,6 +1,5 @@
 #pragma once
 #include "shader.h"
-#include "shape.h"
 #include "camera.h"
 #include "VertexArray.hpp"
 #include "Material.h"
@@ -62,9 +61,14 @@ public:
 	inline void SetShapeMaterial(int shpIndx, int materialIndx) { shapes[shpIndx]->SetMaterial(materialIndx); }
 	inline void SetShapeShader(int shpIndx, int shdrIndx) { shapes[shpIndx]->SetShader(shdrIndx); }
 
+	inline void SetPickedShape(int pick) { pickedShape = pick; }
+	inline int GetPickedShape() { return pickedShape; }
+
+	inline Bezier1D* GetBezier1D() { return bezier1D; }
+
+	inline void ZeroShapeTrans(int shpIndx) { shapes[shpIndx]->ZeroTrans(); }
+
 private:
-
-
 	float depth;
 
 protected:
@@ -77,5 +81,7 @@ protected:
 	int pickedShape;
 
 	bool isActive;
+
+	Bezier1D* bezier1D;
 };
 

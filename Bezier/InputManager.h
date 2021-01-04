@@ -67,6 +67,60 @@
 		rndr->Resize(width,height);
 		
 	}
+	void Bezier1DPoints(Scene* scn, int seg, int diffSeg, bool add)
+	{
+		int points;
+
+		int oldSize = scn->GetBezier1D()->GetControlPoints().size();
+
+		if (add)
+		{
+			points = oldSize + (3 * diffSeg);
+		}
+		else
+		{
+			points = oldSize - (3 * diffSeg);
+		}
+
+		float PI = 3.141592654;
+
+		for (size_t i = 0; i < oldSize; i++)
+		{
+			scn->RemoveShapeViewport(i + 2, 1);
+		}
+
+		scn->GetBezier1D()->GetControlPoints().clear();
+
+		for (size_t i = 0; i < points; i++)
+		{
+			scn->ZeroShapeTrans(i + 2);
+			scn->SetPickedShape(i + 2);
+			float angle = PI * i / oldSize;
+			float xTrans = (-(float)points / 2 + i);
+			float yTrans = i == points - 1 || i == 0 ? 0.f : 2.f * sin(angle);
+			std::cout << "xtrans : " << xTrans << " ytrans : " << yTrans << std::endl;
+			scn->ShapeTransformation(scn->xTranslate, xTrans);
+			scn->ShapeTransformation(scn->yTranslate, yTrans);
+			scn->GetBezier1D()->GetControlPoints().push_back(glm::vec3(xTrans, yTrans, scn->GetPickedShape()));
+			scn->SetPickedShape(-1);
+			scn->AddShapeViewport(i + 2, 1);
+		}
+		   scn->GetBezier1D()->AddSegment(seg);
+	}
+
+	void darwNewBezier1D(Scene* scn, int seg)
+	{
+		int oldSeg = scn->GetBezier1D()->GetSegmentsNum();
+
+		if (oldSeg > seg)
+		{
+			Bezier1DPoints(scn, seg, oldSeg - seg, false);
+		}
+		else if (oldSeg < seg)
+		{
+			Bezier1DPoints(scn, seg, seg - oldSeg, true);
+		}
+	}
 	
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
@@ -97,6 +151,21 @@
 				break;
 			case GLFW_KEY_LEFT:
 				break;
+			case GLFW_KEY_2:
+				darwNewBezier1D(scn, 2);
+				break;
+			case GLFW_KEY_3:
+				darwNewBezier1D(scn, 3);
+				break;
+			case GLFW_KEY_4:
+				darwNewBezier1D(scn, 4);
+				break;
+			case GLFW_KEY_5:
+				darwNewBezier1D(scn, 5);
+				break;
+			case GLFW_KEY_6:
+				darwNewBezier1D(scn, 6);
+				break;
 			default:
 				break;
 			}
@@ -109,3 +178,9 @@
 		display.AddMouseCallBacks(mouse_callback,scroll_callback,cursor_position_callback);
 		display.AddResizeCallBack(window_size_callback);
 	}
+
+	
+
+	
+
+
