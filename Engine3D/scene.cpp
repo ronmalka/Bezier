@@ -163,6 +163,7 @@ bool Scene::Picking(unsigned char data[4])
 		if (data[0] > 0)
 		{
 			pickedShape = data[0]-1; //r 
+			std::cout << (int)data[0] << std::endl;
 			return true;
 		}
 		return false;

@@ -34,12 +34,11 @@ void bezier::Init()
 	float PI = 3.141592654;
 	std::vector<glm::vec3> controlPoints; 
 
-	AddShader("../res/shaders/pickingShader");	
+	AddShader("../res/shaders/pickingShader2");	
 	AddShader("../res/shaders/basicShader");
 	AddShader("../res/shaders/basicShader2");
 	AddTexture("../res/textures/", 3);
 	AddTexture("../res/textures/box0.bmp", 2);
-	//TextureDesine(840, 840);]
 
 	AddShape(Cube, -1, TRIANGLES); //0
 	AddShape(Axis, -1, LINES); // 1
@@ -50,16 +49,18 @@ void bezier::Init()
 		pickedShape = i + 2;
 		RemoveShapeViewport(i + 2, 0);
 		RemoveShapeViewport(i + 2, 1);
+		SetShapeShader(i+2,2);
 		pickedShape = -1;
 	}
 
 	for (int i = 0; i < points; ++i) { //  1 < id <10 + 2
 		pickedShape = i + 2;
 		float angle = PI * i / points;
-		float xTrans = -points / 2 + i;
-		float yTrans = i == points - 1 || i == 0 ? 0 : 2 * sin(angle);
+		float xTrans = (-points / 2 + i)/8.f;
+		float yTrans = i == points - 1 || i == 0 ? 0 : (2.f * sin(angle))/8.f;
 		ShapeTransformation(xTranslate, xTrans);
 		ShapeTransformation(yTranslate, yTrans);
+		SetShapeMaterial(i+2,1);
 		controlPoints.push_back(glm::vec3(xTrans, yTrans, pickedShape));
 		AddShapeViewport(i + 2, 1);
 		pickedShape = -1;
@@ -69,15 +70,8 @@ void bezier::Init()
 
 	AddMaterial(texIDs,slots, 1);
 	AddMaterial(texIDs+1, slots + 1, 1);
-	//AddMaterial(texIDs + 2, slots + 2, 3);
 
 	SetShapeMaterial(0, 0);
-	SetShapeMaterial(1, 1);
-	SetShapeMaterial(maxPoints + 2, 1);
-	//AddShapeCopy(0, -1, TRIANGLES);
-
-	//SetShapeShader(0, 1);
-	//SetShapeShader(1, 1);
 	SetShapeShader(0, 2);
 	AddShapeViewport(0, 0);
 	RemoveShapeViewport(0, 1);
@@ -93,22 +87,7 @@ void bezier::Init()
 
 	pickedShape = 0;
 	ShapeTransformation(zTranslate, 10);
-
-	//pickedShape = 1;
-	//ShapeTransformation(xScale, 100);
-	//ShapeTransformation(yScale, 100);
-	//ShapeTransformation(zScale, 100);
-	//pickedShape = 3;
-	//ShapeTransformation(xTranslate, 7);
 	pickedShape = -1;
-	//SetShapeMaterial(0, 0);
-	
-
-		
-		
-
-
-
 
 }
 

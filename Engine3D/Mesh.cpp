@@ -207,7 +207,7 @@ IndexedModel TethrahedronGenerator()
 
 IndexedModel OctahedronGenerator()
 {
-	float size = 0.2;
+	float size = 0.04;
 	Vertex vertices[] =
 	{
 		Vertex(size * glm::vec3(0, 0,-1), size * glm::vec2(1, 0),size * glm::vec3(1, 1, -1),size * glm::vec3(0, 0, 1)),
