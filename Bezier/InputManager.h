@@ -3,7 +3,7 @@
 #include "renderer.h"
 #include "bezier.h"
 #include <iostream>
-float addition = 0.f;
+bool isPressed = false;
 
 	void mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
@@ -15,10 +15,15 @@ float addition = 0.f;
 			glfwGetCursorPos(window, &x2, &y2);
 			if (rndr->Picking((int)x2, (int)y2))
 			{
-
-				rndr->UpdatePosition(x2, y2);
+				if (scn->GetPickedShape() > 1 && scn->GetPickedShape() <= 21) {
+					int id = (scn->GetPickedShape() - 2) % 3;
+					if (id != 0) {
+						scn->updatePressedPos(x2, y2);
+						rndr->UpdatePosition(x2, y2);
+						isPressed = true;
+					}
+				}
 			}
-			scn->ResetCounter();
 		}
 		else
 			scn->SetCounter();
@@ -32,8 +37,8 @@ float addition = 0.f;
 			scn->ZeroShapeTrans(i + 2);
 			scn->SetPickedShape(i + 2);
 			float angle = PI * i / points;
-			float xTrans = (-(float)points / 2 + i) / 8.f ;
-			float yTrans = (i == points - 1 || i == 0 ? 0.f : (2.f * sin(angle)) / 8.f) + addition ;
+			float xTrans = (-(float)points / 2 + i)/8.8f ;
+			float yTrans = (i == points - 1 || i == 0 ? 0.f : (2.f * sin(angle))/8.8f) ;
 			std::cout << "xtrans : " << xTrans << " ytrans : " << yTrans << std::endl;
 			scn->ShapeTransformation(scn->xTranslate, xTrans);
 			scn->ShapeTransformation(scn->yTranslate, yTrans);
@@ -50,7 +55,7 @@ float addition = 0.f;
 		glfwGetCursorPos(window, &xpos, &ypos);
 		bezier* scn = (bezier*)rndr->GetScene();
 		std::cout << " x " << xpos << std::endl;
-		if (xpos < 800) {
+		if (xpos < 600) {
 			if (yoffset > 0) {
 				rndr->MoveCamera(0, scn->zTranslate, 0.4f);
 			}
@@ -60,12 +65,10 @@ float addition = 0.f;
 		}
 		else {
 			if (yoffset > 0) {
-				addition += 0.2f;
-				reDrawAll(scn->GetBezier1D()->GetControlPoints().size(),scn);
+				rndr->MoveCamera(1, scn->zTranslate, 0.4f);
 			}
 			else {
-				addition -= 0.2f;
-				reDrawAll(scn->GetBezier1D()->GetControlPoints().size(),scn);
+				rndr->MoveCamera(1, scn->zTranslate, -0.4f);
 			}
 		}
 		
@@ -81,13 +84,25 @@ float addition = 0.f;
 
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
-				//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
+				if (isPressed) {
+					scn->setNewOffset(xpos, ypos);
+				}
+				
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
 				scn->UpdatePosition((float)xpos, (float)ypos);
 				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
 			}
+			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+			{
+				if (isPressed) {
+					isPressed = !isPressed;
+					scn->setNewOffset(xpos, ypos);
+					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
+				}
+			}
+
 
 	}
 

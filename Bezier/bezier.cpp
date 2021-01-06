@@ -34,7 +34,7 @@ void bezier::Init()
 	float PI = 3.141592654;
 	std::vector<glm::vec3> controlPoints; 
 
-	AddShader("../res/shaders/pickingShader2");	
+	AddShader("../res/shaders/pickingShader");	
 	AddShader("../res/shaders/basicShaderTex");
 	AddShader("../res/shaders/basicShader");
 	AddShader("../res/shaders/basicShader2");
@@ -136,9 +136,13 @@ void bezier::WhenRotate()
 
 void bezier::WhenTranslate()
 {
+
 }
 
-
+void bezier::WhenPicked()
+{
+	
+}
 
 void bezier::Motion()
 {
@@ -169,6 +173,22 @@ unsigned int bezier::TextureDesine(int width, int height)
 	return(textures.size() - 1);
 }
 
+void bezier::setNewOffset(double xpos, double ypos) {
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	offset_x = (xpos - old_x) / (viewport[2] / 2) * 0.02f;
+	offset_y = (old_y - ypos) / (viewport[3]) * 0.02f;
+	ShapeTransformation(xTranslate, offset_x );
+	ShapeTransformation(yTranslate, offset_y);
+	bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
+}
+
+void bezier::updatePressedPos(double xpos, double ypos) {
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	old_x = xpos;
+	old_y = ypos;
+}
 bezier::~bezier(void)
 {
 

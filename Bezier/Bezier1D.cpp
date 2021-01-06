@@ -55,12 +55,21 @@ glm::vec3 Bezier1D::GetPointOnCurve(int indx, float t)
 void Bezier1D::AddSegment(int seg)
 {
 	segNum = seg;
+	MeshConstructor* old = this->mesh;
 	this->mesh = new MeshConstructor(GetLine(), false);
+	delete(old);
 }
 
 void Bezier1D::RemoveSegment() 
 {
 
+}
+
+void Bezier1D::CurveUpdate(int pointIndx, float dx, float dy, bool preserveC1)
+{
+	controlPoints[pointIndx].x += dx;
+	controlPoints[pointIndx].y += dy;
+	this->mesh->ChangeLine(GetLine());
 }
 
 Bezier1D::~Bezier1D() {}

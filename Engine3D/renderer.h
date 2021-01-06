@@ -68,6 +68,9 @@ public:
 	inline float GetAngle(int cameraIndx) { return cameras[cameraIndx]->GetAngle(); }
 	inline void SetDrawFlag(int infoIndx,unsigned int flag) { drawInfo[infoIndx]->SetFlags(flag); }
 	inline void ClearDrawFlag(int infoIndx, unsigned int flag) { drawInfo[infoIndx]->ClearFlags(flag); }
+	inline int getxRel() { return xrel; }
+	inline int getyRel() { return yrel; }
+
 	bool checkViewport(int x, int y, int viewportIndx);
 	~Renderer();
 private:

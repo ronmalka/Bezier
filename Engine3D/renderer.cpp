@@ -27,7 +27,7 @@ void Renderer::Init(Scene* scene,  std::list<int>xViewport,  std::list<int>yView
 {
 	scn = scene;
 	MoveCamera(0, zTranslate, 10);
-	MoveCamera(1, zTranslate, 100);
+	MoveCamera(1, zTranslate, 1.5f);
 	glm::ivec4 viewport;
 	glGetIntegerv(GL_VIEWPORT, &viewport[0]);
 	//drawInfo.push_back(new DrawInfo(0, 0, 0, 0,   inAction | toClear | blackClear | depthTest));
@@ -115,7 +115,6 @@ bool Renderer::Picking(int x, int y)
 {
 	//picking from camera 0 and using shader 0
 	ActionDraw();
-
 	GLint viewport[4];
 	unsigned char data[4];
 	glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
@@ -242,6 +241,9 @@ void Renderer::MoveCamera(int cameraIndx, int type, float amt)
 		break;
 	case zRotate:
 		cameras[cameraIndx]->MyRotate(amt, glm::vec3(0, 0, 1), 0);
+		break;
+	case yScale:
+		cameras[cameraIndx]->MyScale(glm::vec3(0, amt, 0));
 		break;
 	default:
 		break;

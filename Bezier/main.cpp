@@ -14,7 +14,7 @@ int main(int argc,char *argv[])
 	//y.push_back(DISPLAY_HEIGHT / 2);
 	Display display(DISPLAY_WIDTH, DISPLAY_HEIGHT, "OpenGL");
 	Renderer* rndr = new Renderer(CAMERA_ANGLE, (float)DISPLAY_WIDTH / 2  / DISPLAY_HEIGHT, NEAR, FAR); // adding a camera
-	rndr->AddCamera(glm::vec3(0, 0, 0), 0, 1, NEAR, FAR, infoIndx);
+	rndr->AddCamera(glm::vec3(0, 0, 0), CAMERA_ANGLE, 1, NEAR, FAR, infoIndx);
 	bezier *scn = new bezier();  //initializing scene
 	
 	Init(display); //adding callback functions

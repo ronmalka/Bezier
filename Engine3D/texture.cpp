@@ -8,12 +8,12 @@ Texture::Texture(const std::string& fileName, const int dim)
 {
 	int width, height, numComponents;
 	std::string dir[] = {
-			fileName+ "right.jpg",
-			fileName + "left.jpg",
-			fileName + "top.jpg",
-			fileName + "bottom.jpg",
-			fileName + "front.jpg",
-			fileName + "back.jpg"
+			fileName+ "right.bmp",
+			fileName + "left.bmp",
+			fileName + "top.bmp",
+			fileName + "bottom.bmp",
+			fileName + "front.bmp",
+			fileName + "back.bmp"
 	};
 	unsigned char* data;
 

@@ -163,11 +163,9 @@ bool Scene::Picking(unsigned char data[4])
 		if (data[0] > 0)
 		{
 			pickedShape = data[0]-1; //r 
-			std::cout << pickedShape << std::endl;
 			return true;
 		}
 		return false;
-		//WhenPicked();	
 }
 //return coordinates in global system for a tip of arm position is local system 
 void Scene::MouseProccessing(int button, int xrel, int yrel)

@@ -23,7 +23,7 @@ public:
 	void AddSegment(int seg);  // add a segment at the end of the curve
 	void RemoveSegment();
 	void CurveUpdate(int pointIndx, float dx, float dy, bool preserveC1 = false);  //change the line in by using ChangeLine function of MeshConstructor and MoveControlPoint 
-	
+	inline float getControlY(int index) { return controlPoints[index].y; }
 	inline int GetSegmentsNum() const { return segNum; }
 	
 

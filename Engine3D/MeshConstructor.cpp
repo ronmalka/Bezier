@@ -4,6 +4,7 @@
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 #include "obj_loader.h"
+#include <iostream>
 
 #define GL_FLOAT 0x1406
 
