@@ -81,12 +81,12 @@ float addition = 0.f;
 
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
-				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
+				//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
-				//scn->UpdatePosition((float)xpos, (float)ypos);
-				//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
+				scn->UpdatePosition((float)xpos, (float)ypos);
+				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
 			}
 
 	}
@@ -174,6 +174,24 @@ float addition = 0.f;
 				break;
 			case GLFW_KEY_6:
 				darwNewBezier1D(scn, 6);
+				break;
+			case GLFW_KEY_R:
+				rndr->MoveCamera(0, rndr->yRotate, 0.8);
+				break;
+			case GLFW_KEY_L:
+				rndr->MoveCamera(0, rndr->yRotate, -0.8);
+				break;
+			case GLFW_KEY_D:
+				rndr->MoveCamera(0, rndr->xRotate, -0.8);
+				break;
+			case GLFW_KEY_U:
+				rndr->MoveCamera(0, rndr->xRotate, 0.8);
+				break;
+			case GLFW_KEY_B:
+				rndr->MoveCamera(0, rndr->zTranslate, 0.1);
+				break;
+			case GLFW_KEY_F:
+				rndr->MoveCamera(0, rndr->zTranslate, -0.1);
 				break;
 			default:
 				break;

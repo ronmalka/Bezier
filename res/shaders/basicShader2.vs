@@ -1,13 +1,25 @@
-#version 330 core
-layout (location = 0) in vec3 aPos;
+#version 330
 
-out vec3 TexCoords;
+attribute vec3 position;
+attribute vec3 color;
+attribute vec3 normal;
+attribute vec2 texCoords;
+
+out vec2 texCoord0;
+out vec3 normal0;
+out vec3 color0;
+out vec3 position0;
+out vec3 lookat;
 
 uniform mat4 MVP;
 uniform mat4 Normal;
 
 void main()
 {
-    TexCoords = aPos;
-    gl_Position = MVP * Normal * vec4(aPos, 1.0);
-} 
+	
+	texCoord0 = texCoords;
+	color0 = color;
+	position0 = vec3(Normal * vec4(position, 1.0));
+	gl_Position = MVP * Normal* vec4(position, 1.0); //you must have gl_Position
+	lookat = position0;
+}

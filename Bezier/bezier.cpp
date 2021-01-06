@@ -35,10 +35,11 @@ void bezier::Init()
 	std::vector<glm::vec3> controlPoints; 
 
 	AddShader("../res/shaders/pickingShader2");	
+	AddShader("../res/shaders/basicShaderTex");
 	AddShader("../res/shaders/basicShader");
 	AddShader("../res/shaders/basicShader2");
+	AddTexture("../res/textures/grass.bmp", 2);
 	AddTexture("../res/textures/", 3);
-	AddTexture("../res/textures/box0.bmp", 2);
 
 	AddShape(Cube, -1, TRIANGLES); //0
 	AddShape(Axis, -1, LINES); // 1
@@ -49,7 +50,7 @@ void bezier::Init()
 		pickedShape = i + 2;
 		RemoveShapeViewport(i + 2, 0);
 		RemoveShapeViewport(i + 2, 1);
-		SetShapeShader(i+2,2);
+		SetShapeShader(i+2,1);
 		pickedShape = -1;
 	}
 
@@ -60,7 +61,7 @@ void bezier::Init()
 		float yTrans = i == points - 1 || i == 0 ? 0 : (2.f * sin(angle))/8.f;
 		ShapeTransformation(xTranslate, xTrans);
 		ShapeTransformation(yTranslate, yTrans);
-		SetShapeMaterial(i+2,1);
+		SetShapeMaterial(i+2,0);
 		controlPoints.push_back(glm::vec3(xTrans, yTrans, pickedShape));
 		AddShapeViewport(i + 2, 1);
 		pickedShape = -1;
@@ -71,13 +72,13 @@ void bezier::Init()
 	AddMaterial(texIDs,slots, 1);
 	AddMaterial(texIDs+1, slots + 1, 1);
 
-	SetShapeMaterial(0, 0);
-	SetShapeShader(0, 2);
+	SetShapeMaterial(0, 1);
+	SetShapeShader(0, 3);
 	AddShapeViewport(0, 0);
 	RemoveShapeViewport(0, 1);
 	//SetShapeShader(3, 1);
 
-	SetShapeShader(1, 1);
+	SetShapeShader(1, 2);
 	AddShapeViewport(1, 1);
 	RemoveShapeViewport(1, 0);
 
@@ -85,9 +86,6 @@ void bezier::Init()
 	AddShapeViewport(maxPoints + 2, 1);
 	RemoveShapeViewport(maxPoints + 2, 0);
 
-	pickedShape = 0;
-	ShapeTransformation(zTranslate, 10);
-	pickedShape = -1;
 
 }
 
@@ -97,21 +95,20 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 		counter++;
 	Shader *s = shaders[shaderIndx];
 
-	int r = ((pickedShape) & 0x000000FF) >>  0;
-	int g = ((pickedShape) & 0x0000FF00) >>  8;
-	int b = ((pickedShape) & 0x00FF0000) >> 16;
+	float r = ((pickedShape + 1) & 0x000000FF) >>  0;
+	float g = ((pickedShape + 1) & 0x0000FF00) >>  8;
+	float b = ((pickedShape + 1) & 0x00FF0000) >> 16;
 	if (shapes[pickedShape]->GetMaterial() >= 0 && !materials.empty())
 		BindMaterial(s, shapes[pickedShape]->GetMaterial());
 	//textures[0]->Bind(0);
 	s->Bind();
-
-
+	s->SetUniform1i("sampler1", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
+	if (shaderIndx != 2)
+		s->SetUniform1i("sampler2", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(1));
 	s->SetUniformMat4f("MVP", MVP);
 	s->SetUniformMat4f("Normal", Model);
-	
 	s->SetUniform1i("skybox", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
-
-	s->SetUniform4f("lightColor", r, g, b, 0);
+	s->SetUniform4f("lightColor", r/255.f, g/255.f, b/ 255.f, 1.f);
 	s->SetUniform1ui("counter", counter);
 	s->SetUniform1f("x", x);
 	s->SetUniform1f("y", y);
