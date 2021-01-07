@@ -16,7 +16,6 @@ static void printMat(const glm::mat4 mat)
 bezier::bezier() : Scene()
 {
 	counter = 1;
-	
 }
 
 //bezier::bezier(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
@@ -27,7 +26,7 @@ void bezier::Init()
 {		
 	unsigned int texIDs[3] = { 0 , 1, 0};
 	unsigned int slots[3] = { 0 , 1, 0 };
-	int N = 6;  // max segments
+	int N = 3; 
 	int seg = 3;
 	int points = (3 * seg) + 1;
 	int maxPoints = (6 * N) + 1;
@@ -40,25 +39,23 @@ void bezier::Init()
 	AddShader("../res/shaders/basicShader2");
 	AddTexture("../res/textures/grass.bmp", 2);
 	AddTexture("../res/textures/", 3);
-
 	AddShape(Cube, -1, TRIANGLES); //0
 	AddShape(Axis, -1, LINES); // 1
 
 	for (size_t i = 0; i < maxPoints; i++) // init max points shape
 	{
-		AddShape(Octahedron, -1, TRIANGLES);
+		AddShape(Octahedron, i%3 == 0 ? -1 : (i%3 == 1 ? (i+1) : (i+3)), TRIANGLES);
 		pickedShape = i + 2;
 		RemoveShapeViewport(i + 2, 0);
 		RemoveShapeViewport(i + 2, 1);
 		SetShapeShader(i+2,1);
 		pickedShape = -1;
 	}
-
 	for (int i = 0; i < points; ++i) { //  1 < id <10 + 2
 		pickedShape = i + 2;
 		float angle = PI * i / points;
-		float xTrans = (-points / 2 + i)/8.f;
-		float yTrans = i == points - 1 || i == 0 ? 0 : (2.f * sin(angle))/8.f;
+		float xTrans = (-points / 2 + i)/8.8f;
+		float yTrans = i == points - 1 || i == 0 ? 0 : (2.f + 3.f * sin(angle))/8.8f;
 		ShapeTransformation(xTranslate, xTrans);
 		ShapeTransformation(yTranslate, yTrans);
 		SetShapeMaterial(i+2,0);
@@ -67,16 +64,14 @@ void bezier::Init()
 		pickedShape = -1;
 	}
 
-	AddShape(seg, -1, LINE_STRIP, controlPoints);
-
 	AddMaterial(texIDs,slots, 1);
 	AddMaterial(texIDs+1, slots + 1, 1);
+	AddShape(seg, -1, LINE_STRIP, controlPoints);
 
 	SetShapeMaterial(0, 1);
 	SetShapeShader(0, 3);
 	AddShapeViewport(0, 0);
 	RemoveShapeViewport(0, 1);
-	//SetShapeShader(3, 1);
 
 	SetShapeShader(1, 2);
 	AddShapeViewport(1, 1);
@@ -85,7 +80,6 @@ void bezier::Init()
 	SetShapeShader(maxPoints + 2, 1);
 	AddShapeViewport(maxPoints + 2, 1);
 	RemoveShapeViewport(maxPoints + 2, 0);
-
 
 }
 
@@ -114,10 +108,14 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 	s->SetUniform1f("y", y);
 	s->Unbind();
 
-
-	
-
 	// ... draw rest of the scene
+}
+
+void bezier::updatePressedPos(double xpos, double ypos) {
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	old_x = xpos;
+	old_y = ypos;
 }
 
 void bezier::UpdatePosition(float xpos,  float ypos)
@@ -128,10 +126,20 @@ void bezier::UpdatePosition(float xpos,  float ypos)
 	y =  1 - ypos / viewport[3]; 
 }
 
+void bezier::setNewOffset(double xpos, double ypos) {
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	offset_x = (xpos - old_x)  *0.0045f;
+	offset_y = (old_y - ypos) * 0.0045f;
+	old_x = xpos;
+	old_y = ypos;
+	ShapeTransformation(xTranslate, offset_x);
+	ShapeTransformation(yTranslate, offset_y);
+	bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
+}
+
 void bezier::WhenRotate()
 {
-	std::cout << "x "<<x<<", y "<<y<<std::endl;
-	
 }
 
 void bezier::WhenTranslate()
@@ -173,22 +181,8 @@ unsigned int bezier::TextureDesine(int width, int height)
 	return(textures.size() - 1);
 }
 
-void bezier::setNewOffset(double xpos, double ypos) {
-	int viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	offset_x = (xpos - old_x) / (viewport[2] / 2) * 0.02f;
-	offset_y = (old_y - ypos) / (viewport[3]) * 0.02f;
-	ShapeTransformation(xTranslate, offset_x );
-	ShapeTransformation(yTranslate, offset_y);
-	bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
-}
 
-void bezier::updatePressedPos(double xpos, double ypos) {
-	int viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	old_x = xpos;
-	old_y = ypos;
-}
+
 bezier::~bezier(void)
 {
 

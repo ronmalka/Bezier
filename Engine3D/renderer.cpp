@@ -17,7 +17,6 @@ Renderer::Renderer(float angle, float relationWH, float near, float far)
 {
 	glLineWidth(5);
 	cameras.push_back(new Camera(angle, relationWH, near, far));
-
 	xold = 0;
 	yold = 0;
 
@@ -27,7 +26,7 @@ void Renderer::Init(Scene* scene,  std::list<int>xViewport,  std::list<int>yView
 {
 	scn = scene;
 	MoveCamera(0, zTranslate, 10);
-	MoveCamera(1, zTranslate, 1.5f);
+	MoveCamera(1, zTranslate, 2.1f);
 	glm::ivec4 viewport;
 	glGetIntegerv(GL_VIEWPORT, &viewport[0]);
 	//drawInfo.push_back(new DrawInfo(0, 0, 0, 0,   inAction | toClear | blackClear | depthTest));
@@ -51,7 +50,6 @@ void Renderer::Init(Scene* scene,  std::list<int>xViewport,  std::list<int>yView
 			std::list<int>::iterator yit = yViewport.begin();
 			for (++yit; yit != yViewport.end(); ++yit)
 			{
-				std::cout << "here" << std::endl;
 				viewports.push_back(glm::ivec4(*std::prev(xit), *std::prev(yit), *xit - *std::prev(xit), *yit - *std::prev(yit)));
 				drawInfo.push_back(new DrawInfo(indx, indx, 0, 0, indx < 1 | inAction | toClear | depthTest | stencilTest | blackClear ));
 				drawInfo.push_back(new DrawInfo(indx, indx, 1, 0, indx < 1  | depthTest ));

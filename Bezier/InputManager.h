@@ -25,8 +25,6 @@ bool isPressed = false;
 				}
 			}
 		}
-		else
-			scn->SetCounter();
 		//std::cout << "yes" << std::endl;
 		//rndr->ClearDrawFlag(1,1);
 	}
@@ -38,8 +36,7 @@ bool isPressed = false;
 			scn->SetPickedShape(i + 2);
 			float angle = PI * i / points;
 			float xTrans = (-(float)points / 2 + i)/8.8f ;
-			float yTrans = (i == points - 1 || i == 0 ? 0.f : (2.f * sin(angle))/8.8f) ;
-			std::cout << "xtrans : " << xTrans << " ytrans : " << yTrans << std::endl;
+			float yTrans = (i == (points - 1) || i == 0 ? 0.f : (2.f + 3.f * sin(angle))/8.8f) ;
 			scn->ShapeTransformation(scn->xTranslate, xTrans);
 			scn->ShapeTransformation(scn->yTranslate, yTrans);
 			scn->GetBezier1D()->GetControlPoints().push_back(glm::vec3(xTrans, yTrans, scn->GetPickedShape()));
@@ -81,18 +78,20 @@ bool isPressed = false;
 		bezier* scn = (bezier*)rndr->GetScene();
 		
 		rndr->UpdatePosition((float)xpos,(float)ypos);
-
+			if (isPressed) {
+				scn->setNewOffset((float)xpos, (float)ypos);
+			}
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
-				if (isPressed) {
-					scn->setNewOffset(xpos, ypos);
-				}
-				
+				//if (isPressed) {
+				//	scn->setNewOffset(xpos, ypos);
+				//}
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
-				scn->UpdatePosition((float)xpos, (float)ypos);
-				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
+				/*scn->UpdatePosition((float)xpos, (float)ypos);
+				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);*/
+				if (xpos > 600) { std::cout << "(" << (float)xpos << "," << (float)ypos << ")" << std::endl; }
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 			{
@@ -102,7 +101,6 @@ bool isPressed = false;
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
 				}
 			}
-
 
 	}
 
