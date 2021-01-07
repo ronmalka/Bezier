@@ -26,10 +26,10 @@ void bezier::Init()
 {		
 	unsigned int texIDs[3] = { 0 , 1, 0};
 	unsigned int slots[3] = { 0 , 1, 0 };
-	int N = 3; 
+	int N = 6;  // max segments
 	int seg = 3;
 	int points = (3 * seg) + 1;
-	int maxPoints = (6 * N) + 1;
+	int maxPoints = (3 * N) + 1;
 	float PI = 3.141592654;
 	std::vector<glm::vec3> controlPoints; 
 
@@ -54,8 +54,8 @@ void bezier::Init()
 	for (int i = 0; i < points; ++i) { //  1 < id <10 + 2
 		pickedShape = i + 2;
 		float angle = PI * i / points;
-		float xTrans = (-points / 2 + i)/8.8f;
-		float yTrans = i == points - 1 || i == 0 ? 0 : (2.f + 3.f * sin(angle))/8.8f;
+		float xTrans = (((float)-points / 2.f) + i)/8.8f;
+		float yTrans = i == (points - 1) || i == 0 ? 0 : (2.f + 3.f * sin(angle))/8.8f;
 		ShapeTransformation(xTranslate, xTrans);
 		ShapeTransformation(yTranslate, yTrans);
 		SetShapeMaterial(i+2,0);
