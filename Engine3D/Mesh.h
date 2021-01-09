@@ -73,3 +73,5 @@ IndexedModel TethrahedronGenerator();
 IndexedModel OctahedronGenerator();
 
 IndexedModel CurveGenerator();
+
+IndexedModel SurfaceGenerator();

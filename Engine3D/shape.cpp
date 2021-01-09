@@ -36,6 +36,7 @@ Shape::Shape(const int SimpleShapeType, unsigned int mode)
 	shaderID = 1;
 	materialID = 0;
 }
+
 Shape::Shape(int segNum, int mode, std::vector<glm::vec3> controlPoints, int viewport)
 {
 	this->viewports = viewport;
@@ -46,6 +47,17 @@ Shape::Shape(int segNum, int mode, std::vector<glm::vec3> controlPoints, int vie
 	shaderID = 1;
 	materialID = 0;
 }
+
+Shape::Shape(int segNum, std::vector<glm::vec3> controlPoints, int mode, int viewport) {
+	this->viewports = viewport;
+	this->mode = mode;
+	this->controlPoints = controlPoints;
+	this->segNum = segNum;
+	isCopy = false;
+	shaderID = 1;
+	materialID = 0;
+}
+
 void Shape::Draw(const Shader* shader, bool isPicking)
 {
 	

@@ -162,10 +162,7 @@ bool isPressed = false;
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
 				break;
 			case GLFW_KEY_SPACE:
-				if (scn->IsActive())
-					scn->Deactivate();
-				else
-					scn->Activate();
+				scn->AddShape(scn->GetBezier1D()->GetSegmentsNum(),scn->GetBezier1D()->GetControlPoints() ,-1,scn->QUADS); // Add Bezier2D To Scene
 				break;
 			case GLFW_KEY_LEFT:
 				break;

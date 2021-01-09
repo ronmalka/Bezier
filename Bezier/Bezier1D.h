@@ -24,10 +24,10 @@ public:
 	void RemoveSegment();
 	void CurveUpdate(int pointIndx, float dx, float dy, bool preserveC1 = false);  //change the line in by using ChangeLine function of MeshConstructor and MoveControlPoint 
 	inline float getControlY(int index) { return controlPoints[index].y; }
+	inline std::vector<glm::vec3> getControlPoints() { return controlPoints; }
 	inline int GetSegmentsNum() const { return segNum; }
 private:
-
-
 	~Bezier1D(void);
+	glm::vec3 evalBezierCurve(int indx, float t);
 };
 

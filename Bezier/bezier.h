@@ -18,6 +18,7 @@ public:
 	~bezier(void);
 	inline void ResetCounter() { tmp = counter; counter = 0; }
 	inline void SetCounter() { counter = tmp; }
+	inline Bezier1D* get1D() { return bezier1D; }
 
 	void UpdatePosition( float xpos, float ypos);
 private:

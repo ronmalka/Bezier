@@ -34,7 +34,8 @@ IndexedModel PlaneTriangles()
 		Vertex(glm::vec3(1, 1, 0), glm::vec2(1, 1), glm::vec3(0, 0, 1),glm::vec3(0, 1, 1)),
 		Vertex(glm::vec3(1, -1,0), glm::vec2(1, 0), glm::vec3(0, 0, 1),glm::vec3(0, 1, 1)),
 	};
-	unsigned int indices[] = { 0, 1, 2,
+	unsigned int indices[] = { 
+				0, 1, 2,
 				0, 2, 3 };
 	IndexedModel model;
 
@@ -276,22 +277,11 @@ IndexedModel CurveGenerator()
 {
 	//std::cout << "here" << std::endl;
 	IndexedModel model;
-	int N = 3;
+	/*int N = 3;
 	int points = (3 * N) + 1;
 	float PI = 3.141592654;
 	int size = -5;
 	float angle = PI / points;
-	glm::vec3 p0 = glm::vec3(size, 0,0);
-	glm::vec3 p1 = glm::vec3(size + 1, 2 * sin(angle * 1), 0);
-	glm::vec3 p2 = glm::vec3(size + 2, 2 * sin(angle * 2), 0);
-	glm::vec3 p3 = glm::vec3(size + 3, 2 * sin(angle * 3), 0);
-
-	glm::mat4 M = glm::mat4{
-		glm::vec4(-1, 3, -3 ,1),
-		glm::vec4(3, -6, 3, 0),
-		glm::vec4(-3, 3, 0, 0),
-		glm::vec4(1, 0, 0, 0),
-	};
 
 	LineVertex axisVertices[] =
 	{
@@ -299,9 +289,9 @@ IndexedModel CurveGenerator()
 		LineVertex(glm::vec3(size + 1 ,2 * sin(angle * 1),0),glm::vec3(1,0,0)),
 		LineVertex(glm::vec3(size + 2,2 * sin(angle * 2),0),glm::vec3(0,1,0)),
 		LineVertex(glm::vec3(size + 3,2 * sin(angle * 3),0),glm::vec3(0,1,0))
-	};
+	};*/
 
-	unsigned int axisIndices[] =
+	/*unsigned int axisIndices[] =
 	{
 		0,1,
 		1,2,
@@ -315,9 +305,13 @@ IndexedModel CurveGenerator()
 
 	}
 	for (unsigned int i = 0; i < 6; i++)
-		model.indices.push_back(axisIndices[i]);
+		model.indices.push_back(axisIndices[i]);*/
 
 	return model;
 
 }
 
+IndexedModel SurfaceGenerator() {
+	IndexedModel model;
+	return model;
+}

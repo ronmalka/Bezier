@@ -23,6 +23,8 @@ public:
 
 	Shape(int segNum, int mode, std::vector<glm::vec3> controlPoints, int viewport);
 
+	Shape(int segNum, std::vector<glm::vec3> controlPoints, int mode, int viewport);
+
 	void Draw(const Shader* shaders, bool isPicking);
 
 	inline void AddViewport(int viewport) { viewports = viewports | (1<<viewport); }

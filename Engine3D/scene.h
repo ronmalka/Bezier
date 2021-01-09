@@ -5,7 +5,7 @@
 #include "Material.h"
 #include <vector>
 #include "Bezier/Bezier1D.h"
-
+#include "Bezier/Bezier2D.h"
 
 class Scene : public MovableGLM
 {
@@ -14,7 +14,7 @@ public:
 	enum axis { xAxis, yAxis, zAxis };
 	enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale, xCameraTranslate, yCameraTranslate, zCameraTranslate };
 	enum modes { POINTS, LINES, LINE_LOOP, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN, QUADS };
-	enum shapes { Axis, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy, Curve };
+	enum shapes { Axis, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy, Curve, Surface };
 	enum buffers { COLOR, DEPTH, STENCIL, BACK, FRONT, NONE };
 
 	Scene();
@@ -23,6 +23,7 @@ public:
 	void AddShapeFromFile(const std::string& fileName, int parent, unsigned int mode);
 	virtual void AddShape(int type, int parent, unsigned int mode);
 	virtual void AddShape(int segNum, int parent, unsigned int mode, std::vector<glm::vec3> controlPoints);
+	virtual void AddShape(int segNum, std::vector<glm::vec3> controlPoints,int parent, unsigned int mode);
 	void AddShapeCopy(int indx, int parent, unsigned int mode);
 
 	int AddShader(const std::string& fileName);

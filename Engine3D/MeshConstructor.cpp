@@ -40,6 +40,8 @@ MeshConstructor::MeshConstructor(const int type)
 	case 7:
 		InitLine(CurveGenerator());
 		break;
+	case 8:
+		InitMesh(SurfaceGenerator());
 	default:
 		break;
 	}

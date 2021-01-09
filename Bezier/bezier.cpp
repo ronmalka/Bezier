@@ -51,6 +51,7 @@ void bezier::Init()
 		SetShapeShader(i+2,1);
 		pickedShape = -1;
 	}
+	
 	for (int i = 0; i < points; ++i) { //  1 < id <10 + 2
 		pickedShape = i + 2;
 		float angle = PI * i / points;
@@ -107,8 +108,7 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 	s->SetUniform1f("x", x);
 	s->SetUniform1f("y", y);
 	s->Unbind();
-
-	// ... draw rest of the scene
+	
 }
 
 void bezier::updatePressedPos(double xpos, double ypos) {
