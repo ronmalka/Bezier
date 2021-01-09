@@ -51,7 +51,7 @@ void bezier::Init()
 		SetShapeShader(i+2,1);
 		pickedShape = -1;
 	}
-	for (int i = 0; i < points; ++i) { //  1 < id <10 + 2
+	for (int i = 0; i < points; ++i) { 
 		pickedShape = i + 2;
 		float angle = PI * i / points;
 		float xTrans = (((float)-points / 2.f) + i)/8.8f;
@@ -129,12 +129,176 @@ void bezier::UpdatePosition(float xpos,  float ypos)
 void bezier::setNewOffset(double xpos, double ypos) {
 	int viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
-	offset_x = (xpos - old_x)  *0.0045f;
+	offset_x = (xpos - old_x)  * 0.0045f;
 	offset_y = (old_y - ypos) * 0.0045f;
 	old_x = xpos;
 	old_y = ypos;
 	ShapeTransformation(xTranslate, offset_x);
 	ShapeTransformation(yTranslate, offset_y);
+	bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
+}
+
+void bezier::setNewOffsetWithRotate(double x, double y) 
+{ 
+
+	float parentX = bezier1D->getControlX(chainParents[pickedShape]-2);
+	float parentY = bezier1D->getControlY(chainParents[pickedShape]-2);
+	float childX = bezier1D->getControlX(pickedShape -2);
+	float childY = bezier1D->getControlY(pickedShape-2);
+	float radius = glm::distance(glm::vec2(parentX, parentY), glm::vec2(childX, childY));
+	float angle = glm::atan( parentY - childY, parentX - childX);
+	angle = (x < old_x) ? -angle : angle;
+	float new_x =  glm::cos(angle) * radius * 0.0045f;
+	float new_y =  glm::sin(angle) * radius * 0.0045f;
+	//radius = glm::distance(glm::vec2(parentX, parentY), glm::vec2(new_x, new_y));
+	//std::cout << "new_x: " << new_x << " new_y: " << new_y << " angle: " << angle << std::endl;
+	//std::cout << "radius: " << radius << std::endl;
+	ShapeTransformation(xTranslate, -parentX);
+	ShapeTransformation(yTranslate, -parentY);
+
+	ShapeTransformation(zRotate, angle);
+	//ShapeTransformation(yRotate, angle);
+
+	ShapeTransformation(xTranslate, parentX);
+	ShapeTransformation(yTranslate, parentY);
+
+	bezier1D->CurveUpdate(pickedShape - 2, new_x, new_y);
+
+	old_x = x;
+	old_y = y;
+}
+
+std::vector<int> bezier::FindChilds(int parent)
+{
+	std::vector<int> res;
+	int points = (3 * bezier1D->GetSegmentsNum()) + 3;
+
+	for (size_t i = 0; i < points; i++)
+	{
+		//std::cout << "id: " << i <<" his child: " << chainParents[i] << std::endl;
+		
+		if (chainParents[i] == parent)
+		{
+			//std::cout << "child: " << i <<  std::endl;
+			res.push_back(i);
+		}
+	}
+
+	return res;
+}
+
+void bezier::AlignPoints()
+{
+	std::vector<int> childs = FindChilds(pickedShape);
+
+	float parentX = bezier1D->getControlX(pickedShape - 2);
+	float parentY = bezier1D->getControlY(pickedShape - 2);
+
+	if (childs.size() == 1)
+	{
+		float childX = bezier1D->getControlX(childs[0] - 2);
+		float childY = bezier1D->getControlY(childs[0] - 2);
+		float d = glm::distance(glm::vec2(parentX, parentY), glm::vec2(childX, childY)) ;
+		float x_off = parentX - childX;
+		float y_off = d - childY;
+		Shape* child = shapes[childs[0]];
+
+		child->MyTranslate(glm::vec3(x_off, 0, 0), 1);
+		child->MyTranslate(glm::vec3(0, y_off, 0), 1);
+
+		/*bezier1D->setControlX(childs[0] - 2, parentX);
+		bezier1D->setControlY(childs[0] - 2, d);*/
+
+
+
+		bezier1D->CurveUpdate(childs[0] - 2, x_off, y_off);
+	}
+
+	else
+	{
+		float childX_1 = bezier1D->getControlX(childs[0] - 2);
+		float childY_1 = bezier1D->getControlY(childs[0] - 2);
+
+		float childX_2 = bezier1D->getControlX(childs[1] - 2);
+		float childY_2 = bezier1D->getControlY(childs[1] - 2);
+
+		float angle = glm::atan(parentY - childY_1, childX_1 - parentX );
+		float d2 = glm::distance(glm::vec2(childX_2, childY_2), glm::vec2(parentX, parentY));
+
+		float new_x = (glm::cos(angle) * d2)  ;
+		float new_y = parentY + (glm::sin(angle) * d2) ;
+		
+		if (parentX > childX_1)
+		{
+			new_x += parentX;
+		}
+		else
+		{
+			new_x = parentX - new_x;
+		}
+
+		Shape* child = shapes[childs[1]];
+		float nd2 = glm::distance(glm::vec2(parentX, parentY), glm::vec2(-new_x - childX_2, -new_y - childY_2));
+		std::cout << "child1: " << childs[0] << " child2: " << childs[1] << std::endl;
+		std::cout << "parentX: " << parentX << " parentY: " << parentY << std::endl;
+		std::cout << "childX_1: " << childX_1 << " childY_1: " << childY_1 << std::endl;
+		std::cout << "childX_2: " << childX_2 << " childY_2: " << childY_2 << std::endl;
+		std::cout << "nd2: " << nd2 << " d2: " << d2 << std::endl;
+		std::cout << "new_x: " << new_x << " new_y: " << new_y << std::endl;
+		std::cout << "cos: " << glm::cos(angle) << " sin: " << glm::sin(angle) << std::endl;
+		std::cout << "angle: " << angle <<  std::endl;
+
+		child->ZeroTrans();
+		child->MyTranslate(glm::vec3(new_x, new_y, 0), 0);
+	
+
+		bezier1D->setControlX(childs[1] - 2, 0. );
+		bezier1D->setControlY(childs[1] - 2, 0. );
+
+		bezier1D->CurveUpdate(childs[1] - 2, new_x, new_y);
+
+	}
+	
+}
+
+void bezier::setNewOffsetWithChilds(double x, double y)
+{
+	std::vector<int> childs = FindChilds(pickedShape);
+
+	float parentX = bezier1D->getControlX(pickedShape - 2);
+	float parentY = bezier1D->getControlY(pickedShape - 2);
+
+	float childX_1 = bezier1D->getControlX(childs[0] - 2);
+	float childY_1 = bezier1D->getControlY(childs[0] - 2);
+
+	Shape* child1 = shapes[childs[0]];
+
+
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	offset_x = (x - old_x) * 0.0045f;
+	offset_y = (old_y - y) * 0.0045f;
+	old_x = x;
+	old_y = y;
+	ShapeTransformation(xTranslate, offset_x);
+	ShapeTransformation(yTranslate, offset_y);
+
+	child1->MyTranslate(glm::vec3(offset_x, offset_y, 0), 0);
+	bezier1D->setControlX(childs[0] - 2, offset_x + childX_1);
+	bezier1D->setControlY(childs[0] - 2, offset_y + childY_1);
+
+	if (childs.size() > 1)
+	{
+		float childX_2 = bezier1D->getControlX(childs[1] - 2);
+		float childY_2 = bezier1D->getControlY(childs[1] - 2);
+		Shape* child2 = shapes[childs[1]];
+
+		child2->MyTranslate(glm::vec3(offset_x, offset_y, 0), 0);
+		bezier1D->setControlX(childs[1] - 2, offset_x + childX_2);
+		bezier1D->setControlY(childs[1] - 2, offset_y + childY_2);
+
+	}
+
 	bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
 }
 

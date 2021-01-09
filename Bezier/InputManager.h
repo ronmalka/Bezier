@@ -3,8 +3,47 @@
 #include "renderer.h"
 #include "bezier.h"
 #include <iostream>
-bool isPressed = false;
+bool leftPressedInside = false;
+bool rightPressedInside = false;
+bool leftPressedEdges = false;
+bool rightPressedEdges = false;
+void HandleInsidePoints(Renderer* rndr, bezier* scn, int button, double x , double y)
+{
+	scn->updatePressedPos(x, y);
+	rndr->UpdatePosition(x, y);
+	switch (button)
+	{
+	case  GLFW_MOUSE_BUTTON_RIGHT : 
+		rightPressedInside = true;
+		break;
+	case  GLFW_MOUSE_BUTTON_LEFT:
+		leftPressedInside = true;
+		break;
+	default:
+		break;
+	}
+	
+}
 
+void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double y)
+{
+	scn->updatePressedPos(x, y);
+	rndr->UpdatePosition(x, y);
+	scn->AlignPoints();
+	switch (button)
+	{
+	case  GLFW_MOUSE_BUTTON_RIGHT:
+		rightPressedEdges = true;
+		break;
+	case  GLFW_MOUSE_BUTTON_LEFT:
+		
+		leftPressedEdges = true;
+		break;
+	default:
+		break;
+	}
+
+}
 	void mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
@@ -15,12 +54,15 @@ bool isPressed = false;
 			glfwGetCursorPos(window, &x2, &y2);
 			if (rndr->Picking((int)x2, (int)y2))
 			{
+				std::cout << "picked: " << scn->GetPickedShape() << std::endl;
 				if (scn->GetPickedShape() > 1 && scn->GetPickedShape() <= 21) {
 					int id = (scn->GetPickedShape() - 2) % 3;
 					if (id != 0) {
-						scn->updatePressedPos(x2, y2);
-						rndr->UpdatePosition(x2, y2);
-						isPressed = true;
+						HandleInsidePoints(rndr, scn, button , x2  , y2);
+					}
+					else
+					{
+						HandleEdgesPoints(rndr, scn, button, x2, y2);
 					}
 				}
 			}
@@ -75,26 +117,46 @@ bool isPressed = false;
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		bezier* scn = (bezier*)rndr->GetScene();
 		
-		rndr->UpdatePosition((float)xpos,(float)ypos);
-			if (isPressed) {
+			rndr->UpdatePosition((float)xpos,(float)ypos);
+
+			if (rightPressedInside) {
 				scn->setNewOffset((float)xpos, (float)ypos);
 			}
+
+			if (leftPressedInside) {
+				scn->setNewOffsetWithRotate((float)xpos, (float)ypos);
+			}
+
+			if (rightPressedEdges) {
+				scn->setNewOffsetWithChilds((float)xpos, (float)ypos);
+			}
+
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
-				//if (isPressed) {
-				//	scn->setNewOffset(xpos, ypos);
-				//}
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
-				/*scn->UpdatePosition((float)xpos, (float)ypos);
-				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);*/
+				
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 			{
-				if (isPressed) {
-					isPressed = !isPressed;
+				if (rightPressedInside) {
+					rightPressedInside = !rightPressedInside;
 					scn->setNewOffset(xpos, ypos);
+					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
+				}
+				if (leftPressedInside) {
+					leftPressedInside = !leftPressedInside;
+					scn->setNewOffsetWithRotate(xpos, ypos);
+					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
+				}
+				if (rightPressedEdges) {
+					rightPressedEdges = !rightPressedEdges;
+					scn->setNewOffsetWithChilds(xpos, ypos);
+					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
+				}
+				if (leftPressedEdges) {
+					leftPressedEdges = !leftPressedEdges;
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
 				}
 			}

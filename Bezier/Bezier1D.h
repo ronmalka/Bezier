@@ -24,6 +24,9 @@ public:
 	void RemoveSegment();
 	void CurveUpdate(int pointIndx, float dx, float dy, bool preserveC1 = false);  //change the line in by using ChangeLine function of MeshConstructor and MoveControlPoint 
 	inline float getControlY(int index) { return controlPoints[index].y; }
+	inline float getControlX(int index) { return controlPoints[index].x; }
+	inline float setControlY(int index, float y) { return controlPoints[index].y =y; }
+	inline float setControlX(int index, float x) { return controlPoints[index].x =x; }
 	inline int GetSegmentsNum() const { return segNum; }
 private:
 

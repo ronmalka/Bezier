@@ -14,12 +14,15 @@ public:
 	void Motion();
 	void updatePressedPos(double xpos, double ypos);
 	void setNewOffset(double x, double y);
+	void setNewOffsetWithRotate(double x, double y);
+	void setNewOffsetWithChilds(double x, double y);
 	unsigned int TextureDesine(int width, int height);
 	~bezier(void);
 	inline void ResetCounter() { tmp = counter; counter = 0; }
 	inline void SetCounter() { counter = tmp; }
-
 	void UpdatePosition( float xpos, float ypos);
+	std::vector<int> FindChilds(int parent);
+	void AlignPoints();
 private:
 	unsigned int counter;
 	unsigned int tmp;
