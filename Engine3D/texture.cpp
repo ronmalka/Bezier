@@ -7,14 +7,24 @@
 Texture::Texture(const std::string& fileName, const int dim)
 {
 	int width, height, numComponents;
-	std::string dir[] = {
-			fileName+ "right.bmp",
-			fileName + "left.bmp",
-			fileName + "top.bmp",
-			fileName + "bottom.bmp",
-			fileName + "front.bmp",
-			fileName + "back.bmp"
-	};
+	std::string dir[6];
+	if(fileName!="../res/textures/box0.bmp")
+	{
+		dir[0] = fileName + "right.bmp";
+		dir[1] = fileName + "left.bmp";
+		dir[2] = fileName + "top.bmp";
+		dir[3] = fileName + "bottom.bmp";
+		dir[4] = fileName + "front.bmp";
+		dir[5] = fileName + "back.bmp";
+	}
+	else {
+		dir[0] = fileName;
+		dir[1] = fileName;
+		dir[2] = fileName;
+		dir[3] = fileName;
+		dir[4] = fileName;
+		dir[5] = fileName;
+	}
 	unsigned char* data;
 
 	if (dim != 3)
@@ -126,6 +136,7 @@ void Texture::Bind(int slot)
 	case 3:
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
 		break;
+	case 2:
 	default:
 		//int tex = 1;
 		glBindTexture(GL_TEXTURE_2D, m_texture);

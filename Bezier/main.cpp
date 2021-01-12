@@ -21,7 +21,7 @@ int main(int argc,char *argv[])
 	scn->Init();    //adding shaders, textures, shapes to scene
 	rndr->Init(scn,x,y); // adding scene and viewports to the renderer
 	display.SetRenderer(rndr);  // updating renderer in as a user pointer in glfw
-	rndr->MoveCamera(0,scn->zTranslate,-8.8f);
+	rndr->MoveCamera(0,scn->zTranslate,-7.8f);
 	while(!display.CloseWindow())
 	{
 		rndr->DrawAll();

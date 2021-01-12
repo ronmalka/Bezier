@@ -4,7 +4,7 @@
 #include "bezier.h"
 #include <iostream>
 bool isPressed = false;
-int globalID = 19 + 3;
+int globalID = 22;
 
 	void mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
@@ -32,13 +32,13 @@ int globalID = 19 + 3;
 		for (size_t i = 0; i < points; i++)
 		{
 			scn->ZeroShapeTrans(i + 2);
-			scn->SetPickedShape(i + 2);
 			float angle = PI * i / points;
 			float xTrans = (((float)-points / 2.f) + i) / 8.8f;
 			float yTrans = i == (points - 1) || i == 0 ? 0 : (2.f + 3.f * sin(angle)) / 8.8f;
 			scn->ShapeTransformation(scn->xTranslate, xTrans);
 			scn->ShapeTransformation(scn->yTranslate, yTrans);
-			scn->GetBezier1D()->GetControlPoints().push_back(glm::vec3(xTrans, yTrans, scn->GetPickedShape()));
+			scn->SetPickedShape(i + 2);
+			scn->GetBezier1D()->GetControlPoints().push_back(glm::vec3(xTrans, yTrans, 0.f));
 			scn->SetPickedShape(-1);
 			scn->AddShapeViewport(i + 2, 1);
 		}
@@ -82,22 +82,23 @@ int globalID = 19 + 3;
 			}
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
-				//if (isPressed) {
-				//	scn->setNewOffset(xpos, ypos);
-				//}
+				/*if (isPressed) {
+					scn->setNewOffset(xpos, ypos);
+				}*/
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
-				if (xpos < 600) {
+				/*if (xpos < 600) {
 					if (rndr->Picking((int)xpos, (int)ypos))
 					{
 						if (scn->GetPickedShape() > 21) {
 							std::cout << "my 3d" << std::endl;
 						}
-					}
+					}*/
 					//scn->UpdatePosition((float)xpos, (float)ypos);
 					//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
-				}
+				//}
+
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 			{
@@ -171,15 +172,28 @@ int globalID = 19 + 3;
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
 				break;
 			case GLFW_KEY_SPACE:
-				scn->AddShape(scn->GetBezier1D()->GetSegmentsNum(),scn->GetBezier1D()->GetControlPoints() ,-1,scn->QUADS); // Add Bezier2D To Scene
-				scn->SetPickedShape(globalID);
+				scn->AddShape(scn->GetBezier1D()->GetSegmentsNum(),scn->GetBezier1D()->GetControlPoints() ,-1,scn->TRIANGLES); // Add Bezier2D To Scene
 				scn->RemoveShapeViewport(globalID, 1);
 				scn->AddShapeViewport(globalID, 0);
 				scn->SetShapeShader(globalID, 1);
-				scn->SetShapeMaterial(globalID++, 2);
+				scn->SetShapeMaterial(globalID++, 1);
+				scn->SetPickedShape(globalID -1);
 				scn->ShapeTransformation(scn->xTranslate, 0.3f);
+				scn->SetPickedShape(-1);
 				break;
 			case GLFW_KEY_LEFT:
+				rndr->MoveCamera(0, rndr->xRotate, -0.8f);
+				//scn->SetPickedShape(0);
+				//scn->ShapeTransformation(scn->xTranslate,-20.f);
+				break;
+			case GLFW_KEY_RIGHT:
+				rndr->MoveCamera(0, rndr->xRotate, 0.8);
+				break;
+			case GLFW_KEY_UP:
+				rndr->MoveCamera(0, rndr->yRotate, 0.8);
+				break;
+			case GLFW_KEY_DOWN:
+				rndr->MoveCamera(0, rndr->yRotate, -0.8);
 				break;
 			case GLFW_KEY_2:
 				darwNewBezier1D(scn, 2);
@@ -197,13 +211,13 @@ int globalID = 19 + 3;
 				darwNewBezier1D(scn, 6);
 				break;
 			case GLFW_KEY_R:
-				rndr->MoveCamera(0, rndr->yRotate, 0.8);
+				//rndr->MoveCamera(0, rndr->yRotate, 0.8);
 				break;
 			case GLFW_KEY_L:
-				rndr->MoveCamera(0, rndr->yRotate, -0.8);
+				/*rndr->MoveCamera(0, rndr->yRotate, -0.8);*/
 				break;
 			case GLFW_KEY_D:
-				rndr->MoveCamera(0, rndr->xRotate, -0.8);
+				//rndr->MoveCamera(0, rndr->xRotate, -0.8);
 				break;
 			case GLFW_KEY_U:
 				rndr->MoveCamera(0, rndr->xRotate, 0.8);

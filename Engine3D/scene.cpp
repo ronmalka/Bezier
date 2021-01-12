@@ -126,7 +126,7 @@ void Scene::Draw(int shaderIndx, const glm::mat4& MVP, int viewportIndx, unsigne
 
 void Scene::ShapeTransformation(int type, float amt)
 {
-	if (glm::abs(amt) > 1e-5)
+	if (glm::abs(amt) > 1e-5 && pickedShape > 0)
 	{
 		switch (type)
 		{
@@ -170,6 +170,7 @@ bool Scene::Picking(unsigned char data[4])
 		if (data[0] > 0)
 		{
 			pickedShape = data[0]-1; //r 
+			std::cout << "picked" << pickedShape << std::endl;
 			return true;
 		}
 		return false;
@@ -181,7 +182,6 @@ void Scene::MouseProccessing(int button, int xrel, int yrel)
 	//{
 	if (button == 1)
 	{
-		pickedShape = 0;
 		ShapeTransformation(xTranslate, xrel / 80.0f);
 		pickedShape = -1;
 		MyTranslate(glm::vec3(-xrel / 80.0f, 0, 0), 0);

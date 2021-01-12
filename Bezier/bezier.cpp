@@ -24,7 +24,7 @@ bezier::bezier() : Scene()
 
 void bezier::Init()
 {		
-	unsigned int texIDs[3] = { 0 , 1, 2};
+	unsigned int texIDs[3] = { 0 , 1, 2 };
 	unsigned int slots[3] = { 0 , 1, 2 };
 	int N = 6;  // max segments
 	int seg = 3;
@@ -37,11 +37,16 @@ void bezier::Init()
 	AddShader("../res/shaders/basicShaderTex");
 	AddShader("../res/shaders/basicShader");
 	AddShader("../res/shaders/basicShader2");
-	AddTexture("../res/textures/grass.bmp", 2);
-	AddTexture("../res/textures/", 3);
 	AddTexture("../res/textures/box0.bmp", 2);
+	AddTexture("../res/textures/", 3);
+	AddTexture("../res/textures/grass.bmp", 2);
 	AddShape(Cube, -1, TRIANGLES); //0
 	AddShape(Axis, -1, LINES); // 1
+
+
+	AddMaterial(texIDs, slots, 1);
+	AddMaterial(texIDs + 1, slots + 1, 1);
+	AddMaterial(texIDs + 2, slots + 2, 1);
 
 	for (size_t i = 0; i < maxPoints; i++) // init max points shape
 	{
@@ -61,14 +66,12 @@ void bezier::Init()
 		ShapeTransformation(xTranslate, xTrans);
 		ShapeTransformation(yTranslate, yTrans);
 		SetShapeMaterial(i+2,0);
-		controlPoints.push_back(glm::vec3(xTrans, yTrans, pickedShape));
+		controlPoints.push_back(glm::vec3(xTrans, yTrans, 0.f));
 		AddShapeViewport(i + 2, 1);
 		pickedShape = -1;
 	}
 
-	AddMaterial(texIDs,slots, 1);
-	AddMaterial(texIDs+1, slots + 1, 1);
-	AddMaterial(texIDs + 2, slots + 2, 1);
+
 	AddShape(seg, -1, LINE_STRIP, controlPoints);
 
 	SetShapeMaterial(0, 1);
@@ -80,7 +83,7 @@ void bezier::Init()
 	AddShapeViewport(1, 1);
 	RemoveShapeViewport(1, 0);
 
-	SetShapeShader(maxPoints + 2, 1);
+	SetShapeShader(maxPoints + 2, 2);
 	AddShapeViewport(maxPoints + 2, 1);
 	RemoveShapeViewport(maxPoints + 2, 0);
 
@@ -91,7 +94,6 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 	if(counter)
 		counter++;
 	Shader *s = shaders[shaderIndx];
-
 	float r = ((pickedShape + 1) & 0x000000FF) >>  0;
 	float g = ((pickedShape + 1) & 0x0000FF00) >>  8;
 	float b = ((pickedShape + 1) & 0x00FF0000) >> 16;
@@ -99,16 +101,17 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 		BindMaterial(s, shapes[pickedShape]->GetMaterial());
 	//textures[0]->Bind(0);
 	s->Bind();
-	s->SetUniform1i("sampler1", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
-	if (shaderIndx != 2)
+	//s->SetUniform1i("sampler1", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
+	if (shaderIndx == 1)
 		s->SetUniform1i("sampler2", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(1));
 	s->SetUniformMat4f("MVP", MVP);
 	s->SetUniformMat4f("Normal", Model);
-	s->SetUniform1i("skybox", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
-	s->SetUniform4f("lightColor", r/255.f, g/255.f, b/ 255.f, 1.f);
-	/*s->SetUniform1ui("counter", counter);
-	s->SetUniform1f("x", x);
-	s->SetUniform1f("y", y);*/
+	if(shaderIndx == 3){
+		s->SetUniform1i("skybox", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
+	}
+	if (shaderIndx == 0) {
+		s->SetUniform4f("lightColor", r / 255.f, g / 255.f, b / 255.f, 1.f);
+	}
 	s->Unbind();
 	
 }
@@ -129,15 +132,18 @@ void bezier::UpdatePosition(float xpos,  float ypos)
 }
 
 void bezier::setNewOffset(double xpos, double ypos) {
-	int viewport[4];
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	offset_x = (xpos - old_x)  *0.0045f;
-	offset_y = (old_y - ypos) * 0.0045f;
-	old_x = xpos;
-	old_y = ypos;
-	ShapeTransformation(xTranslate, offset_x);
-	ShapeTransformation(yTranslate, offset_y);
-	bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
+	if (pickedShape != -1) {
+		int viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		offset_x = (xpos - old_x) * 0.0045f;
+		offset_y = (old_y - ypos) * 0.0045f;
+		old_x = xpos;
+		old_y = ypos;
+		ShapeTransformation(xTranslate, offset_x);
+		ShapeTransformation(yTranslate, offset_y);
+		bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
+	}
+	
 }
 
 void bezier::WhenRotate()

@@ -1,4 +1,5 @@
 #include "Bezier/Bezier1D.h"
+#include <iostream>
 
 Bezier1D::Bezier1D(int segNum, int mode, std::vector<glm::vec3> controlPoints, int viewport) : Shape(segNum,mode,controlPoints, viewport)
 {
@@ -40,15 +41,15 @@ void Bezier1D::GetControlPoint(int segment, int indx, std::vector<glm::vec3> &li
 
 glm::vec3 Bezier1D::GetPointOnCurve(int indx, float t)
 {
+
 	glm::vec3 p0 = controlPoints[indx];
 	glm::vec3 p1 = controlPoints[indx + 1];
 	glm::vec3 p2 = controlPoints[indx + 2];
 	glm::vec3 p3 = controlPoints[indx + 3];
-	glm::vec3 bezier = glm::vec3(0,0,0);
-
-	bezier.x = powf((1.0f - t), 3.0f) * p0.x + 3.0f * t * powf((1.0f - t), 2.0f) * p1.x + 3.0f * (1.0f - t) * powf(t, 2.0f) * p2.x + powf(t, 3.0f) * p3.x;
-	bezier.y = powf((1.0f - t), 3.0f) * p0.y + 3.0f * t * powf((1.0f - t), 2.0f) * p1.y + 3.0f * (1.0f - t) * powf(t, 2.0f) * p2.y + powf(t, 3.0f) * p3.y;
-
+	glm::vec3 bezier = pow(1 - t, 3) * p0
+		+ 3 * t * pow(1 - t, 2) * p1
+		+ 3 * pow(t, 2) * (1 - t) * p2
+		+ pow(t, 3) * p3;
 	return bezier;
 }
 
@@ -69,7 +70,10 @@ void Bezier1D::CurveUpdate(int pointIndx, float dx, float dy, bool preserveC1)
 {
 	controlPoints[pointIndx].x += dx;
 	controlPoints[pointIndx].y += dy;
-	this->mesh->ChangeLine(GetLine());
+	MeshConstructor* old = this->mesh;
+	this->mesh = new MeshConstructor(GetLine(),false);
+	delete(old);
+
 }
 
 Bezier1D::~Bezier1D() {}
