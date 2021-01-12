@@ -24,8 +24,8 @@ bezier::bezier() : Scene()
 
 void bezier::Init()
 {		
-	unsigned int texIDs[3] = { 0 , 1, 0};
-	unsigned int slots[3] = { 0 , 1, 0 };
+	unsigned int texIDs[3] = { 0 , 1, 2};
+	unsigned int slots[3] = { 0 , 1, 2 };
 	int N = 6;  // max segments
 	int seg = 3;
 	int points = (3 * seg) + 1;
@@ -39,6 +39,7 @@ void bezier::Init()
 	AddShader("../res/shaders/basicShader2");
 	AddTexture("../res/textures/grass.bmp", 2);
 	AddTexture("../res/textures/", 3);
+	AddTexture("../res/textures/box0.bmp", 2);
 	AddShape(Cube, -1, TRIANGLES); //0
 	AddShape(Axis, -1, LINES); // 1
 
@@ -67,6 +68,7 @@ void bezier::Init()
 
 	AddMaterial(texIDs,slots, 1);
 	AddMaterial(texIDs+1, slots + 1, 1);
+	AddMaterial(texIDs + 2, slots + 2, 1);
 	AddShape(seg, -1, LINE_STRIP, controlPoints);
 
 	SetShapeMaterial(0, 1);
@@ -104,9 +106,9 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 	s->SetUniformMat4f("Normal", Model);
 	s->SetUniform1i("skybox", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
 	s->SetUniform4f("lightColor", r/255.f, g/255.f, b/ 255.f, 1.f);
-	s->SetUniform1ui("counter", counter);
+	/*s->SetUniform1ui("counter", counter);
 	s->SetUniform1f("x", x);
-	s->SetUniform1f("y", y);
+	s->SetUniform1f("y", y);*/
 	s->Unbind();
 	
 }

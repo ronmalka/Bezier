@@ -184,8 +184,8 @@ void Scene::MouseProccessing(int button, int xrel, int yrel)
 		pickedShape = 0;
 		ShapeTransformation(xTranslate, xrel / 80.0f);
 		pickedShape = -1;
-		//MyTranslate(glm::vec3(-xrel / 80.0f, 0, 0), 0);
-		//MyTranslate(glm::vec3(0, yrel / 80.0f, 0), 0);
+		MyTranslate(glm::vec3(-xrel / 80.0f, 0, 0), 0);
+		MyTranslate(glm::vec3(0, yrel / 80.0f, 0), 0);
 		WhenTranslate();
 	}
 	else
@@ -193,8 +193,8 @@ void Scene::MouseProccessing(int button, int xrel, int yrel)
 		pickedShape = 0;
 		ShapeTransformation(yRotate, xrel / 2.0f);
 		pickedShape = -1;
-		//MyRotate(-xrel / 2.0f, glm::vec3(0, 1, 0), 0);
-		//MyRotate(-yrel / 2.0f, glm::vec3(1, 0, 0), 1);
+		MyRotate(-xrel / 2.0f, glm::vec3(0, 1, 0), 0);
+		MyRotate(-yrel / 2.0f, glm::vec3(1, 0, 0), 1);
 		WhenRotate();
 	}
 	//}

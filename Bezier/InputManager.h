@@ -4,6 +4,7 @@
 #include "bezier.h"
 #include <iostream>
 bool isPressed = false;
+int globalID = 19 + 3;
 
 	void mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
@@ -87,8 +88,16 @@ bool isPressed = false;
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
-				/*scn->UpdatePosition((float)xpos, (float)ypos);
-				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);*/
+				if (xpos < 600) {
+					if (rndr->Picking((int)xpos, (int)ypos))
+					{
+						if (scn->GetPickedShape() > 21) {
+							std::cout << "my 3d" << std::endl;
+						}
+					}
+					//scn->UpdatePosition((float)xpos, (float)ypos);
+					//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
+				}
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 			{
@@ -163,6 +172,12 @@ bool isPressed = false;
 				break;
 			case GLFW_KEY_SPACE:
 				scn->AddShape(scn->GetBezier1D()->GetSegmentsNum(),scn->GetBezier1D()->GetControlPoints() ,-1,scn->QUADS); // Add Bezier2D To Scene
+				scn->SetPickedShape(globalID);
+				scn->RemoveShapeViewport(globalID, 1);
+				scn->AddShapeViewport(globalID, 0);
+				scn->SetShapeShader(globalID, 1);
+				scn->SetShapeMaterial(globalID++, 2);
+				scn->ShapeTransformation(scn->xTranslate, 0.3f);
 				break;
 			case GLFW_KEY_LEFT:
 				break;

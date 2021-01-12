@@ -126,10 +126,10 @@ bool Renderer::Picking(int x, int y)
 void Renderer::MouseProccessing(int button)
 {
 
-	//MoveCamera(0, scn->xRotate, xrel/80.f);
-	//MoveCamera(0, scn->yRotate, yrel / 80.f);
-	//scn->MouseProccessing(button, xrel, yrel);
-}
+	/*MoveCamera(0, scn->xRotate, xrel/80.f);
+	MoveCamera(0, scn->yRotate, yrel / 80.f);*/
+	scn->MouseProccessing(button, xrel, yrel);
+} 
 
 void Renderer::AddCamera(const glm::vec3& pos, float fov, float relationWH, float zNear, float zFar, int infoIndx)
 {
