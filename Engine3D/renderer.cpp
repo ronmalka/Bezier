@@ -87,7 +87,8 @@ void Renderer::Draw(int infoIndx)
 	else
 		glDisable(GL_BLEND);
 
-	glm::mat4 MVP = cameras[info.cameraIndx]->GetViewProjection() * glm::inverse(cameras[info.cameraIndx]->MakeTrans());
+	glm::mat4 Projection = cameras[info.cameraIndx]->GetViewProjection();
+	glm::mat4 View = glm::inverse(cameras[info.cameraIndx]->MakeTrans());
 
 	if (info.flags & toClear)
 	{
@@ -96,7 +97,7 @@ void Renderer::Draw(int infoIndx)
 		else
 			Clear(1, 1, 1, 1);
 	}
-	scn->Draw(info.shaderIndx, MVP, info.viewportIndx, debugMode);
+	scn->Draw(info.shaderIndx, Projection, View, info.viewportIndx, debugMode);
 
 }
 

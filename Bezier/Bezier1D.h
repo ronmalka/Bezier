@@ -27,6 +27,7 @@ public:
 	inline float getControlX(int index) { return controlPoints[index].x; }
 	inline float setControlY(int index, float y) { return controlPoints[index].y =y; }
 	inline float setControlX(int index, float x) { return controlPoints[index].x =x; }
+	inline std::vector<glm::vec3> getControlPoints() { return controlPoints; }
 	inline int GetSegmentsNum() const { return segNum; }
 private:
 

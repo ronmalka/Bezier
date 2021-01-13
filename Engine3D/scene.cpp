@@ -90,7 +90,7 @@ int Scene::AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned
 	return (materials.size() - 1);
 }
 
-void Scene::Draw(int shaderIndx, const glm::mat4& MVP, int viewportIndx, unsigned int flags) 
+void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags)
 {
 	glm::mat4 Normal = MakeTrans();
 
@@ -104,12 +104,12 @@ void Scene::Draw(int shaderIndx, const glm::mat4& MVP, int viewportIndx, unsigne
 
 			if (shaderIndx > 0)
 			{
-				Update(MVP, Model, shapes[pickedShape]->GetShader());
+				Update(Projection, View, Model, shapes[pickedShape]->GetShader());
 				shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
 			}
 			else
 			{ //picking
-				Update(MVP, Model, 0);
+				Update(Projection, View, Model, 0);
 				shapes[pickedShape]->Draw(shaders[0], true);
 			}
 		}
@@ -119,7 +119,7 @@ void Scene::Draw(int shaderIndx, const glm::mat4& MVP, int viewportIndx, unsigne
 
 void Scene::ShapeTransformation(int type, float amt)
 {
-	if (glm::abs(amt) > 1e-5)
+	if (glm::abs(amt) > 1e-5 && pickedShape > 0 )
 	{
 		switch (type)
 		{
@@ -225,6 +225,13 @@ void Scene::BindMaterial(Shader* s, unsigned int materialIndx)
 		materials[materialIndx]->Bind(textures, i);
 		s->SetUniform1i("sampler" + std::to_string(i + 1), materials[materialIndx]->GetSlot(i));
 	}
+}
+
+void Scene::AddShape(int segNum, std::vector<glm::vec3> controlPoints, int parent, unsigned int mode)
+{
+	chainParents.push_back(parent);
+	Bezier2D* bezier2D = new Bezier2D(segNum, controlPoints, mode, 1);
+	shapes.push_back(bezier2D);
 }
 
 Scene::~Scene(void)

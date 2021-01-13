@@ -7,7 +7,7 @@
 class Shape : public MovableGLM
 {
 private:
-
+	
 	unsigned int materialID;
 	int shaderID;
 	bool isCopy;
@@ -40,14 +40,16 @@ public:
 	inline unsigned int GetMaterial() { return materialID; }
 
 	inline std::vector<glm::vec3>& GetControlPoints() { return controlPoints; }
-
+	inline void setRadius(float radius) { this->radius = radius; }
+	inline float getRadius() { return this->radius; }
 	virtual ~Shape(void);
-
+	Shape(int segNum, std::vector<glm::vec3> controlPoints, int mode, int viewport);
 protected:
 	std::vector<glm::vec3> controlPoints;
 	int segNum;
 	unsigned int mode;
 	MeshConstructor* mesh;
+	float radius = -1.; // PI/2 limit of arctan
 };
 
 

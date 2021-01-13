@@ -7,6 +7,7 @@ bool leftPressedInside = false;
 bool rightPressedInside = false;
 bool leftPressedEdges = false;
 bool rightPressedEdges = false;
+int globalID = 22;
 void HandleInsidePoints(Renderer* rndr, bezier* scn, int button, double x , double y)
 {
 	scn->updatePressedPos(x, y);
@@ -14,10 +15,16 @@ void HandleInsidePoints(Renderer* rndr, bezier* scn, int button, double x , doub
 	switch (button)
 	{
 	case  GLFW_MOUSE_BUTTON_RIGHT : 
-		rightPressedInside = true;
+		if (!rightPressedInside)
+		{
+			rightPressedInside = !rightPressedInside;
+		}
 		break;
 	case  GLFW_MOUSE_BUTTON_LEFT:
-		leftPressedInside = true;
+		if (!leftPressedInside)
+		{
+			leftPressedInside = !leftPressedInside;
+		}
 		break;
 	default:
 		break;
@@ -33,11 +40,18 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 	switch (button)
 	{
 	case  GLFW_MOUSE_BUTTON_RIGHT:
-		rightPressedEdges = true;
+		if (!rightPressedEdges)
+		{
+			rightPressedEdges = true;
+			
+		}
 		break;
 	case  GLFW_MOUSE_BUTTON_LEFT:
+		if (!leftPressedEdges)
+		{
+			leftPressedEdges = true;
+		}
 		
-		leftPressedEdges = true;
 		break;
 	default:
 		break;
@@ -72,14 +86,16 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		float PI = 3.141592654;
 		for (size_t i = 0; i < points; i++)
 		{
+			scn->RemoveShapeViewport(i + 2, 1);
 			scn->ZeroShapeTrans(i + 2);
-			scn->SetPickedShape(i + 2);
+			scn->SetShapeShader(i + 2, 1);
 			float angle = PI * i / points;
 			float xTrans = (((float)-points / 2.f) + i) / 8.8f;
 			float yTrans = i == (points - 1) || i == 0 ? 0 : (2.f + 3.f * sin(angle)) / 8.8f;
+			scn->SetPickedShape(i + 2);
 			scn->ShapeTransformation(scn->xTranslate, xTrans);
 			scn->ShapeTransformation(scn->yTranslate, yTrans);
-			scn->GetBezier1D()->GetControlPoints().push_back(glm::vec3(xTrans, yTrans, scn->GetPickedShape()));
+			scn->GetBezier1D()->GetControlPoints().push_back(glm::vec3(xTrans, yTrans, 0.f));
 			scn->SetPickedShape(-1);
 			scn->AddShapeViewport(i + 2, 1);
 		}
@@ -224,12 +240,14 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
 				break;
 			case GLFW_KEY_SPACE:
-				if (scn->IsActive())
-					scn->Deactivate();
-				else
-					scn->Activate();
-				break;
-			case GLFW_KEY_LEFT:
+				scn->AddShape(scn->GetBezier1D()->GetSegmentsNum(), scn->GetBezier1D()->GetControlPoints(), -1, scn->TRIANGLES); // Add Bezier2D To Scene
+				scn->RemoveShapeViewport(globalID, 1);
+				scn->AddShapeViewport(globalID, 0);
+				scn->SetShapeShader(globalID, 1);
+				scn->SetShapeMaterial(globalID++, 1);
+				scn->SetPickedShape(globalID - 1);
+				scn->ShapeTransformation(scn->xTranslate, 0.3f);
+				scn->SetPickedShape(-1);
 				break;
 			case GLFW_KEY_2:
 				darwNewBezier1D(scn, 2);
@@ -246,6 +264,17 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 			case GLFW_KEY_6:
 				darwNewBezier1D(scn, 6);
 				break;
+			case GLFW_KEY_LEFT:
+				rndr->MoveCamera(0, rndr->yRotate, -0.8f);
+				break;
+			case GLFW_KEY_RIGHT:
+				rndr->MoveCamera(0, rndr->yRotate, 0.8f);
+				break;
+			case GLFW_KEY_UP:
+				rndr->MoveCamera(0, rndr->xRotate, 0.8);
+				break;
+			case GLFW_KEY_DOWN:
+				rndr->MoveCamera(0, rndr->xRotate, -0.8);
 			case GLFW_KEY_R:
 				rndr->MoveCamera(0, rndr->yRotate, 0.8);
 				break;

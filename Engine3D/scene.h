@@ -5,6 +5,7 @@
 #include "Material.h"
 #include <vector>
 #include "Bezier/Bezier1D.h"
+#include "Bezier/Bezier2D.h"
 
 
 class Scene : public MovableGLM
@@ -14,7 +15,7 @@ public:
 	enum axis { xAxis, yAxis, zAxis };
 	enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale, xCameraTranslate, yCameraTranslate, zCameraTranslate };
 	enum modes { POINTS, LINES, LINE_LOOP, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN, QUADS };
-	enum shapes { Axis, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy, Curve };
+	enum shapes { Axis, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy, Curve, Surface };
 	enum buffers { COLOR, DEPTH, STENCIL, BACK, FRONT, NONE };
 
 	Scene();
@@ -23,6 +24,7 @@ public:
 	void AddShapeFromFile(const std::string& fileName, int parent, unsigned int mode);
 	virtual void AddShape(int type, int parent, unsigned int mode);
 	virtual void AddShape(int segNum, int parent, unsigned int mode, std::vector<glm::vec3> controlPoints);
+	virtual void AddShape(int segNum, std::vector<glm::vec3> controlPoints, int parent, unsigned int mode);
 	void AddShapeCopy(int indx, int parent, unsigned int mode);
 
 	int AddShader(const std::string& fileName);
@@ -31,13 +33,13 @@ public:
 	int AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned int size);
 	void ZeroShapesTrans();
 
-	virtual void Update(const glm::mat4& MVP, const glm::mat4& Normal, const int  shaderIndx) = 0;
+	virtual void Update(const glm::mat4& Projection, const glm::mat4& View, const glm::mat4& Model, const int shaderIndx) = 0;
 	virtual void WhenTranslate() {};
 	virtual void WhenRotate() {};
 	virtual void WhenPicked() {};
 	virtual void Motion() {};
 	virtual void Reset() {};
-	virtual void Draw(int shaderIndx, const glm::mat4& MVP, int viewportIndx, unsigned int flags);
+	virtual void Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags);
 	virtual ~Scene(void);
 
 	void ShapeTransformation(int type, float amt);
