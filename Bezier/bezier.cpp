@@ -89,7 +89,7 @@ void bezier::Init()
 
 }
 
-void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shaderIndx)
+void bezier::Update(const glm::mat4 &Projection, const glm::mat4& View, const glm::mat4& Model,const int  shaderIndx)
 {	
 	if(counter)
 		counter++;
@@ -104,8 +104,10 @@ void bezier::Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shade
 	//s->SetUniform1i("sampler1", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
 	if (shaderIndx == 1)
 		s->SetUniform1i("sampler2", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(1));
-	s->SetUniformMat4f("MVP", MVP);
-	s->SetUniformMat4f("Normal", Model);
+	s->SetUniformMat4f("Projection", Projection);
+	s->SetUniformMat4f("View", View);
+	s->SetUniformMat4f("Model", Model);
+
 	if(shaderIndx == 3){
 		s->SetUniform1i("skybox", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(0));
 	}

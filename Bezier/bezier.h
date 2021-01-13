@@ -7,8 +7,7 @@ public:
 	
 	bezier();
 	void Init();
-	void Update(const glm::mat4 &MVP,const glm::mat4 &Model,const int  shaderIndx);
-	void WhenRotate();
+	void Update(const glm::mat4& Projection, const glm::mat4& View, const glm::mat4& Model, const int shaderIndx);	void WhenRotate();
 	void WhenTranslate();
 	void WhenPicked();
 	void Motion();

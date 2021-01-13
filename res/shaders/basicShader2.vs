@@ -11,15 +11,22 @@ out vec3 color0;
 out vec3 position0;
 out vec3 lookat;
 
-uniform mat4 MVP;
-uniform mat4 Normal;
+uniform mat4 Projection;
+uniform mat4 View;
+uniform mat4 Model;
+
 
 void main()
 {
-	
+	mat4 newView = View;
+	newView[3][0] = 0;
+	newView[3][1] = 0;
+	newView[3][2] = 0;
+
 	texCoord0 = texCoords;
 	color0 = color;
-	position0 = vec3(Normal * vec4(position, 1.0));
-	gl_Position = MVP * Normal* vec4(position, 1.0); //you must have gl_Position
-	lookat = position0;
+	normal0 = (Model * vec4(normal, 0.0)).xyz;
+	position0 = vec3(Model * vec4(position, 1.0));
+	gl_Position = Projection *newView * Model* vec4(position, 1.0); //you must have gl_Position
+	lookat = position0;//vec3(View * vec4(position, 1.0));
 }

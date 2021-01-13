@@ -87,7 +87,8 @@ void Renderer::Draw(int infoIndx)
 	else
 		glDisable(GL_BLEND);
 
-	glm::mat4 MVP = cameras[info.cameraIndx]->GetViewProjection() * glm::inverse(cameras[info.cameraIndx]->MakeTrans());
+	glm::mat4 Projection = cameras[info.cameraIndx]->GetViewProjection();
+	glm::mat4 View = glm::inverse(cameras[info.cameraIndx]->MakeTrans());
 
 	if (info.flags & toClear)
 	{
@@ -96,7 +97,7 @@ void Renderer::Draw(int infoIndx)
 		else
 			Clear(1, 1, 1, 1);
 	}
-	scn->Draw(info.shaderIndx, MVP, info.viewportIndx, debugMode);
+	scn->Draw(info.shaderIndx, Projection,View, info.viewportIndx, debugMode);
 
 }
 
@@ -118,6 +119,7 @@ bool Renderer::Picking(int x, int y)
 	glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
 	glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glReadPixels(x, viewport[3] - y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	std::cout << "tried" << std::endl;
 	return scn->Picking(data);
 	//return depth;
 

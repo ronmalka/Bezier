@@ -97,7 +97,7 @@ int Scene::AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned
 	return (materials.size() - 1);
 }
 
-void Scene::Draw(int shaderIndx, const glm::mat4& MVP, int viewportIndx, unsigned int flags) 
+void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags)
 {
 	glm::mat4 Normal = MakeTrans();
 
@@ -111,12 +111,12 @@ void Scene::Draw(int shaderIndx, const glm::mat4& MVP, int viewportIndx, unsigne
 
 			if (shaderIndx > 0)
 			{
-				Update(MVP, Model, shapes[pickedShape]->GetShader());
+				Update(Projection,View, Model, shapes[pickedShape]->GetShader());
 				shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
 			}
 			else
 			{ //picking
-				Update(MVP, Model, 0);
+				Update(Projection, View, Model, 0);
 				shapes[pickedShape]->Draw(shaders[0], true);
 			}
 		}
@@ -167,6 +167,7 @@ void Scene::ShapeTransformation(int type, float amt)
 bool Scene::Picking(unsigned char data[4])
 {
 		pickedShape = -1;
+		std::cout << (int)data[0] << std::endl;
 		if (data[0] > 0)
 		{
 			pickedShape = data[0]-1; //r 

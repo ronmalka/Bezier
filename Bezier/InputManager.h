@@ -31,13 +31,15 @@ int globalID = 22;
 		float PI = 3.141592654;
 		for (size_t i = 0; i < points; i++)
 		{
+			scn->RemoveShapeViewport(i + 2, 1);
 			scn->ZeroShapeTrans(i + 2);
+			scn->SetShapeShader(i + 2, 1);
 			float angle = PI * i / points;
 			float xTrans = (((float)-points / 2.f) + i) / 8.8f;
 			float yTrans = i == (points - 1) || i == 0 ? 0 : (2.f + 3.f * sin(angle)) / 8.8f;
+			scn->SetPickedShape(i + 2);
 			scn->ShapeTransformation(scn->xTranslate, xTrans);
 			scn->ShapeTransformation(scn->yTranslate, yTrans);
-			scn->SetPickedShape(i + 2);
 			scn->GetBezier1D()->GetControlPoints().push_back(glm::vec3(xTrans, yTrans, 0.f));
 			scn->SetPickedShape(-1);
 			scn->AddShapeViewport(i + 2, 1);
@@ -182,18 +184,16 @@ int globalID = 22;
 				scn->SetPickedShape(-1);
 				break;
 			case GLFW_KEY_LEFT:
-				rndr->MoveCamera(0, rndr->xRotate, -0.8f);
-				//scn->SetPickedShape(0);
-				//scn->ShapeTransformation(scn->xTranslate,-20.f);
+				rndr->MoveCamera(0, rndr->yRotate, -0.8f);
 				break;
 			case GLFW_KEY_RIGHT:
-				rndr->MoveCamera(0, rndr->xRotate, 0.8);
+				rndr->MoveCamera(0, rndr->yRotate, 0.8f);
 				break;
 			case GLFW_KEY_UP:
-				rndr->MoveCamera(0, rndr->yRotate, 0.8);
+				rndr->MoveCamera(0, rndr->xRotate, 0.8);
 				break;
 			case GLFW_KEY_DOWN:
-				rndr->MoveCamera(0, rndr->yRotate, -0.8);
+				rndr->MoveCamera(0, rndr->xRotate, -0.8);
 				break;
 			case GLFW_KEY_2:
 				darwNewBezier1D(scn, 2);

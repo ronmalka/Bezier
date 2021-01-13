@@ -70,9 +70,7 @@ void Bezier1D::CurveUpdate(int pointIndx, float dx, float dy, bool preserveC1)
 {
 	controlPoints[pointIndx].x += dx;
 	controlPoints[pointIndx].y += dy;
-	MeshConstructor* old = this->mesh;
-	this->mesh = new MeshConstructor(GetLine(),false);
-	delete(old);
+	this->mesh->ChangeLine(GetLine());
 
 }
 
