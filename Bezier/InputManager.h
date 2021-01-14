@@ -7,7 +7,11 @@ bool leftPressedInside = false;
 bool rightPressedInside = false;
 bool leftPressedEdges = false;
 bool rightPressedEdges = false;
-int globalID = 22;
+bool threeDPressed = false;
+bool isRotate = false;
+
+
+int globalID = 23;
 void HandleInsidePoints(Renderer* rndr, bezier* scn, int button, double x , double y)
 {
 	scn->updatePressedPos(x, y);
@@ -68,8 +72,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 			glfwGetCursorPos(window, &x2, &y2);
 			if (rndr->Picking((int)x2, (int)y2))
 			{
-				std::cout << "picked: " << scn->GetPickedShape() << std::endl;
-				if (scn->GetPickedShape() > 1 && scn->GetPickedShape() <= 21) {
+				if (scn->GetPickedShape() > 1 && scn->GetPickedShape() <= 21) { //Control Points
 					int id = (scn->GetPickedShape() - 2) % 3;
 					if (id != 0) {
 						HandleInsidePoints(rndr, scn, button , x2  , y2);
@@ -78,6 +81,20 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					{
 						HandleEdgesPoints(rndr, scn, button, x2, y2);
 					}
+				}
+				else if (scn->GetPickedShape() >= 23 && scn->GetPickedShape() <=globalID) { //Shapes in 3D
+					std::cout << "picked: " << scn->GetPickedShape() << std::endl;
+					scn->updatePressedPos(x2, y2);
+					threeDPressed = true;
+					if (button == GLFW_MOUSE_BUTTON_LEFT) { isRotate = true; } 
+					else isRotate = false;
+				}
+				else {
+					//Blending
+					std::cout << "scissor" << std::endl;
+					rndr->whenBlend(x2,y2);
+					rndr->isClicked = true;
+					scn->drawPlane = true;
 				}
 			}
 		}
@@ -132,11 +149,10 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		bezier* scn = (bezier*)rndr->GetScene();
-		
-			rndr->UpdatePosition((float)xpos,(float)ypos);
+		rndr->UpdatePosition((float)xpos,(float)ypos);
 
 			if (rightPressedInside) {
-				scn->setNewOffset((float)xpos, (float)ypos);
+				scn->setNewOffset((float)xpos, (float)ypos,false,isRotate);
 			}
 
 			if (leftPressedInside) {
@@ -145,6 +161,9 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 
 			if (rightPressedEdges) {
 				scn->setNewOffsetWithChilds((float)xpos, (float)ypos);
+			}
+			if (threeDPressed) {
+				scn->setNewOffset((float)xpos, (float)ypos,true,isRotate);
 			}
 
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
@@ -156,9 +175,10 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 			{
+				rndr->isClicked = false;
 				if (rightPressedInside) {
 					rightPressedInside = !rightPressedInside;
-					scn->setNewOffset(xpos, ypos);
+					scn->setNewOffset(xpos, ypos,false,isRotate);
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 				}
 				if (leftPressedInside) {
@@ -172,8 +192,13 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 				}
 				if (leftPressedEdges) {
+					scn->setNewOffset(xpos, ypos, true, isRotate);
 					leftPressedEdges = !leftPressedEdges;
+					isRotate = false;
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
+				}
+				if (threeDPressed) {
+					threeDPressed = !threeDPressed;
 				}
 			}
 

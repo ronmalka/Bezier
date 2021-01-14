@@ -88,6 +88,11 @@ void bezier::Init()
 	AddShapeViewport(maxPoints + 2, 1);
 	RemoveShapeViewport(maxPoints + 2, 0);
 
+	AddShape(Plane,-1,TRIANGLES);
+	SetShapeShader(maxPoints + 3, 2);
+	AddShapeViewport(maxPoints + 3,0);
+	RemoveShapeViewport(maxPoints + 3, 1);
+
 }
 
 void bezier::Update(const glm::mat4& Projection, const glm::mat4& View, const glm::mat4& Model, const int  shaderIndx)
@@ -127,6 +132,7 @@ void bezier::updatePressedPos(double xpos, double ypos) {
 	new_radius = true;
 }
 
+
 void bezier::UpdatePosition(float xpos,  float ypos)
 {
 	int viewport[4];
@@ -135,7 +141,7 @@ void bezier::UpdatePosition(float xpos,  float ypos)
 	y =  1 - ypos / viewport[3]; 
 }
 
-void bezier::setNewOffset(double xpos, double ypos) {
+void bezier::setNewOffset(double xpos, double ypos,bool is3D,bool isRotate) {
 	if (pickedShape != -1) {
 		int viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
@@ -143,9 +149,16 @@ void bezier::setNewOffset(double xpos, double ypos) {
 		offset_y = (old_y - ypos) * 0.0045f;
 		old_x = xpos;
 		old_y = ypos;
-		ShapeTransformation(xTranslate, offset_x);
-		ShapeTransformation(yTranslate, offset_y);
-		bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
+		if(!isRotate){ 
+			ShapeTransformation(xTranslate, offset_x);
+			ShapeTransformation(yTranslate, offset_y);
+		}
+		else {
+			ShapeTransformation(xRotate, -offset_x*100.f);
+			ShapeTransformation(yMyRotate, -offset_y*100.f);
+		}
+		
+		if(!is3D) bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
 	}
 }
 

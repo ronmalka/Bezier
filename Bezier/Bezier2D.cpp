@@ -84,7 +84,7 @@ void Bezier2D::make2DCtrlPoints(int curveIndex, float startAngle, std::vector<st
 	for (int j = 0; j < 4; ++j) {
 		std::vector<glm::vec3> lvl;
 		for (int i = 0; i < 4; ++i) {
-			lvl.push_back(glm::rotateY(pts[i] / 4.f, startAngle + (30.f) * j));
+			lvl.push_back(glm::rotateY(pts[i] / 2.f, startAngle + (30.f) * j));
 		}
 		grid.push_back(lvl);
 	}
@@ -134,7 +134,8 @@ IndexedModel Bezier2D::GetSurface()
 		makeVertices(i, cnt, model);
 	}
 	//Connect Edges
-	for (int i = 0; i < segNum; i++) {
+	for (int i = 0; i < segNum; i++) { 
+		//TODO - FIX THAT!
 		for (int k = 19 + 1600 * i, m = CALC_KOFFSET((1600 + 1600 * i), i); k < 1599 + 1600 * i; k += 20, m += 20) {
 			model.indices.push_back(k);
 			model.indices.push_back(k + 20);

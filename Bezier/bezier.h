@@ -13,7 +13,8 @@ public:
 	void WhenPicked();
 	void Motion();
 	void updatePressedPos(double xpos, double ypos);
-	void setNewOffset(double x, double y);
+	void whenBlend(double xpos, double ypos);
+	void setNewOffset(double x, double y,bool is3D,bool isRotate);
 	void setNewOffsetWithRotate(float x, float y);
 	void setNewOffsetWithChilds(double x, double y);
 	unsigned int TextureDesine(int width, int height);

@@ -1,5 +1,6 @@
 #include "renderer.h"
 #include "GL/glew.h"
+#include "glm/glm.hpp";
 #include <array>
 #include <iostream>
 
@@ -51,7 +52,7 @@ void Renderer::Init(Scene* scene,  std::list<int>xViewport,  std::list<int>yView
 			for (++yit; yit != yViewport.end(); ++yit)
 			{
 				viewports.push_back(glm::ivec4(*std::prev(xit), *std::prev(yit), *xit - *std::prev(xit), *yit - *std::prev(yit)));
-				drawInfo.push_back(new DrawInfo(indx, indx, 0, 0, indx < 1 | inAction | toClear | depthTest | stencilTest | blackClear ));
+				drawInfo.push_back(new DrawInfo(indx, indx, 0, 0, indx < 1 | inAction  | depthTest | stencilTest | blackClear ));
 				drawInfo.push_back(new DrawInfo(indx, indx, 1, 0, indx < 1  | depthTest ));
 				indx++;
 			}
@@ -67,8 +68,12 @@ void Renderer::Draw(int infoIndx)
 
 	buffers[info.buffer]->Bind();
 	glViewport(viewports[info.viewportIndx].x, viewports[info.viewportIndx].y, viewports[info.viewportIndx].z, viewports[info.viewportIndx].w);
-	if (info.flags & scissorTest)
+	if (info.flags & scissorTest) {
 		glEnable(GL_SCISSOR_TEST);
+		int x = glm::min((int)xWhenBlend,xold); //x is xWhenPressed
+		int y = glm::min(viewports[info.viewportIndx].w-(int)yWhenBlend, viewports[info.viewportIndx].w-yold); //y is yWhenPressed
+		glScissorIndexed(0,x,y,glm::abs((int)xWhenBlend -xold), glm::abs((int)yWhenBlend - yold)); // to change y in y old to whenpressed
+	}	
 	else
 		glDisable(GL_SCISSOR_TEST);
 
@@ -82,10 +87,16 @@ void Renderer::Draw(int infoIndx)
 	else
 		glDisable(GL_DEPTH_TEST);
 
-	if (info.flags & blend)
+	if (info.flags & blend) {
 		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE_MINUS_SRC_ALPHA,GL_SRC_ALPHA);
+	}
 	else
 		glDisable(GL_BLEND);
+
+	if (info.flags & inAction2) {
+		
+	}
 
 	glm::mat4 Projection = cameras[info.cameraIndx]->GetViewProjection();
 	glm::mat4 View = glm::inverse(cameras[info.cameraIndx]->MakeTrans());
@@ -105,9 +116,14 @@ void Renderer::DrawAll()
 {
 	for (int i =   0; i < drawInfo.size(); i++)
 	{
-		if (!(drawInfo[i]->flags & inAction))
+		if (!(drawInfo[i]->flags & inAction) || (drawInfo[i]->flags & inAction2 & isClicked))
 			Draw( i);
 	}
+}
+
+void Renderer::whenBlend(double xpos, double ypos) {
+	xWhenBlend = (float)xpos;
+	yWhenBlend = (float)ypos;
 }
 
 bool Renderer::Picking(int x, int y)
@@ -129,7 +145,7 @@ void Renderer::MouseProccessing(int button)
 
 	//MoveCamera(0, scn->xRotate, xrel/80.f);
 	//MoveCamera(0, scn->yRotate, yrel / 80.f);
-	//scn->MouseProccessing(button, xrel, yrel);
+	scn->MouseProccessing(button, xrel, yrel);
 }
 
 void Renderer::AddCamera(const glm::vec3& pos, float fov, float relationWH, float zNear, float zFar, int infoIndx)

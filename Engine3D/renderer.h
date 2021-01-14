@@ -39,7 +39,7 @@ class Renderer
 public:
 	enum buffersMode { COLOR, DEPTH, STENCIL, BACK, FRONT, NONE };
 	enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale, xCameraTranslate, yCameraTranslate, zCameraTranslate };
-	enum drawFlags { toClear = 1, is2D = 2, inAction = 4, scissorTest = 8, depthTest = 16, stencilTest = 32, blend = 64, blackClear = 128, debugMode = 256};
+	enum drawFlags { toClear = 1, is2D = 2, inAction = 4, scissorTest = 8, depthTest = 16, stencilTest = 32, blend = 64, blackClear = 128, debugMode = 256, inAction2 = 512};
 
 	Renderer();
 	Renderer(float angle, float relationWH, float near, float far);
@@ -48,6 +48,8 @@ public:
 	inline Scene* GetScene() const { return scn; };
 	void Draw(int infoIndx = 1);
 	void DrawAll();
+
+	void whenBlend(double xpos, double ypos);
 
 
 	void Resize(int width, int height);
@@ -70,7 +72,7 @@ public:
 	inline void ClearDrawFlag(int infoIndx, unsigned int flag) { drawInfo[infoIndx]->ClearFlags(flag); }
 	inline int getxRel() { return xrel; }
 	inline int getyRel() { return yrel; }
-
+	bool isClicked = false;
 	bool checkViewport(int x, int y, int viewportIndx);
 	~Renderer();
 private:
@@ -85,6 +87,7 @@ private:
 	std::vector<DrawBuffer*> buffers;
 	int materialIndx2D;
 	int toDrawIndx;
+	float xWhenBlend, yWhenBlend;
 	
 };
 
