@@ -72,8 +72,9 @@ public:
 	inline void ClearDrawFlag(int infoIndx, unsigned int flag) { drawInfo[infoIndx]->ClearFlags(flag); }
 	inline int getxRel() { return xrel; }
 	inline int getyRel() { return yrel; }
-	bool isClicked = false;
+	int isClicked = 0;
 	bool checkViewport(int x, int y, int viewportIndx);
+	float xWhenBlend, yWhenBlend;
 	~Renderer();
 private:
 	std::vector<Camera*> cameras;
@@ -87,7 +88,6 @@ private:
 	std::vector<DrawBuffer*> buffers;
 	int materialIndx2D;
 	int toDrawIndx;
-	float xWhenBlend, yWhenBlend;
 	
 };
 

@@ -1,6 +1,8 @@
 #pragma once
 #include "scene.h"
 #include "glm/gtx/rotate_vector.hpp"
+#include <set>
+
 class bezier : public Scene
 {
 public:
@@ -15,6 +17,8 @@ public:
 	void updatePressedPos(double xpos, double ypos);
 	void whenBlend(double xpos, double ypos);
 	void setNewOffset(double x, double y,bool is3D,bool isRotate);
+	void updatePickedShapes();
+	void updatePickedShapes(int xWhenBlend, int xpos, int yWhenBlend, int ypos);
 	void setNewOffsetWithRotate(float x, float y);
 	void setNewOffsetWithChilds(double x, double y);
 	unsigned int TextureDesine(int width, int height);
@@ -25,6 +29,11 @@ public:
 	void UpdatePosition( float xpos, float ypos);
 	std::vector<int> FindChilds(int parent);
 	void AlignPoints();
+	int xPos, yPos;
+	int xWhenBlend, yWhenBlend;
+	int toUpdatePicked = 0;
+	std::set<int> picked;
+	std::vector<std::vector<int>> leftShapesPos;
 private:
 	unsigned int counter;
 	unsigned int tmp;

@@ -98,7 +98,7 @@ void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, i
 
 	for (pickedShape = 0; pickedShape < shapes.size(); pickedShape++)
 	{
-		if (shapes[pickedShape]->Is2Render(viewportIndx) && (pickedShape != 22 || drawPlane))
+		if (shapes[pickedShape]->Is2Render(viewportIndx))
 		{
 			glm::mat4 Model =  shapes[pickedShape]->MakeTrans();
 			if (chainParents[pickedShape] == -2) {

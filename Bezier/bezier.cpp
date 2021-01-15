@@ -90,8 +90,9 @@ void bezier::Init()
 
 	AddShape(Plane,-1,TRIANGLES);
 	SetShapeShader(maxPoints + 3, 2);
-	AddShapeViewport(maxPoints + 3,0);
 	RemoveShapeViewport(maxPoints + 3, 1);
+	RemoveShapeViewport(maxPoints + 3, 0);
+	//AddShapeViewport(maxPoints + 3, 2);
 
 }
 
@@ -186,6 +187,25 @@ void setNewOffsetByLoc(glm::vec4 &res, float x, float y, float x2, float y2)
 	{
 		std::cout << "4: " << std::endl;
 		//res.x = 1 - res.x;
+	}
+}
+
+void bezier::updatePickedShapes(int xWhenBlend, int xpos,int yWhenBlend,int ypos) {
+	picked.clear();
+	int start_x = glm::min(xWhenBlend, xpos);
+	int size_x = glm::abs(xWhenBlend - xpos);
+	int start_y = glm::min(600 - yWhenBlend, 600 - ypos);
+	int size_y = glm::abs(yWhenBlend - ypos);
+	std::cout << "start_x  " << start_x << "start y  " << start_y << std::endl;
+	std::cout << "end_x  " << start_x + size_x << "start y  " << start_y + size_y << std::endl;
+	//unsigned char* data = new unsigned char[size_x * 4];
+	for (auto& v : leftShapesPos) {
+		if (v[0] > start_x && v[0]<(start_x + size_x) && v[1] > start_y && v[1] < (start_y + size_y)) {
+			picked.insert(v[2]);
+		}
+	}
+	for (auto& i : picked) {
+		std::cout << i << std::endl;
 	}
 }
 

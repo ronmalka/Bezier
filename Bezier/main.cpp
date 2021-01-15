@@ -22,9 +22,9 @@ int main(int argc,char *argv[])
 	rndr->Init(scn,x,y); // adding scene and viewports to the renderer
 	display.SetRenderer(rndr);  // updating renderer in as a user pointer in glfw
 	rndr->MoveCamera(0, scn->zTranslate, -7.8f);
-	rndr->AddDraw(0,0,2,0, rndr->inAction2 | rndr->scissorTest | rndr->blend);
 	while(!display.CloseWindow())
 	{
+		//scn->updatePickedShapes();
 		rndr->DrawAll();
 		scn->Motion();
 		display.SwapBuffers();

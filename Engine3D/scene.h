@@ -69,6 +69,7 @@ public:
 	inline Bezier1D* GetBezier1D() { return bezier1D; }
 
 	inline void ZeroShapeTrans(int shpIndx) { shapes[shpIndx]->ZeroTrans(); }
+	inline int getShapeSize() { return shapes.size(); }
 	bool drawPlane = true;
 
 private:

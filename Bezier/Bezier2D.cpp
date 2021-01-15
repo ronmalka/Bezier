@@ -46,7 +46,8 @@ glm::vec3 Bezier2D::calcDerivV(std::vector<std::vector<glm::vec3>>& grid, float 
 }
 
 glm::vec3 Bezier2D::crossDeriv(std::vector<std::vector<glm::vec3>>& grid, float u, float v) {
-	return -glm::normalize(glm::cross(calcDerivV(grid, u, v), calcDerivU(grid, u, v)));
+	glm::vec3 res = (glm::cross(calcDerivV(grid, u, v), calcDerivU(grid, u, v)));
+	return res == glm::vec3(0.f, 0.f, 0.f) ? res : -glm::normalize(res);
 }
 
 glm::vec3 Bezier2D::evalBezierCurve(std::vector<glm::vec3>& p, float t)
