@@ -46,7 +46,8 @@ glm::vec3 Bezier2D::calcDerivV(std::vector<std::vector<glm::vec3>>& grid, float 
 }
 
 glm::vec3 Bezier2D::crossDeriv(std::vector<std::vector<glm::vec3>>& grid, float u, float v) {
-	return -glm::normalize(glm::cross(calcDerivV(grid, u, v), calcDerivU(grid, u, v)));
+	glm::vec3 res = (glm::cross(calcDerivV(grid, u, v), calcDerivU(grid, u, v)));
+	return res == glm::vec3(0.f, 0.f, 0.f) ? res : -glm::normalize(res);
 }
 
 glm::vec3 Bezier2D::evalBezierCurve(std::vector<glm::vec3>& p, float t)
@@ -84,7 +85,7 @@ void Bezier2D::make2DCtrlPoints(int curveIndex, float startAngle, std::vector<st
 	for (int j = 0; j < 4; ++j) {
 		std::vector<glm::vec3> lvl;
 		for (int i = 0; i < 4; ++i) {
-			lvl.push_back(glm::rotateY(pts[i] / 4.f, startAngle + (30.f) * j));
+			lvl.push_back(glm::rotateY(pts[i] / 2.f, startAngle + (30.f) * j));
 		}
 		grid.push_back(lvl);
 	}
@@ -135,6 +136,7 @@ IndexedModel Bezier2D::GetSurface()
 	}
 	//Connect Edges
 	for (int i = 0; i < segNum; i++) {
+		//TODO - FIX THAT!
 		for (int k = 19 + 1600 * i, m = CALC_KOFFSET((1600 + 1600 * i), i); k < 1599 + 1600 * i; k += 20, m += 20) {
 			model.indices.push_back(k);
 			model.indices.push_back(k + 20);

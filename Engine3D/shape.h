@@ -42,6 +42,8 @@ public:
 	inline std::vector<glm::vec3>& GetControlPoints() { return controlPoints; }
 	inline void setRadius(float radius) { this->radius = radius; }
 	inline float getRadius() { return this->radius; }
+	inline void setAngel(float angel) { this->angel = angel; }
+	inline float getAngel() { return this->angel; }
 	virtual ~Shape(void);
 	Shape(int segNum, std::vector<glm::vec3> controlPoints, int mode, int viewport);
 protected:
@@ -50,6 +52,7 @@ protected:
 	unsigned int mode;
 	MeshConstructor* mesh;
 	float radius = -1.; // PI/2 limit of arctan
+	float angel = 0.;
 };
 
 

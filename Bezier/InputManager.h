@@ -3,11 +3,18 @@
 #include "renderer.h"
 #include "bezier.h"
 #include <iostream>
+#include <set>
+
+bool threeDPressed = false;
+bool isRotate = false;
+std::set<int> picked;
+bool movepickeds = false;
+int globalID = 23;
 bool leftPressedInside = false;
 bool rightPressedInside = false;
 bool leftPressedEdges = false;
 bool rightPressedEdges = false;
-int globalID = 22;
+
 void HandleInsidePoints(Renderer* rndr, bezier* scn, int button, double x , double y)
 {
 	scn->updatePressedPos(x, y);
@@ -69,7 +76,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 			if (rndr->Picking((int)x2, (int)y2))
 			{
 				std::cout << "picked: " << scn->GetPickedShape() << std::endl;
-				if (scn->GetPickedShape() > 1 && scn->GetPickedShape() <= 21) {
+				if (scn->GetPickedShape() > 1 && scn->GetPickedShape() <= 21) {//Control Points
 					int id = (scn->GetPickedShape() - 2) % 3;
 					if (id != 0) {
 						HandleInsidePoints(rndr, scn, button , x2  , y2);
@@ -77,6 +84,26 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					else
 					{
 						HandleEdgesPoints(rndr, scn, button, x2, y2);
+					}
+				}
+				else if (scn->GetPickedShape() >= 23 && scn->GetPickedShape() <= globalID) { //Shapes in 3D
+					std::cout << "picked: " << scn->GetPickedShape() << std::endl;
+					scn->updatePressedPos(x2, y2);
+					threeDPressed = true;
+					if (button == GLFW_MOUSE_BUTTON_LEFT) { isRotate = true; }
+					else isRotate = false;
+				}
+				else {
+					//Blending
+					if (button == GLFW_MOUSE_BUTTON_LEFT) {
+						std::cout << "scissor " << scn->GetPickedShape() << std::endl;
+						rndr->whenBlend(x2, y2);
+						//scn->xWhenBlend = (int)x2;
+						//scn->yWhenBlend = (int)y2;
+						//scn->xPos = scn->xWhenBlend;
+						//scn->yPos = scn->yWhenBlend;
+						rndr->isClicked = rndr->inAction2;
+						//scn->AddShapeViewport(22, 0);
 					}
 				}
 			}
@@ -134,9 +161,11 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		bezier* scn = (bezier*)rndr->GetScene();
 		
 			rndr->UpdatePosition((float)xpos,(float)ypos);
+			scn->xPos = (int)xpos;
+			scn->yPos = (int)ypos;
 
 			if (rightPressedInside) {
-				scn->setNewOffset((float)xpos, (float)ypos);
+				scn->setNewOffset((float)xpos, (float)ypos, false, isRotate);
 			}
 
 			if (leftPressedInside) {
@@ -146,19 +175,38 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 			if (rightPressedEdges) {
 				scn->setNewOffsetWithChilds((float)xpos, (float)ypos);
 			}
-
+			if (threeDPressed) {
+				scn->setNewOffset((float)xpos, (float)ypos, true, isRotate);
+			}
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
+				picked.clear();
+				movepickeds = false;
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
-				
+				picked.clear();
+				movepickeds = false;
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 			{
+				if (rndr->isClicked) {
+					rndr->isClicked = 0;
+					scn->updatePickedShapes((int)rndr->xWhenBlend, (int)xpos, (int)rndr->yWhenBlend, (int)ypos);
+					movepickeds = true;
+					scn->updatePressedPos(xpos, ypos);
+
+				}
+				if (movepickeds) {
+					for (auto& i : scn->picked) {
+						scn->SetPickedShape(i);
+						scn->setNewOffset(xpos, ypos, true, false);
+					}
+
+				}
 				if (rightPressedInside) {
 					rightPressedInside = !rightPressedInside;
-					scn->setNewOffset(xpos, ypos);
+					scn->setNewOffset(xpos, ypos, false, isRotate);
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 				}
 				if (leftPressedInside) {
@@ -172,9 +220,21 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 				}
 				if (leftPressedEdges) {
+					scn->setNewOffset(xpos, ypos, true, isRotate);
 					leftPressedEdges = !leftPressedEdges;
+					isRotate = false;
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
 				}
+				if (threeDPressed) {
+					threeDPressed = !threeDPressed;
+					if (!isRotate) {
+						scn->leftShapesPos[scn->GetPickedShape() - 23][0] = (int)xpos;
+						scn->leftShapesPos[scn->GetPickedShape() - 23][1] = 600 - (int)ypos;
+						std::cout << "xpos" << xpos << std::endl;
+						std::cout << "ypos" << 600 - ypos << std::endl;
+					}
+				}
+
 			}
 
 	}
@@ -244,10 +304,11 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				scn->RemoveShapeViewport(globalID, 1);
 				scn->AddShapeViewport(globalID, 0);
 				scn->SetShapeShader(globalID, 1);
-				scn->SetShapeMaterial(globalID++, 1);
+				scn->SetShapeMaterial(globalID, 1);
 				scn->SetPickedShape(globalID - 1);
 				scn->ShapeTransformation(scn->xTranslate, 0.3f);
 				scn->SetPickedShape(-1);
+				scn->leftShapesPos.push_back({ 300,300,globalID++ });
 				break;
 			case GLFW_KEY_2:
 				darwNewBezier1D(scn, 2);
@@ -265,16 +326,20 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				darwNewBezier1D(scn, 6);
 				break;
 			case GLFW_KEY_LEFT:
+				scn->ZeroTrans();
 				rndr->MoveCamera(0, rndr->yRotate, -0.8f);
 				break;
 			case GLFW_KEY_RIGHT:
+				scn->ZeroTrans();
 				rndr->MoveCamera(0, rndr->yRotate, 0.8f);
 				break;
 			case GLFW_KEY_UP:
-				rndr->MoveCamera(0, rndr->xRotate, 0.8);
+				scn->ZeroTrans();
+				rndr->MoveCamera(0, rndr->zRotate, 0.8);
 				break;
 			case GLFW_KEY_DOWN:
-				rndr->MoveCamera(0, rndr->xRotate, -0.8);
+				scn->ZeroTrans();
+				rndr->MoveCamera(0, rndr->zRotate, -0.8);
 			case GLFW_KEY_R:
 				rndr->MoveCamera(0, rndr->yRotate, 0.8);
 				break;
@@ -292,6 +357,9 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				break;
 			case GLFW_KEY_F:
 				rndr->MoveCamera(0, rndr->zTranslate, -0.1);
+				break;
+			case GLFW_KEY_C:
+				scn->setCont();
 				break;
 			default:
 				break;

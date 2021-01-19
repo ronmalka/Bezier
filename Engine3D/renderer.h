@@ -39,7 +39,7 @@ class Renderer
 public:
 	enum buffersMode { COLOR, DEPTH, STENCIL, BACK, FRONT, NONE };
 	enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale, xCameraTranslate, yCameraTranslate, zCameraTranslate };
-	enum drawFlags { toClear = 1, is2D = 2, inAction = 4, scissorTest = 8, depthTest = 16, stencilTest = 32, blend = 64, blackClear = 128, debugMode = 256};
+	enum drawFlags { toClear = 1, is2D = 2, inAction = 4, scissorTest = 8, depthTest = 16, stencilTest = 32, blend = 64, blackClear = 128, debugMode = 256, inAction2 = 512 };
 
 	Renderer();
 	Renderer(float angle, float relationWH, float near, float far);
@@ -49,7 +49,7 @@ public:
 	void Draw(int infoIndx = 1);
 	void DrawAll();
 
-
+	void whenBlend(double xpos, double ypos);
 	void Resize(int width, int height);
 	void UpdatePosition(float xpos, float ypos);
 	void AddCamera(const glm::vec3& pos, float fov, float relationWH, float zNear, float zFar, int infoIndx = -1);
@@ -70,8 +70,9 @@ public:
 	inline void ClearDrawFlag(int infoIndx, unsigned int flag) { drawInfo[infoIndx]->ClearFlags(flag); }
 	inline int getxRel() { return xrel; }
 	inline int getyRel() { return yrel; }
-
+	int isClicked = 0;
 	bool checkViewport(int x, int y, int viewportIndx);
+	float xWhenBlend, yWhenBlend;
 	~Renderer();
 private:
 	std::vector<Camera*> cameras;

@@ -100,8 +100,13 @@ void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, i
 	{
 		if (shapes[pickedShape]->Is2Render(viewportIndx))
 		{
-			glm::mat4 Model = Normal * shapes[pickedShape]->MakeTrans();
-
+			glm::mat4 Model = shapes[pickedShape]->MakeTrans();
+			if (chainParents[pickedShape] == -2) {
+				Model = glm::inverse(View) * Model;
+			}
+			else {
+				Model = Normal * Model;
+			}
 			if (shaderIndx > 0)
 			{
 				Update(Projection, View, Model, shapes[pickedShape]->GetShader());
@@ -150,6 +155,11 @@ void Scene::ShapeTransformation(int type, float amt)
 		case zScale:
 			shapes[pickedShape]->MyScale(glm::vec3(0, 0, amt));
 			break;
+		case xMyRotate:
+			shapes[pickedShape]->MyRotate(amt, glm::vec3(1, 0, 0), 1);
+			break;
+		case yMyRotate:
+			shapes[pickedShape]->MyRotate(amt, glm::vec3(0, 1, 0), 1);
 		default:
 			break;
 		}

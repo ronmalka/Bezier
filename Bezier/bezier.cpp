@@ -62,7 +62,9 @@ void bezier::Init()
 		pickedShape = i + 2;
 		float angle = PI * i / points;
 		float xTrans = (((float)-points / 2.f) + i)/8.8f;
+		
 		float yTrans = i == (points - 1) || i == 0 ? 0 : (2.f + 3.f * sin(angle))/8.8f;
+	
 		ShapeTransformation(xTranslate, xTrans);
 		ShapeTransformation(yTranslate, yTrans);
 		SetShapeMaterial(i+2,0);
@@ -88,6 +90,11 @@ void bezier::Init()
 	AddShapeViewport(maxPoints + 2, 1);
 	RemoveShapeViewport(maxPoints + 2, 0);
 
+	AddShape(Plane, -1, TRIANGLES);
+	SetShapeShader(maxPoints + 3, 2);
+	RemoveShapeViewport(maxPoints + 3, 1);
+	RemoveShapeViewport(maxPoints + 3, 0);
+	//AddShapeViewport(maxPoints + 3, 2);
 }
 
 void bezier::Update(const glm::mat4& Projection, const glm::mat4& View, const glm::mat4& Model, const int  shaderIndx)
@@ -124,7 +131,7 @@ void bezier::updatePressedPos(double xpos, double ypos) {
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	old_x = xpos;
 	old_y = ypos;
-	new_radius = true;
+	new_angel = true;
 }
 
 void bezier::UpdatePosition(float xpos,  float ypos)
@@ -135,7 +142,7 @@ void bezier::UpdatePosition(float xpos,  float ypos)
 	y =  1 - ypos / viewport[3]; 
 }
 
-void bezier::setNewOffset(double xpos, double ypos) {
+void bezier::setNewOffset(double xpos, double ypos, bool is3D, bool isRotate) {
 	if (pickedShape != -1) {
 		int viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
@@ -143,38 +150,71 @@ void bezier::setNewOffset(double xpos, double ypos) {
 		offset_y = (old_y - ypos) * 0.0045f;
 		old_x = xpos;
 		old_y = ypos;
-		ShapeTransformation(xTranslate, offset_x);
-		ShapeTransformation(yTranslate, offset_y);
-		bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
+		if (!isRotate) {
+			ShapeTransformation(xTranslate, offset_x);
+			ShapeTransformation(yTranslate, offset_y);
+		}
+		else {
+			ShapeTransformation(xRotate, -offset_x * 100.f);
+			ShapeTransformation(yMyRotate, -offset_y * 100.f);
+		}
+
+		if (!is3D) bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
 	}
 }
 
-void setNewOffsetByLoc(glm::vec4 &res, float x, float y, float x2, float y2)
+
+void bezier::movePointWithAngel(float parentX, float parentY, float angle)
 {
-	std::cout << "x: " << x << " y: " << y << std::endl;
-	std::cout << "x2: " << x2 << " y2: " << y2 << std::endl;
-	if (x2 < x && y2 > y)
+	int parentID = chainParents[pickedShape];
+	std::vector<int> childs = FindChilds(parentID);
+	
+	
+	if (childs.size() == 1)
 	{
-		std::cout << "1: " << std::endl;
-		res.y = 1 - res.y;
-		
+		return;
 	}
-	else if(x2 > x && y2 > y)
-	{
-		std::cout << "2: " << std::endl;
+	int tmpPicked = pickedShape;
+	pickedShape = (pickedShape == childs[0]) ? childs[1] : childs[0];
+	
+	ZeroTrans();
+	ShapeTransformation(xTranslate, -parentX);
+	ShapeTransformation(yTranslate, -parentY);
+	ShapeTransformation(zRotate, angle);
+	ShapeTransformation(xTranslate, parentX);
+	ShapeTransformation(yTranslate, parentY);
+
+
+	glm::vec4 v = glm::vec4(0., 0., 1., 1.);
+	glm::vec4 res = (shapes[pickedShape]->getRot() * shapes[pickedShape]->getTrans() * shapes[pickedShape]->getScl()) * v;
+
+	bezier1D->setControlX(pickedShape - 2, 0.);
+	bezier1D->setControlY(pickedShape - 2, 0.);
+
+	bezier1D->CurveUpdate(pickedShape - 2, res.x, res.y);
+
+	pickedShape = tmpPicked;
+}
+
+void bezier::updatePickedShapes(int xWhenBlend, int xpos, int yWhenBlend, int ypos) {
+	picked.clear();
+	int start_x = glm::min(xWhenBlend, xpos);
+	int size_x = glm::abs(xWhenBlend - xpos);
+	int start_y = glm::min(600 - yWhenBlend, 600 - ypos);
+	int size_y = glm::abs(yWhenBlend - ypos);
+	std::cout << "start_x  " << start_x << "start y  " << start_y << std::endl;
+	std::cout << "end_x  " << start_x + size_x << "start y  " << start_y + size_y << std::endl;
+	//unsigned char* data = new unsigned char[size_x * 4];
+	for (auto& v : leftShapesPos) {
+		if (v[0] > start_x && v[0]<(start_x + size_x) && v[1] > start_y && v[1] < (start_y + size_y)) {
+			picked.insert(v[2]);
+		}
 	}
-	else if (x2 > x && y2 < y)
-	{
-		std::cout << "3: " << std::endl;
-		res.x = 1 - res.x ;
-		res.y = 1 - res.y  ;
-	}
-	else
-	{
-		std::cout << "4: " << std::endl;
-		//res.x = 1 - res.x;
+	for (auto& i : picked) {
+		std::cout << i << std::endl;
 	}
 }
+
 
 void bezier::setNewOffsetWithRotate(float x, float y)
 { 
@@ -193,13 +233,22 @@ void bezier::setNewOffsetWithRotate(float x, float y)
 
 	//std::cout << "new_x2222: " << childX << " new_y222: " << childY  << std::endl;
 	//glm::vec3 radius = glm::normalize(parent - child);
+	float angle;
+	if (new_angel)
+	{
+		angle = glm::atan(childY - parentY, parentX - childX);
+		bezier1D->setAngel(angle);
+	}
+	else
+	{
+		angle = bezier1D->getAngel();
+	}
 	
-	float angle = glm::atan(parentY - childY, parentX - childX);
-	angle = (old_x < x) || (old_y < y)? - angle : angle;
+	angle = (old_x < x)? - angle :  angle;
 	old_x = x;
 	old_y = y;
 
-	std::cout << "O angle: " << angle << std::endl;
+	//std::cout << "O angle: " << angle << std::endl;
 	//std::cout << "N angle: " << angle << std::endl;
 	//child = (parent + glm::rotate(parent, angle, glm::vec3(0.0f, 0.0f, 1.0f)));
 	//std::cout << "O x: " << childX << " y: " << childY << std::endl;
@@ -219,7 +268,7 @@ void bezier::setNewOffsetWithRotate(float x, float y)
 	
 
 	//std::cout << "new_x: " <<  new_x << " new_y: " << new_y << " angle: " << angle << std::endl;
-	//ZeroTrans();
+	ZeroTrans();
 	ShapeTransformation(xTranslate, -parentX);
 	ShapeTransformation(yTranslate, -parentY);
 
@@ -228,7 +277,7 @@ void bezier::setNewOffsetWithRotate(float x, float y)
 
 	ShapeTransformation(zRotate, angle);
 
-
+	
 
 
 	ShapeTransformation(xTranslate, parentX);
@@ -237,10 +286,13 @@ void bezier::setNewOffsetWithRotate(float x, float y)
 	
 
 	/*printMat(shapes[pickedShape]->getTrans());*/
-	printMat(shapes[pickedShape]->MakeTrans());
-	glm::vec4 v = glm::vec4(0., 0., 0., 1.);
-	glm::vec4 res = (shapes[pickedShape]->getTrans()) * v ;
-
+    
+	glm::vec4 v = glm::vec4(0., 0., 1., 1.);
+	//printMat(shapes[pickedShape]->MakeTrans());
+	
+	glm::vec4 res = (shapes[pickedShape]->getRot()  * shapes[pickedShape]->getTrans() * shapes[pickedShape]->getScl() ) * v ;
+	
+	//std::cout << "x: " << res.x << " y: " << res.y <<  std::endl;
 
 	/*ShapeTransformation(xTranslate, -1 - res.x);
 	ShapeTransformation(yTranslate, -1 - res.y);*/
@@ -253,14 +305,18 @@ void bezier::setNewOffsetWithRotate(float x, float y)
 	bezier1D->setControlX(pickedShape - 2, 0.);
 	bezier1D->setControlY(pickedShape - 2,0.);
 
-	bezier1D->CurveUpdate(pickedShape - 2,  res.x, res.y);
+	bezier1D->CurveUpdate(pickedShape - 2, res.x, res.y);
 
-	//new_radius = false;
+	new_angel = false;
 	/*childX = bezier1D->getControlX(pickedShape - 2);
 	childY = bezier1D->getControlY(pickedShape - 2);
 	radius = glm::distance(glm::vec2(parentX, parentY), glm::vec2(childX, childY));*/
 	//std::cout << "new_x: " << childX  << " new_y: " << childY  << " radius: " << radius << std::endl;
 	
+	if (cont)
+	{
+		movePointWithAngel(parentX, parentY, angle);
+	}
 }
 
 std::vector<int> bezier::FindChilds(int parent)
@@ -365,6 +421,7 @@ void bezier::setNewOffsetWithChilds(double x, double y)
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	offset_x = (x - old_x) * 0.0045f;
 	offset_y = (old_y - y) * 0.0045f;
+	offset_y = ((parentY + offset_y) < 0) ? 0 : offset_y;
 	old_x = x;
 	old_y = y;
 	ShapeTransformation(xTranslate, offset_x);
