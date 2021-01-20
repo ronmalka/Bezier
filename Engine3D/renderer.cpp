@@ -59,9 +59,7 @@ void Renderer::Init(Scene* scene,  std::list<int>xViewport,  std::list<int>yView
 		}
 	}
 	viewports.push_back(viewports[0]);
-	drawInfo.push_back(new DrawInfo(2, 0, 2, 0,   inAction2 | scissorTest | blend ));
-	//drawInfo.push_back(new DrawInfo(2, 0, 2, 0, 0));
-	//drawInfo.push_back(new DrawInfo(2, 0, 0, 0,  inAction2 | scissorTest | blend ));
+	drawInfo.push_back(new DrawInfo(2, 0, 2, 0,  inAction2 | scissorTest | blend ));
 }
 
 void Renderer::Draw(int infoIndx)
@@ -75,7 +73,7 @@ void Renderer::Draw(int infoIndx)
 			glEnable(GL_SCISSOR_TEST);
 			int x = glm::min((int)xWhenBlend, xold); //x is xWhenPressed
 			int y = glm::min(viewports[info.viewportIndx].w - (int)yWhenBlend, viewports[info.viewportIndx].w - yold); //y is yWhenPressed
-			glScissorIndexed(2, x, y, glm::abs((int)xWhenBlend - xold), glm::abs((int)yWhenBlend - yold)); // to change y in y old to whenpressed
+			glScissor(x, y, glm::abs((int)xWhenBlend - xold), glm::abs((int)yWhenBlend - yold)); // to change y in y old to whenpressed
 	}	
 	else
 		glDisable(GL_SCISSOR_TEST);

@@ -19,6 +19,7 @@ public:
 	void setNewOffset(double x, double y,bool is3D,bool isRotate);
 	void updatePickedShapes();
 	void updatePickedShapes(int xWhenBlend, int xpos, int yWhenBlend, int ypos);
+	void pickedMove(double xpos, double ypos);
 	void setNewOffsetWithRotate(float x, float y);
 	void setNewOffsetWithChilds(double x, double y);
 	unsigned int TextureDesine(int width, int height);

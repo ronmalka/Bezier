@@ -92,7 +92,7 @@ void bezier::Init()
 	SetShapeShader(maxPoints + 3, 2);
 	RemoveShapeViewport(maxPoints + 3, 1);
 	RemoveShapeViewport(maxPoints + 3, 0);
-	//AddShapeViewport(maxPoints + 3, 2);
+	AddShapeViewport(maxPoints + 3, 2);
 
 }
 
@@ -207,6 +207,21 @@ void bezier::updatePickedShapes(int xWhenBlend, int xpos,int yWhenBlend,int ypos
 	for (auto& i : picked) {
 		std::cout << i << std::endl;
 	}
+}
+
+void bezier::pickedMove(double xpos, double ypos) {
+		int viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		offset_x = (xpos - old_x) * 0.0045f;
+		offset_y = (old_y - ypos) * 0.0045f;
+		old_x = xpos;
+		old_y = ypos;
+		for (auto& p : picked) {
+			pickedShape = p;
+			ShapeTransformation(xTranslate, offset_x);
+			ShapeTransformation(yTranslate, offset_y);
+			pickedShape = -1;
+		}
 }
 
 void bezier::setNewOffsetWithRotate(float x, float y)

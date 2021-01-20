@@ -95,12 +95,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					if (button == GLFW_MOUSE_BUTTON_LEFT) {
 						std::cout << "scissor " << scn->GetPickedShape() << std::endl;
 						rndr->whenBlend(x2, y2);
-						//scn->xWhenBlend = (int)x2;
-						//scn->yWhenBlend = (int)y2;
-						//scn->xPos = scn->xWhenBlend;
-						//scn->yPos = scn->yWhenBlend;
 						rndr->isClicked = rndr->inAction2;
-						//scn->AddShapeViewport(22, 0);
 					}
 				}
 			}
@@ -195,11 +190,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 
 				}
 				if (movepickeds) {
-					for (auto& i : scn->picked) {
-						scn->SetPickedShape(i);
-						scn->setNewOffset(xpos, ypos, true, false);
-					}
-
+					scn->pickedMove(xpos, ypos);
 				}
 				if (rightPressedInside) {
 					rightPressedInside = !rightPressedInside;
