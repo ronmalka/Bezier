@@ -293,9 +293,9 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				scn->AddShapeViewport(globalID, 0);
 				scn->SetShapeShader(globalID, 1);
 				scn->SetShapeMaterial(globalID, 1);
-				scn->SetPickedShape(globalID - 1);
-				scn->ShapeTransformation(scn->xTranslate, 0.3f);
-				scn->SetPickedShape(-1);
+				//scn->SetPickedShape(globalID - 1);
+				//scn->ShapeTransformation(scn->xTranslate, 0.3f);
+				//scn->SetPickedShape(-1);
 				scn->leftShapesPos.push_back({ 300,300,globalID++ });
 				break;
 			case GLFW_KEY_2:

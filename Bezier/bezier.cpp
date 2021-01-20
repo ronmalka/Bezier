@@ -93,7 +93,6 @@ void bezier::Init()
 	RemoveShapeViewport(maxPoints + 3, 1);
 	RemoveShapeViewport(maxPoints + 3, 0);
 	AddShapeViewport(maxPoints + 3, 2);
-
 }
 
 void bezier::Update(const glm::mat4& Projection, const glm::mat4& View, const glm::mat4& Model, const int  shaderIndx)
