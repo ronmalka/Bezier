@@ -92,7 +92,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				}
 				else {
 					//Blending
-					if (button == GLFW_MOUSE_BUTTON_LEFT) {
+					if (button == GLFW_MOUSE_BUTTON_LEFT && x2 < 600) {
 						std::cout << "scissor " << scn->GetPickedShape() << std::endl;
 						rndr->whenBlend(x2, y2);
 						rndr->isClicked = rndr->inAction2;
