@@ -20,6 +20,7 @@ public:
 	glm::vec3 calcPoint(int i, int j, float s, float t, glm::vec3 p_i_j);
 	glm::vec3 evalBezierPatch(std::vector<std::vector<glm::vec3>>& ps, const float& u, const float& v);
 	void makeVertices(int curveIndex, int& startIndex, IndexedModel& idxed);
+	void Stitch(IndexedModel& model, int i, int j,int p);
 	glm::vec3 calcDeriv(std::vector<glm::vec3>& p, float t);
 	glm::vec3 calcDerivU(std::vector<std::vector<glm::vec3>>& grid, float u, float v);
 	glm::vec3 calcDerivV(std::vector<std::vector<glm::vec3>>& grid, float u, float v);

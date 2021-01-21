@@ -30,9 +30,9 @@ void Bezier1D::GetControlPoint(int segment, int indx, std::vector<glm::vec3> &li
 {
 	glm::vec3 p;
 	
-	for (float t = 0.0; t < 1.0; t += 0.001)
+	for (int t = 0; t <= 50; t ++)
 	{
-		p = GetPointOnCurve(indx, t);
+		p = GetPointOnCurve(indx, (float)t*0.02f);
 		lineVertex.push_back(p);
 	}
 

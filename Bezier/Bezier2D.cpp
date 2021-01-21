@@ -1,8 +1,5 @@
 #include "Bezier\Bezier2D.h"
 #include "glm/gtx/rotate_vector.hpp"
-#define CALC_OFFSET(a,i) ((a) >= 1600 * i ? (a - 1580) : (a))
-#define CALC_KOFFSET(a,i) (a > (segNum*1600) ? (a - (segNum*1600)-19) : a)
-#define CALC_TEX(i) (i == 0 ? glm::vec2(0.f,0.f) : i==1 ? glm::vec2(1.f,0.f) : i==2 ? glm::vec2(1.f,1.f) : glm::vec2(0.f,1.f))
 
 Bezier2D::Bezier2D(int segNum, std::vector<glm::vec3> controlPoints, int mode, int viewport) : Shape(segNum, controlPoints, mode, viewport)
 {
@@ -85,7 +82,7 @@ void Bezier2D::make2DCtrlPoints(int curveIndex, float startAngle, std::vector<st
 	for (int j = 0; j < 4; ++j) {
 		std::vector<glm::vec3> lvl;
 		for (int i = 0; i < 4; ++i) {
-			lvl.push_back(glm::rotateY(pts[i] / 2.f, startAngle + (30.f) * j));
+			lvl.push_back(glm::rotateY(pts[i]/2.f, startAngle + (30.0f) * j));
 		}
 		grid.push_back(lvl);
 	}
@@ -98,33 +95,44 @@ void Bezier2D::makeVertices(int curveIndex, int& startIndex, IndexedModel& model
 		std::vector<std::vector<int>> ind_indexes;
 		std::vector<std::vector<glm::vec3>> grid;
 		make2DCtrlPoints(curveIndex, (float)i * 90.f, grid);
-		for (int u = 0; u < 20; ++u) { // For Every U (0.0 -> 1.0) Horizontal
+		for (int u = 0; u < 21; ++u) { // For Every U (0.0 -> 1.0) Horizontal
 			std::vector<int> vec;
-			for (int v = 0; v < 20; ++v) { // For Every V (0.0 -> 1.0) Vertical
+			for (int v = 0; v < 21; ++v) { // For Every V (0.0 -> 1.0) Vertical
 				vec.push_back(startIndex++);
-				model.positions.push_back(evalBezierPatch(grid, (float)u * 0.05f, (float)v * 0.05f));
-				model.normals.push_back(crossDeriv(grid, (float)u * 0.05f, (float)v * 0.05f));
-				model.texCoords.push_back(glm::vec2(u * 0.05f, v * 0.05f));
+				float _u = (float)u * 0.05f;
+				float _v = (float)v * 0.05f;
+				model.positions.push_back(evalBezierPatch(grid, _u, _v));
+				model.normals.push_back(crossDeriv(grid, _u, _v));
+				model.texCoords.push_back(glm::vec2(_u, _v));
 				model.colors.push_back(color);
 			}
 			ind_indexes.push_back(vec);
 		}
 		// Put Indexes in the indecis array
-		for (int u = 0; u < 19; ++u) {
-			for (int v = 0; v < 19; ++v) {
+		for (int u = 0; u < 20; ++u) {
+			for (int v = 0; v < 20; ++v) {
 				model.indices.push_back(ind_indexes[u][v]);
-				model.indices.push_back(ind_indexes[u][v + 1]);
-				model.indices.push_back(ind_indexes[u + 1][v]);
+				model.indices.push_back(ind_indexes[u][(v + 1)]);
+				model.indices.push_back(ind_indexes[(u + 1)][v]);
 
-				model.indices.push_back(ind_indexes[u][v + 1]);
-				model.indices.push_back(ind_indexes[u + 1][v]);
-				model.indices.push_back(ind_indexes[u + 1][v + 1]);
+				model.indices.push_back(ind_indexes[u][(v + 1)]);
+				model.indices.push_back(ind_indexes[(u + 1)][v]);
+				model.indices.push_back(ind_indexes[(u + 1)][(v + 1)]);
 			}
 		}
 	}
 
 }
 
+void Bezier2D::Stitch(IndexedModel& model,int i,int j,int p) {
+	model.indices.push_back(i);
+	model.indices.push_back(j);
+	model.indices.push_back(j+ p);
+
+	model.indices.push_back(j+ p);
+	model.indices.push_back(i+ p);
+	model.indices.push_back(i);
+}
 
 IndexedModel Bezier2D::GetSurface()
 {
@@ -134,31 +142,7 @@ IndexedModel Bezier2D::GetSurface()
 	for (int i = 0; i < segNum; ++i) {
 		makeVertices(i, cnt, model);
 	}
-	//Connect Edges
-	for (int i = 0; i < segNum; i++) { 
-		//TODO - FIX THAT!
-		for (int k = 19 + 1600 * i, m = CALC_KOFFSET((1600 + 1600 * i), i); k < 1599 + 1600 * i; k += 20, m += 20) {
-			model.indices.push_back(k);
-			model.indices.push_back(k + 20);
-			model.indices.push_back(m + 20);
-
-			model.indices.push_back(m + 20);
-			model.indices.push_back(k);
-			model.indices.push_back(m);
-		}
-
-		for (int k = 0; k < 4; k++) {
-			for (int m = (380 + 1600 * i + 400 * k); m < (399 + 1600 * i + 400 * k); m++) {
-				model.indices.push_back(m);
-				model.indices.push_back(CALC_OFFSET(m + 20, i));
-				model.indices.push_back(m + 1);
-
-				model.indices.push_back(CALC_OFFSET(m + 20, i));
-				model.indices.push_back(CALC_OFFSET(m + 21, i));
-				model.indices.push_back(m + 1);
-			}
-		}
-	}
+	
 
 	return model;
 }

@@ -1,4 +1,5 @@
 #pragma once   //maybe should be static class
+#define MY_PLANE 22
 #include "display.h"
 #include "renderer.h"
 #include "bezier.h"
@@ -13,6 +14,13 @@ bool isRotate = false;
 std::set<int> picked;
 bool movepickeds = false;
 int globalID = 23;
+
+void movePlane(Scene* scn,int action,float amt) {
+	scn->SetPickedShape(MY_PLANE);
+	scn->ShapeTransformation(action, amt); // Move Plane
+	scn->SetPickedShape(-1);
+}
+
 void HandleInsidePoints(Renderer* rndr, bezier* scn, int button, double x , double y)
 {
 	scn->updatePressedPos(x, y);
@@ -129,10 +137,12 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		std::cout << " x " << xpos << std::endl;
 		if (xpos < 600) {
 			if (yoffset > 0) {
-				rndr->MoveCamera(0, scn->zTranslate, 0.4f);
+				rndr->MoveCamera(0, rndr->zTranslate, 0.4f);
+				movePlane(scn, scn->zTranslate, 0.4f);
 			}
 			else {
 				rndr->MoveCamera(0, scn->zTranslate, -0.4f);
+				movePlane(scn, scn->zTranslate, -0.4f);
 			}
 		}
 		else {
@@ -293,9 +303,6 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				scn->AddShapeViewport(globalID, 0);
 				scn->SetShapeShader(globalID, 1);
 				scn->SetShapeMaterial(globalID, 1);
-				//scn->SetPickedShape(globalID - 1);
-				//scn->ShapeTransformation(scn->xTranslate, 0.3f);
-				//scn->SetPickedShape(-1);
 				scn->leftShapesPos.push_back({ 300,300,globalID++ });
 				break;
 			case GLFW_KEY_2:
@@ -315,26 +322,34 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				break;
 			case GLFW_KEY_LEFT:
 				rndr->MoveCamera(0, rndr->yRotate, -0.8f);
+				movePlane(scn, scn->yRotate, -0.8f);
 				break;
 			case GLFW_KEY_RIGHT:
 				rndr->MoveCamera(0, rndr->yRotate, 0.8f);
+				movePlane(scn, scn->yRotate, 0.8f);
 				break;
 			case GLFW_KEY_UP:
 				rndr->MoveCamera(0, rndr->xRotate, 0.8);
+				movePlane(scn, scn->xRotate, 0.8f);
 				break;
 			case GLFW_KEY_DOWN:
 				rndr->MoveCamera(0, rndr->xRotate, -0.8);
+				movePlane(scn, scn->xRotate, -0.8f);
 			case GLFW_KEY_R:
 				rndr->MoveCamera(0, rndr->yRotate, 0.8);
+				movePlane(scn, scn->yRotate, 0.8f);
 				break;
 			case GLFW_KEY_L:
 				rndr->MoveCamera(0, rndr->yRotate, -0.8);
+				movePlane(scn, scn->yRotate, -0.8f);
 				break;
 			case GLFW_KEY_D:
 				rndr->MoveCamera(0, rndr->xRotate, -0.8);
+				movePlane(scn, scn->xRotate, -0.8f);
 				break;
 			case GLFW_KEY_U:
 				rndr->MoveCamera(0, rndr->xRotate, 0.8);
+				movePlane(scn, scn->xRotate, 0.8f);
 				break;
 			case GLFW_KEY_B:
 				rndr->MoveCamera(0, rndr->zTranslate, 0.1);
