@@ -141,24 +141,29 @@ void bezier::UpdatePosition(float xpos,  float ypos)
 	y =  1 - ypos / viewport[3]; 
 }
 
-void bezier::setNewOffset(double xpos, double ypos,bool is3D,bool isRotate) {
+void bezier::setNewOffset(double xpos, double ypos,bool is3D,bool isRotate,float zoomCo) {
 	if (pickedShape != -1) {
 		int viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
-		offset_x = (xpos - old_x) * 0.0045f;
-		offset_y = (old_y - ypos) * 0.0045f;
-		old_x = xpos;
-		old_y = ypos;
+		offset_x = (xpos - old_x) * 0.0045f*zoomCo;
+		offset_y = (old_y - ypos) * 0.0045f*zoomCo;
 		if(!isRotate){ 
 			ShapeTransformation(xTranslate, offset_x);
 			ShapeTransformation(yTranslate, offset_y);
 		}
 		else {
-			ShapeTransformation(xRotate, -offset_x*100.f);
+			//ShapeTransformation(xRotate, -offset_x*100.f);
 			ShapeTransformation(yMyRotate, -offset_y*100.f);
 		}
 		
 		if(!is3D) bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
+		else {
+			leftShapesPos[pickedShape - 23].x += offset_x;
+			leftShapesPos[pickedShape - 23].y += offset_y;
+		}
+		old_x = xpos;
+		old_y = ypos;
+
 	}
 }
 
@@ -189,18 +194,15 @@ void setNewOffsetByLoc(glm::vec4 &res, float x, float y, float x2, float y2)
 	}
 }
 
-void bezier::updatePickedShapes(int xWhenBlend, int xpos,int yWhenBlend,int ypos) {
+void bezier::updatePickedShapes(glm::vec3 from,glm::vec3 to) {
 	picked.clear();
-	int start_x = glm::min(xWhenBlend, xpos);
-	int size_x = glm::abs(xWhenBlend - xpos);
-	int start_y = glm::min(600 - yWhenBlend, 600 - ypos);
-	int size_y = glm::abs(yWhenBlend - ypos);
-	std::cout << "start_x  " << start_x << "start y  " << start_y << std::endl;
-	std::cout << "end_x  " << start_x + size_x << "start y  " << start_y + size_y << std::endl;
-	//unsigned char* data = new unsigned char[size_x * 4];
-	for (auto& v : leftShapesPos) {
-		if (v[0] > start_x && v[0]<(start_x + size_x) && v[1] > start_y && v[1] < (start_y + size_y)) {
-			picked.insert(v[2]);
+	for (int i = 0; i < leftShapesPos.size();i++) {
+		if ((leftShapesPos[i].x >= glm::min(to.x, from.x) && leftShapesPos[i].x <= glm::max(to.x,from.x))
+			&& (leftShapesPos[i].y >= glm::min(to.y, from.y) && leftShapesPos[i].y <= glm::max(to.y, from.y))) {
+				picked.insert(23+i);
+		}
+		else {
+			std::cout << "shape  x " << leftShapesPos[i].x << " y  " << leftShapesPos[i].y << " z " << leftShapesPos[i].z << std::endl;
 		}
 	}
 	for (auto& i : picked) {
@@ -208,19 +210,22 @@ void bezier::updatePickedShapes(int xWhenBlend, int xpos,int yWhenBlend,int ypos
 	}
 }
 
-void bezier::pickedMove(double xpos, double ypos) {
+void bezier::pickedMove(double xpos, double ypos,float zoomCo) {
 		int viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
-		offset_x = (xpos - old_x) * 0.0045f;
-		offset_y = (old_y - ypos) * 0.0045f;
-		old_x = xpos;
-		old_y = ypos;
+		offset_x = (xpos - old_x) * 0.0045f * zoomCo;
+		offset_y = (old_y - ypos) * 0.0045f * zoomCo;
 		for (auto& p : picked) {
 			pickedShape = p;
 			ShapeTransformation(xTranslate, offset_x);
 			ShapeTransformation(yTranslate, offset_y);
+			leftShapesPos[pickedShape - 23].x += offset_x;
+			leftShapesPos[pickedShape - 23].y += offset_y;
 			pickedShape = -1;
 		}
+		old_x = xpos;
+		old_y = ypos;
+
 }
 
 void bezier::setNewOffsetWithRotate(float x, float y)

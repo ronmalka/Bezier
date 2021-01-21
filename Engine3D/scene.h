@@ -71,12 +71,13 @@ public:
 	inline void ZeroShapeTrans(int shpIndx) { shapes[shpIndx]->ZeroTrans(); }
 	inline int getShapeSize() { return shapes.size(); }
 	bool drawPlane = true;
+	std::vector<Shape*> shapes;
+
 
 private:
 	float depth;
 
 protected:
-	std::vector<Shape*> shapes;
 	std::vector<Shader*> shaders;
 	std::vector<int> chainParents;
 	std::vector<Texture*> textures;

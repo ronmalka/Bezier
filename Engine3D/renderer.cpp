@@ -3,6 +3,8 @@
 #include "glm/glm.hpp";
 #include <array>
 #include <iostream>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 
 Renderer::Renderer()
@@ -159,6 +161,20 @@ void Renderer::AddViewport(int left, int bottom, int width, int height)
 	viewports.push_back(glm::ivec4(left, bottom, width, height));
 	glViewport(left, bottom, width, height);
 
+}
+
+glm::vec3 Renderer::DoUnProject(glm::vec3 winloc)
+{
+	glm::mat4 Projection = cameras[0]->GetViewProjection();
+	glm::mat4 Model = glm::inverse(cameras[0]->MakeTrans());
+	return glm::unProject(winloc,Model,Projection, viewports[0]);
+}
+
+glm::vec3 Renderer::DoProject(glm::vec3 objloc)
+{
+	glm::mat4 Projection = cameras[0]->GetViewProjection();
+	glm::mat4 Model = glm::inverse(cameras[0]->MakeTrans());
+	return glm::project(objloc, Model, Projection, viewports[0]);
 }
 
 unsigned int Renderer::AddBuffer(int infoIndx, bool stencil)

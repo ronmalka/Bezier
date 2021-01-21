@@ -16,10 +16,8 @@ public:
 	void Motion();
 	void updatePressedPos(double xpos, double ypos);
 	void whenBlend(double xpos, double ypos);
-	void setNewOffset(double x, double y,bool is3D,bool isRotate);
-	void updatePickedShapes();
-	void updatePickedShapes(int xWhenBlend, int xpos, int yWhenBlend, int ypos);
-	void pickedMove(double xpos, double ypos);
+	void updatePickedShapes(glm::vec3 from, glm::vec3 to);
+	void pickedMove(double xpos, double ypos, float zoomCo);
 	void setNewOffsetWithRotate(float x, float y);
 	void setNewOffsetWithChilds(double x, double y);
 	unsigned int TextureDesine(int width, int height);
@@ -28,13 +26,14 @@ public:
 	inline void SetCounter() { counter = tmp; }
 	inline Bezier1D* get1D() { return bezier1D; }
 	void UpdatePosition( float xpos, float ypos);
+	void setNewOffset(double xpos, double ypos, bool is3D, bool isRotate, float zoomCo);
 	std::vector<int> FindChilds(int parent);
 	void AlignPoints();
 	int xPos, yPos;
 	int xWhenBlend, yWhenBlend;
 	int toUpdatePicked = 0;
 	std::set<int> picked;
-	std::vector<std::vector<int>> leftShapesPos;
+	std::vector<glm::vec3> leftShapesPos;
 private:
 	unsigned int counter;
 	unsigned int tmp;
