@@ -14,4 +14,3 @@ void main()
 {             
     gl_FragColor = texture(skybox, lookat);
 }  
-

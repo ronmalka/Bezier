@@ -73,10 +73,25 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		{
 			double x2, y2;
 			glfwGetCursorPos(window, &x2, &y2);
+
+			
+			//std::cout << "x point0: " << scn->GetBezier1D()->GetControlPoints()[0].x << std::endl;
+			//std::cout << "y point0: " << scn->GetBezier1D()->GetControlPoints()[0].y << std::endl;
+			//std::cout << "x point3: " << scn->GetBezier1D()->GetControlPoints()[3].x << std::endl;
+			//std::cout << "y point3: " << scn->GetBezier1D()->GetControlPoints()[3].y << std::endl;
+			//std::cout << "x point6: " << scn->GetBezier1D()->GetControlPoints()[6].x << std::endl;
+			//std::cout << "y point6: " << scn->GetBezier1D()->GetControlPoints()[6].y << std::endl;
+			//std::cout << "x point9: " << scn->GetBezier1D()->GetControlPoints()[9].x << std::endl;
+			//std::cout << "y point9: " << scn->GetBezier1D()->GetControlPoints()[9].y << std::endl;
+
+			//check if inside convex hull in the 2D area
+			
+
 			if (rndr->Picking((int)x2, (int)y2))
 			{
+				
 				std::cout << "picked: " << scn->GetPickedShape() << std::endl;
-				if (scn->GetPickedShape() > 1 && scn->GetPickedShape() <= 21) {//Control Points
+				if (scn->GetPickedShape() > 1 && scn->GetPickedShape() < 21) {//Control Points
 					int id = (scn->GetPickedShape() - 2) % 3;
 					if (id != 0) {
 						HandleInsidePoints(rndr, scn, button , x2  , y2);
@@ -107,6 +122,12 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					}
 				}
 			}
+			else if (x2 > 600 && button == GLFW_MOUSE_BUTTON_LEFT)
+			{
+				scn->HandleConvexHull((((x2 - 600) / 600) - 0.5) * 2, ((1 - y2 / 600) - 0.5) * 2);
+
+			}
+
 		}
 	}
 	void reDrawAll(int points, Scene* scn) {
@@ -144,11 +165,12 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 			}
 		}
 		else {
+			float scale;
 			if (yoffset > 0) {
-				rndr->MoveCamera(1, scn->zTranslate, 0.4f);
+				rndr->MoveCamera(0, scn->zTranslate, 0.4f);
 			}
 			else {
-				rndr->MoveCamera(1, scn->zTranslate, -0.4f);
+				rndr->MoveCamera(0, scn->zTranslate, -0.4f);
 			}
 		}
 		
@@ -303,7 +325,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				scn->AddShape(scn->GetBezier1D()->GetSegmentsNum(), scn->GetBezier1D()->GetControlPoints(), -1, scn->TRIANGLES); // Add Bezier2D To Scene
 				scn->RemoveShapeViewport(globalID, 1);
 				scn->AddShapeViewport(globalID, 0);
-				scn->SetShapeShader(globalID, 1);
+				scn->SetShapeShader(globalID, 5);
 				scn->SetShapeMaterial(globalID, 1);
 				scn->SetPickedShape(globalID - 1);
 				scn->ShapeTransformation(scn->xTranslate, 0.3f);
@@ -326,31 +348,36 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				darwNewBezier1D(scn, 6);
 				break;
 			case GLFW_KEY_LEFT:
-				scn->ZeroTrans();
-				rndr->MoveCamera(0, rndr->yRotate, -0.8f);
+				rndr->MoveCamera(0, rndr->zTranslate, -10.0f);
+				rndr->MoveCamera(0, rndr->yRotate, 0.8f);
+				rndr->MoveCamera(0, rndr->zTranslate, 10.0f);
 				break;
 			case GLFW_KEY_RIGHT:
-				scn->ZeroTrans();
-				rndr->MoveCamera(0, rndr->yRotate, 0.8f);
+				rndr->MoveCamera(0, rndr->zTranslate, -10.0f);
+				rndr->MoveCamera(0, rndr->yRotate, -0.8f);
+				rndr->MoveCamera(0, rndr->zTranslate, 10.0f);
 				break;
 			case GLFW_KEY_UP:
-				scn->ZeroTrans();
-				rndr->MoveCamera(0, rndr->zRotate, 0.8);
+				rndr->MoveCamera(0, rndr->zTranslate, -10.0f);
+				rndr->MoveCamera(0, rndr->xRotate, 0.8);
+				rndr->MoveCamera(0, rndr->zTranslate, 10.0f);
 				break;
 			case GLFW_KEY_DOWN:
-				scn->ZeroTrans();
-				rndr->MoveCamera(0, rndr->zRotate, -0.8);
+				rndr->MoveCamera(0, rndr->zTranslate, -10.0f);
+				rndr->MoveCamera(0, rndr->xRotate, -0.8);
+				rndr->MoveCamera(0, rndr->zTranslate, 10.0f);
+				break;
 			case GLFW_KEY_R:
-				rndr->MoveCamera(0, rndr->yRotate, 0.8);
+				rndr->MoveCamera(0, rndr->xTranslate, 0.8);				
 				break;
 			case GLFW_KEY_L:
-				rndr->MoveCamera(0, rndr->yRotate, -0.8);
+				rndr->MoveCamera(0, rndr->xTranslate, -0.8);
 				break;
 			case GLFW_KEY_D:
-				rndr->MoveCamera(0, rndr->xRotate, -0.8);
+				rndr->MoveCamera(0, rndr->yTranslate, -0.8);
 				break;
 			case GLFW_KEY_U:
-				rndr->MoveCamera(0, rndr->xRotate, 0.8);
+				rndr->MoveCamera(0, rndr->yTranslate, 0.8);
 				break;
 			case GLFW_KEY_B:
 				rndr->MoveCamera(0, rndr->zTranslate, 0.1);

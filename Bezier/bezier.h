@@ -7,6 +7,7 @@ class bezier : public Scene
 {
 public:
 	
+
 	bezier();
 	void Init();
 	void Update(const glm::mat4& Projection, const glm::mat4& View, const glm::mat4& Model, const int shaderIndx);	
@@ -22,6 +23,7 @@ public:
 	void setNewOffsetWithRotate(float x, float y);
 	void setNewOffsetWithChilds(double x, double y);
 	unsigned int TextureDesine(int width, int height);
+	virtual void Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags);
 	~bezier(void);
 	inline void ResetCounter() { tmp = counter; counter = 0; }
 	inline void SetCounter() { counter = tmp; }
@@ -37,6 +39,7 @@ public:
 	inline bool getCont() { return cont; }
 	inline void setCont() { cont = !cont; }
 	void movePointWithAngel(float parentX, float parentY, float angle);
+	void HandleConvexHull(float xpos, float ypos);
 private:
 	unsigned int counter;
 	unsigned int tmp;

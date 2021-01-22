@@ -107,10 +107,15 @@ void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, i
 			else {
 				Model = Normal * Model;
 			}
-			if (shaderIndx > 0)
+			if (shaderIndx > 0 && shaderIndx !=4)
 			{
 				Update(Projection, View, Model, shapes[pickedShape]->GetShader());
 				shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
+			}
+			else if (shaderIndx == 4)
+			{
+				Update(Projection, View, Model, 4);
+				shapes[pickedShape]->Draw(shaders[4], false);
 			}
 			else
 			{ //picking

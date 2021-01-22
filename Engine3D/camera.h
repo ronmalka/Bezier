@@ -24,11 +24,14 @@ public:
 		return relationWH;}
 	
 	void SetProjection(float fov, float relationWH);
+
+	void zoomOrth(float scale);
 protected:
 private:
 	glm::mat4 projection;
 	float fov, relationWH;
 	float far,near;
+	float scale = 1.0;
 };
 
 #endif

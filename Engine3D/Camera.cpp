@@ -28,3 +28,8 @@
 		this->relationWH = relationWH;
 	}
 
+	void Camera::zoomOrth(float scale)
+	{
+		this->projection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, near * scale, far);
+	}
+
