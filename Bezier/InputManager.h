@@ -14,6 +14,7 @@ bool isRotate = false;
 std::set<int> picked;
 bool movepickeds = false;
 float zoomCo = 1.f;
+float twoDzoom = 0.f;
 int globalID = 23;
 
 void movePlane(Scene* scn,int action,float amt) {
@@ -151,10 +152,14 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		}
 		else {
 			if (yoffset > 0) {
-				rndr->MoveCamera(1, scn->zTranslate, 0.4f);
+				rndr->MoveCamera(1, scn->zTranslate, 0.2f);
+				twoDzoom += 0.2f;
 			}
 			else {
-				rndr->MoveCamera(1, scn->zTranslate, -0.4f);
+				if (twoDzoom > -1.6) {
+					rndr->MoveCamera(1, scn->zTranslate, -0.2f);
+					twoDzoom -= 0.2f;
+				}
 			}
 		}
 		
@@ -204,7 +209,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					int width = glm::abs((int)rndr->xWhenBlend - xpos);
 					int hight = glm::abs((int)rndr->yWhenBlend - ypos);
 					for (int i = 0; i < scn->leftShapesPos.size(); i++) {
-						glm::vec4 pos = scn->shapes[23 + i]->getTrans() * glm::vec4(0.f,0.f,0.f,1.f);
+						glm::vec4 pos = scn->shapes[23 + i]->MakeTrans() * glm::vec4(0.f,0.f,0.f,1.f);
 						glm::vec3 win_cor = rndr->DoProject(glm::vec3(pos.x,pos.y,pos.z));
 						if (win_cor.x >= x && win_cor.x <= x+width && win_cor.y >= y && win_cor.y <= y+width) {
 							scn->picked.insert(23+i);

@@ -145,22 +145,21 @@ void bezier::setNewOffset(double xpos, double ypos,bool is3D,bool isRotate,float
 	if (pickedShape != -1) {
 		int viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
-		offset_x = (xpos - old_x) * 0.0045f*zoomCo;
-		offset_y = (old_y - ypos) * 0.0045f*zoomCo;
+		offset_x = (xpos - old_x) *zoomCo;
+		offset_y = (old_y - ypos) *zoomCo;
 		if(!isRotate){ 
-			ShapeTransformation(xTranslate, offset_x);
-			ShapeTransformation(yTranslate, offset_y);
+			ShapeTransformation(xTranslate, offset_x* 0.0045f);
+			ShapeTransformation(yTranslate, offset_y* 0.0045f);
 		}
 		else {
-			//ShapeTransformation(xRotate, -offset_x*100.f);
-			ShapeTransformation(yMyRotate, -offset_y*100.f);
+			glm::vec4 objLoc = shapes[pickedShape]->MakeTrans()*glm::vec4(0.f,0.f,0.f,1.f);
+			MyTranslate(glm::vec3 (-objLoc.x, -objLoc.y, -objLoc.z),1);
+			ShapeTransformation(xRotate, offset_y/2.2f);
+			ShapeTransformation(yRotate, offset_x/ 2.2f);
+			MyTranslate(glm::vec3(objLoc.x, objLoc.y, objLoc.z), 1);
 		}
 		
-		if(!is3D) bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
-		else {
-			leftShapesPos[pickedShape - 23].x += offset_x;
-			leftShapesPos[pickedShape - 23].y += offset_y;
-		}
+		if(!is3D) bezier1D->CurveUpdate(pickedShape - 2, offset_x * 0.0045f, offset_y * 0.0045f);
 		old_x = xpos;
 		old_y = ypos;
 

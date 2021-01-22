@@ -29,7 +29,7 @@ void Renderer::Init(Scene* scene,  std::list<int>xViewport,  std::list<int>yView
 {
 	scn = scene;
 	MoveCamera(0, zTranslate, 10);
-	MoveCamera(1, zTranslate, 2.1f);
+	MoveCamera(1, zTranslate, 2.8f);
 	glm::ivec4 viewport;
 	glGetIntegerv(GL_VIEWPORT, &viewport[0]);
 	//drawInfo.push_back(new DrawInfo(0, 0, 0, 0,   inAction | toClear | blackClear | depthTest));

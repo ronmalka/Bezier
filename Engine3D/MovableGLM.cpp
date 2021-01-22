@@ -55,3 +55,7 @@ void MovableGLM::ZeroTrans()
 	rot = glm::mat4(1);
 	scl = glm::mat4(1);
 }
+
+void MovableGLM::MoveAround(float angle, const glm::vec3& vec) {
+
+}

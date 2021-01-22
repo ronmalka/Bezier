@@ -82,7 +82,7 @@ void Bezier2D::make2DCtrlPoints(int curveIndex, float startAngle, std::vector<st
 	for (int j = 0; j < 4; ++j) {
 		std::vector<glm::vec3> lvl;
 		for (int i = 0; i < 4; ++i) {
-			lvl.push_back(glm::rotateY(pts[i], startAngle + (30.0f) * j));
+			lvl.push_back(glm::rotateY(pts[i]/1.5f, startAngle + (30.0f) * j));
 		}
 		grid.push_back(lvl);
 	}
