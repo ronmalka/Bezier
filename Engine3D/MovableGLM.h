@@ -14,6 +14,7 @@ public:
 	void MoveAround(float angle, const glm::vec3& vec);
 	inline glm::mat4 getTrans() { return trans; }
 	inline glm::mat4 getRot() { return rot; }
+	inline glm::mat4 getScl() { return scl; }
 private:
 	glm::mat4 trans;
 	glm::mat4 rot;

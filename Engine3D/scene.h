@@ -33,7 +33,7 @@ public:
 	int AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned int size);
 	void ZeroShapesTrans();
 
-	virtual void Update(const glm::mat4& Projection, const glm::mat4& View, const glm::mat4& Model, const int shaderIndx) = 0;
+	virtual void Update(const glm::mat4& Projection, const glm::mat4& View, const glm::mat4& Model, const int shaderIndx) {};
 	virtual void WhenTranslate() {};
 	virtual void WhenRotate() {};
 	virtual void WhenPicked() {};

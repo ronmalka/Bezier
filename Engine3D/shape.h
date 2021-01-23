@@ -38,6 +38,8 @@ public:
 	inline void SetMaterial(const unsigned int id) { materialID = id; }
 
 	inline unsigned int GetMaterial() { return materialID; }
+	inline void setAngel(float angel) { this->angel = angel; }
+	inline float getAngel() { return this->angel; }
 
 	inline std::vector<glm::vec3>& GetControlPoints() { return controlPoints; }
 	inline void setRadius(float radius) { this->radius = radius; }
@@ -50,6 +52,8 @@ protected:
 	unsigned int mode;
 	MeshConstructor* mesh;
 	float radius = -1.; // PI/2 limit of arctan
+	float angel = 0.;
+
 };
 
 

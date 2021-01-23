@@ -38,6 +38,8 @@ void bezier::Init()
 	AddShader("../res/shaders/basicShaderTex");
 	AddShader("../res/shaders/basicShader");
 	AddShader("../res/shaders/basicShader2");
+	AddShader("../res/shaders/basicShader3");
+	AddShader("../res/shaders/basicShader4");
 	AddTexture("../res/textures/box0.bmp", 2);
 	AddTexture("../res/textures/", 3);
 	AddTexture("../res/textures/grass.bmp", 2);
@@ -100,7 +102,7 @@ void bezier::Update(const glm::mat4& Projection, const glm::mat4& View, const gl
 	if(counter)
 		counter++;
 	Shader *s = shaders[shaderIndx];
-
+	new_angel = true;
 	float r = ((pickedShape + 1) & 0x000000FF) >>  0;
 	float g = ((pickedShape + 1) & 0x0000FF00) >>  8;
 	float b = ((pickedShape + 1) & 0x00FF0000) >> 16;
@@ -129,7 +131,6 @@ void bezier::updatePressedPos(double xpos, double ypos) {
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	old_x = xpos;
 	old_y = ypos;
-	new_radius = true;
 }
 
 
@@ -166,6 +167,39 @@ void bezier::setNewOffset(double xpos, double ypos,bool is3D,bool isRotate,float
 	}
 }
 
+void bezier::movePointWithAngel(float parentX, float parentY, float angle)
+{
+	int parentID = chainParents[pickedShape];
+	std::vector<int> childs = FindChilds(parentID);
+
+
+	if (childs.size() == 1)
+	{
+		return;
+	}
+	int tmpPicked = pickedShape;
+	pickedShape = (pickedShape == childs[0]) ? childs[1] : childs[0];
+
+	ZeroTrans();
+	ShapeTransformation(xTranslate, -parentX);
+	ShapeTransformation(yTranslate, -parentY);
+	ShapeTransformation(zRotate, angle);
+	ShapeTransformation(xTranslate, parentX);
+	ShapeTransformation(yTranslate, parentY);
+
+
+	glm::vec4 v = glm::vec4(0., 0., 1., 1.);
+	glm::vec4 res = (shapes[pickedShape]->getRot() * shapes[pickedShape]->getTrans() * shapes[pickedShape]->getScl()) * v;
+
+	bezier1D->setControlX(pickedShape - 2, 0.);
+	bezier1D->setControlY(pickedShape - 2, 0.);
+
+	bezier1D->CurveUpdate(pickedShape - 2, res.x, res.y);
+
+	pickedShape = tmpPicked;
+}
+
+
 void setNewOffsetByLoc(glm::vec4 &res, float x, float y, float x2, float y2)
 {
 	std::cout << "x: " << x << " y: " << y << std::endl;
@@ -193,21 +227,6 @@ void setNewOffsetByLoc(glm::vec4 &res, float x, float y, float x2, float y2)
 	}
 }
 
-void bezier::updatePickedShapes(glm::vec3 from,glm::vec3 to) {
-	picked.clear();
-	for (int i = 0; i < leftShapesPos.size();i++) {
-		if ((leftShapesPos[i].x >= glm::min(to.x, from.x) && leftShapesPos[i].x <= glm::max(to.x,from.x))
-			&& (leftShapesPos[i].y >= glm::min(to.y, from.y) && leftShapesPos[i].y <= glm::max(to.y, from.y))) {
-				picked.insert(23+i);
-		}
-		else {
-			std::cout << "shape  x " << leftShapesPos[i].x << " y  " << leftShapesPos[i].y << " z " << leftShapesPos[i].z << std::endl;
-		}
-	}
-	for (auto& i : picked) {
-		std::cout << i << std::endl;
-	}
-}
 
 void bezier::pickedMove(double xpos, double ypos,float zoomCo) {
 		int viewport[4];
@@ -218,8 +237,6 @@ void bezier::pickedMove(double xpos, double ypos,float zoomCo) {
 			pickedShape = p;
 			ShapeTransformation(xTranslate, offset_x);
 			ShapeTransformation(yTranslate, offset_y);
-			leftShapesPos[pickedShape - 23].x += offset_x;
-			leftShapesPos[pickedShape - 23].y += offset_y;
 			pickedShape = -1;
 		}
 		old_x = xpos;
@@ -229,88 +246,54 @@ void bezier::pickedMove(double xpos, double ypos,float zoomCo) {
 
 void bezier::setNewOffsetWithRotate(float x, float y)
 { 
+	float parentX = bezier1D->getControlX(chainParents[pickedShape] - 2);
+	float parentY = bezier1D->getControlY(chainParents[pickedShape] - 2);
+	float childX = bezier1D->getControlX(pickedShape - 2);
+	float childY = bezier1D->getControlY(pickedShape - 2);
+	float angleLimit = 0.5;
+	float angle;
 
-	float parentX = bezier1D->getControlX(chainParents[pickedShape]-2);
-	float parentY = bezier1D->getControlY(chainParents[pickedShape]-2);
-	float childX = bezier1D->getControlX(pickedShape -2);
-	float childY = bezier1D->getControlY(pickedShape-2);
 
-	
+	if (new_angel)
+	{
+		angle = glm::atan(childY - parentY, parentX - childX);
+		angle = (glm::abs(angle) < angleLimit) ? angleLimit : angle;
+		bezier1D->setAngel(angle);
+	}
+	else
+	{
+		angle = bezier1D->getAngel();
+	}
 
-	
-
-	//glm::vec3 child = glm::vec3(childX, childY,0);
-	//glm::vec3 parent = glm::vec3(parentX, parentY,0);
-
-	//std::cout << "new_x2222: " << childX << " new_y222: " << childY  << std::endl;
-	//glm::vec3 radius = glm::normalize(parent - child);
-	
-	float angle = glm::atan(parentY - childY, parentX - childX);
-	angle = (old_x < x) || (old_y < y)? - angle : angle;
+	angle = (old_x < x) ? -angle : angle;
 	old_x = x;
 	old_y = y;
 
-	std::cout << "O angle: " << angle << std::endl;
-	//std::cout << "N angle: " << angle << std::endl;
-	//child = (parent + glm::rotate(parent, angle, glm::vec3(0.0f, 0.0f, 1.0f)));
-	//std::cout << "O x: " << childX << " y: " << childY << std::endl;
-	/*childX = child.x;
-	childY = child.y;*/
-	//std::cout << "N x: " << childX << " y: " << childY << std::endl;
-	//angle = (x < parentX) ? -angle : angle;
-	//float new_x = (glm::cos(angle) * radius);
-	//float new_y = (glm::sin(angle) * radius);
-
-
-	//std::cout << "new_x111: " << old_x << " new_y111: " << old_y  << std::endl;
-	/*ShapeTransformation(xTranslate, new_x);
-	ShapeTransformation(yTranslate, new_y);
-	bezier1D->CurveUpdate(pickedShape - 2, new_x, new_y);*/
-
-	
-
-	//std::cout << "new_x: " <<  new_x << " new_y: " << new_y << " angle: " << angle << std::endl;
-	//ZeroTrans();
+	ZeroTrans();
 	ShapeTransformation(xTranslate, -parentX);
 	ShapeTransformation(yTranslate, -parentY);
 
-	
-
-
 	ShapeTransformation(zRotate, angle);
-
-
-
 
 	ShapeTransformation(xTranslate, parentX);
 	ShapeTransformation(yTranslate, parentY);
-	
-	
 
-	/*printMat(shapes[pickedShape]->getTrans());*/
-	printMat(shapes[pickedShape]->MakeTrans());
-	glm::vec4 v = glm::vec4(0., 0., 0., 1.);
-	glm::vec4 res = (shapes[pickedShape]->getTrans()) * v ;
+	glm::vec4 v = glm::vec4(0., 0., 1., 1.);
 
+	glm::vec4 res = (shapes[pickedShape]->getRot() * shapes[pickedShape]->getTrans() * shapes[pickedShape]->getScl()) * v;
 
-	/*ShapeTransformation(xTranslate, -1 - res.x);
-	ShapeTransformation(yTranslate, -1 - res.y);*/
-	//res.y = (childY + res.y > parentY) ? -res.y : res.y;
-
-	//setNewOffsetByLoc(res, parentX, parentX, childX, childY);
-
-	//old_x = new_x;
-	//old_y = new_y;
 	bezier1D->setControlX(pickedShape - 2, 0.);
-	bezier1D->setControlY(pickedShape - 2,0.);
+	bezier1D->setControlY(pickedShape - 2, 0.);
 
-	bezier1D->CurveUpdate(pickedShape - 2,  res.x, res.y);
+	bezier1D->CurveUpdate(pickedShape - 2, res.x, res.y);
 
-	//new_radius = false;
-	/*childX = bezier1D->getControlX(pickedShape - 2);
-	childY = bezier1D->getControlY(pickedShape - 2);
-	radius = glm::distance(glm::vec2(parentX, parentY), glm::vec2(childX, childY));*/
-	//std::cout << "new_x: " << childX  << " new_y: " << childY  << " radius: " << radius << std::endl;
+	new_angel = false;
+
+	if (cont)
+	{
+		movePointWithAngel(parentX, parentY, angle);
+	}
+
 	
 }
 
@@ -350,14 +333,8 @@ void bezier::AlignPoints()
 		float y_off = d - childY;
 		Shape* child = shapes[childs[0]];
 
-		child->MyTranslate(glm::vec3(x_off, 0, 0), 1);
-		child->MyTranslate(glm::vec3(0, y_off, 0), 1);
-
-		/*bezier1D->setControlX(childs[0] - 2, parentX);
-		bezier1D->setControlY(childs[0] - 2, d);*/
-
-
-
+		child->MyTranslate(glm::vec3(x_off, 0, 0), 0);
+		child->MyTranslate(glm::vec3(0, y_off, 0), 0);
 		bezier1D->CurveUpdate(childs[0] - 2, x_off, y_off);
 	}
 
@@ -376,19 +353,8 @@ void bezier::AlignPoints()
 		float new_y = parentY + (glm::sin(angle) * d2)   ;
 
 		Shape* child = shapes[childs[1]];
-		float nd2 = glm::distance(glm::vec2(childX_2, childY_2), glm::vec2(parentX, parentY));
-		std::cout << "child1: " << childs[0] << " child2: " << childs[1] << std::endl;
-		std::cout << "parentX: " << parentX << " parentY: " << parentY << std::endl;
-		std::cout << "childX_1: " << childX_1 << " childY_1: " << childY_1 << std::endl;
-		std::cout << "childX_2: " << childX_2 << " childY_2: " << childY_2 << std::endl;
-		std::cout << "nd2: " << nd2 << " d2: " << d2 << std::endl;
-		std::cout << "new_x: " << new_x << " new_y: " << new_y << std::endl;
-		std::cout << "cos: " << glm::cos(angle) << " sin: " << glm::sin(angle) << std::endl;
-		std::cout << "angle: " << angle <<  std::endl;
-
 		child->ZeroTrans();
 		child->MyTranslate(glm::vec3(new_x, new_y, 0), 0);
-	
 
 		bezier1D->setControlX(childs[1] - 2, 0. );
 		bezier1D->setControlY(childs[1] - 2, 0. );
@@ -416,6 +382,7 @@ void bezier::setNewOffsetWithChilds(double x, double y)
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	offset_x = (x - old_x) * 0.0045f;
 	offset_y = (old_y - y) * 0.0045f;
+	offset_y = ((parentY + offset_y) < 0) ? 0 : offset_y;
 	old_x = x;
 	old_y = y;
 	ShapeTransformation(xTranslate, offset_x);
@@ -483,6 +450,66 @@ unsigned int bezier::TextureDesine(int width, int height)
 	return(textures.size() - 1);
 }
 
+void bezier::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags) {
+
+	float trans = 3.0;
+	float scale = 0.85;
+
+	if (pickedShape > 22)
+	{
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+	}
+
+	Scene::Draw(shaderIndx, Projection, View, viewportIndx, flags);
+
+	if (pickedShape > 22)
+	{
+		shapes[pickedShape]->MyTranslate(glm::vec3(0, 0, trans), 0);
+		shapes[pickedShape]->MyScale(glm::vec3(scale, scale, scale));
+
+		glStencilFunc(GL_EQUAL, 1, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, 0);
+
+
+		Scene::Draw(4, Projection, View, viewportIndx, flags);
+
+
+		shapes[pickedShape]->MyScale(glm::vec3(1 / scale, 1 / scale, 1 / scale));
+		shapes[pickedShape]->MyTranslate(glm::vec3(0, 0, -trans), 0);
+
+
+		glStencilFunc(GL_ALWAYS, 0, 0xFF);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	}
+
+
+}
+void bezier::HandleConvexHull(float xpos, float ypos)
+{
+	if (bezier1D->HandleConvexHull(xpos, ypos))
+	{
+		for (size_t i = 0; i < bezier1D->GetControlPoints().size(); i++)
+		{
+			RemoveShapeViewport(i + 2, 1);
+			ZeroShapeTrans(i + 2);
+			SetShapeShader(i + 2, 1);
+
+			SetPickedShape(i + 2);
+			ShapeTransformation(xTranslate, bezier1D->GetControlPoints()[i].x);
+			ShapeTransformation(yTranslate, bezier1D->GetControlPoints()[i].y);
+
+			SetPickedShape(-1);
+			AddShapeViewport(i + 2, 1);
+		}
+
+		GetBezier1D()->AddSegment(GetBezier1D()->GetSegmentsNum() + 1);
+	}
+
+
+
+}
 
 
 bezier::~bezier(void)

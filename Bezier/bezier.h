@@ -16,7 +16,6 @@ public:
 	void Motion();
 	void updatePressedPos(double xpos, double ypos);
 	void whenBlend(double xpos, double ypos);
-	void updatePickedShapes(glm::vec3 from, glm::vec3 to);
 	void pickedMove(double xpos, double ypos, float zoomCo);
 	void setNewOffsetWithRotate(float x, float y);
 	void setNewOffsetWithChilds(double x, double y);
@@ -33,7 +32,11 @@ public:
 	int xWhenBlend, yWhenBlend;
 	int toUpdatePicked = 0;
 	std::set<int> picked;
-	std::vector<glm::vec3> leftShapesPos;
+	virtual void Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags);
+	inline bool getCont() { return cont; }
+	inline void setCont() { cont = !cont; }
+	void movePointWithAngel(float parentX, float parentY, float angle);
+	void HandleConvexHull(float xpos, float ypos);
 private:
 	unsigned int counter;
 	unsigned int tmp;
@@ -42,7 +45,9 @@ private:
 	float old_y;
 	float offset_x;
 	float offset_y;
-	bool new_radius;
+	bool new_angel;
+	bool cont = false;
+
 
 };
 
