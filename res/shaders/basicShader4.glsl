@@ -50,5 +50,5 @@ vec3 calcColor()
 void main()
 {
 //gl_FragColor = vec4(1,0,0,1);
-	gl_FragColor = vec4((texture(sampler, texCoord0) * vec4(calcColor(),1.0)).xyz,1.0); //you must have gl_FragColor
+	gl_FragColor = vec4((texture(sampler, texCoord0) * vec4(calcColor(),0.5)).xyz,1.0); //you must have gl_FragColor
 }
