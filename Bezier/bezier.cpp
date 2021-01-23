@@ -153,11 +153,18 @@ void bezier::setNewOffset(double xpos, double ypos,bool is3D,bool isRotate,float
 			ShapeTransformation(yTranslate, offset_y* 0.0045f);
 		}
 		else {
-			glm::vec4 objLoc = shapes[pickedShape]->MakeTrans()*glm::vec4(0.f,0.f,0.f,1.f);
-			MyTranslate(glm::vec3 (-objLoc.x, -objLoc.y, -objLoc.z),1);
-			ShapeTransformation(xRotate, offset_y/2.2f);
-			ShapeTransformation(yRotate, offset_x/ 2.2f);
-			MyTranslate(glm::vec3(objLoc.x, objLoc.y, objLoc.z), 1);
+			if (!is3D) {
+				ShapeTransformation(xRotate, offset_y / 2.2f);
+				ShapeTransformation(yRotate, offset_x / 2.2f);
+			}
+			else {
+				glm::vec4 objLoc = shapes[pickedShape]->MakeTrans() * glm::vec4(0.f, 0.f, 0.f, 1.f);
+				MyTranslate(glm::vec3(-objLoc.x, -objLoc.y, -objLoc.z), 1);
+				ShapeTransformation(xRotate, offset_y / 2.2f);
+				ShapeTransformation(yRotate, offset_x / 2.2f);
+				MyTranslate(glm::vec3(objLoc.x, objLoc.y, objLoc.z), 1);
+
+			}
 		}
 		
 		if(!is3D) bezier1D->CurveUpdate(pickedShape - 2, offset_x * 0.0045f, offset_y * 0.0045f);
