@@ -14,6 +14,7 @@ bool isRotate = false;
 bool movepickeds = false;
 float zoomCo = 1.f;
 float twoDzoom = 0.f;
+float threeDzoom = 0.f;
 int globalID = 23;
 
 void movePlane(Scene* scn,int action,float amt) {
@@ -142,14 +143,18 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		bezier* scn = (bezier*)rndr->GetScene();
 		if (xpos < 600) {
 			if (yoffset > 0) {
-				rndr->MoveCamera(0, rndr->zTranslate, 0.4f);
-				movePlane(scn, scn->zTranslate, 0.4f);
-				zoomCo += 0.1f;
+				if (zoomCo < 10.2f) {
+					rndr->MoveCamera(0, rndr->zTranslate, 0.4f);
+					movePlane(scn, scn->zTranslate, 0.4f);
+					zoomCo += 0.2f;
+				}
 			}
 			else {
-				rndr->MoveCamera(0, scn->zTranslate, -0.4f);
-				movePlane(scn, scn->zTranslate, -0.4f);
-				zoomCo -= 0.1f;
+				if (zoomCo > -8.2f) {
+					rndr->MoveCamera(0, scn->zTranslate, -0.4f);
+					movePlane(scn, scn->zTranslate, -0.4f);
+					zoomCo -= 0.2f;
+				}
 			}
 		}
 		else {
