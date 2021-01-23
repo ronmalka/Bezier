@@ -356,18 +356,18 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				break;
 			case GLFW_KEY_UP:
 				rndr->MoveCamera(0, rndr->zTranslate, -10.0f);
-				movePlane(scn, scn->zTranslate, -10.0f);
-				rndr->MoveCamera(0, rndr->xRotate, 0.8f);
-				movePlane(scn, scn->xRotate, 0.8f);
+				rndr->MoveCamera(0, rndr->xRotate, 0.8);
 				rndr->MoveCamera(0, rndr->zTranslate, 10.0f);
+				movePlane(scn, scn->zTranslate, -10.0f);
+				movePlane(scn, scn->xRotate, 0.8f);
 				movePlane(scn, scn->zTranslate, 10.0f);
 				break;
 			case GLFW_KEY_DOWN:
 				rndr->MoveCamera(0, rndr->zTranslate, -10.0f);
-				movePlane(scn, scn->zTranslate, -10.0f);
-				rndr->MoveCamera(0, rndr->xRotate, -0.8f);
-				movePlane(scn, scn->xRotate, -0.8f);
+				rndr->MoveCamera(0, rndr->xRotate, -0.8);
 				rndr->MoveCamera(0, rndr->zTranslate, 10.0f);
+				movePlane(scn, scn->zTranslate, -10.0f);
+				movePlane(scn, scn->xRotate, -0.8f);
 				movePlane(scn, scn->zTranslate, 10.0f);
 				break;
 			case GLFW_KEY_R:
