@@ -1,15 +1,16 @@
 #version 330
 
-in vec3 position;
-in vec3 color;
-in vec3 normal;
-in vec2 texCoords;
+attribute vec3 position;
+attribute vec3 color;
+attribute vec3 normal;
+attribute vec2 texCoords;
 
 out vec2 texCoord0;
 out vec3 normal0;
 out vec3 color0;
 out vec3 position0;
 
+uniform mat4 Projection;
 uniform mat4 View;
 uniform mat4 Model;
 
@@ -20,5 +21,6 @@ void main()
 	color0 = color;
 	normal0 = (Model * vec4(normal, 0.0)).xyz;
 	position0 = vec3(Model * vec4(position, 1.0));
-	gl_Position = View * Model* vec4(position, 1.0); //you must have gl_Position
+	gl_Position = Projection*View *Model* vec4(position, 1.0); //you must have gl_Position
 }
+

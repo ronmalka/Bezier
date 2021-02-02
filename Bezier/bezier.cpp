@@ -207,34 +207,6 @@ void bezier::movePointWithAngel(float parentX, float parentY, float angle)
 }
 
 
-void setNewOffsetByLoc(glm::vec4 &res, float x, float y, float x2, float y2)
-{
-	std::cout << "x: " << x << " y: " << y << std::endl;
-	std::cout << "x2: " << x2 << " y2: " << y2 << std::endl;
-	if (x2 < x && y2 > y)
-	{
-		std::cout << "1: " << std::endl;
-		res.y = 1 - res.y;
-		
-	}
-	else if(x2 > x && y2 > y)
-	{
-		std::cout << "2: " << std::endl;
-	}
-	else if (x2 > x && y2 < y)
-	{
-		std::cout << "3: " << std::endl;
-		res.x = 1 - res.x ;
-		res.y = 1 - res.y  ;
-	}
-	else
-	{
-		std::cout << "4: " << std::endl;
-		//res.x = 1 - res.x;
-	}
-}
-
-
 void bezier::pickedMove(double xpos, double ypos,float zoomCo) {
 		int viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
@@ -355,7 +327,6 @@ void bezier::AlignPoints()
 
 		float angle = glm::atan(parentY - childY_1, parentX - childX_1);
 		float d2 = glm::distance(glm::vec2(childX_2, childY_2), glm::vec2(parentX, parentY));
-		std::cout << "N angle: " << angle << std::endl;
 	    float new_x = parentX + (glm::cos(angle) * d2 )  ;
 		float new_y = parentY + (glm::sin(angle) * d2)   ;
 
@@ -460,36 +431,50 @@ unsigned int bezier::TextureDesine(int width, int height)
 void bezier::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags) {
 
 	float trans = 3.0;
-	float scale = 0.85;
+	float scale = 1.1;
+	float scaleZ = 0.2;
+	bool shouldDelete = false;
+	int pckedToDel = -1;
 
-	if (pickedShape > 22)
+	/*if (pickedShape > 22)
 	{
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-	}
+		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	}*/
+	
+	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 
 	Scene::Draw(shaderIndx, Projection, View, viewportIndx, flags);
 
-	if (pickedShape > 22)
+	if (pickedShape > 22 && !(picked.find(pickedShape) != picked.end()))
 	{
-		shapes[pickedShape]->MyTranslate(glm::vec3(0, 0, trans), 0);
-		shapes[pickedShape]->MyScale(glm::vec3(scale, scale, scale));
+		picked.insert(pickedShape);
+		shouldDelete = true;
+		pckedToDel = pickedShape;
+	}
 
+	for (int p : picked)
+	{
+		glStencilOp(GL_KEEP, GL_KEEP, GL_ZERO);
 		glStencilFunc(GL_EQUAL, 1, 0xFF);
-		glStencilOp(GL_KEEP, GL_KEEP, 0);
 
+		shapes[p]->MyScale(glm::vec3(scale, scale, scaleZ));
 
 		Scene::Draw(4, Projection, View, viewportIndx, flags);
 
+		shapes[p]->MyScale(glm::vec3(1 / scale, 1 / scale, 1 / scaleZ));
 
-		shapes[pickedShape]->MyScale(glm::vec3(1 / scale, 1 / scale, 1 / scale));
-		shapes[pickedShape]->MyTranslate(glm::vec3(0, 0, -trans), 0);
-
-
-		glStencilFunc(GL_ALWAYS, 0, 0xFF);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
+		glStencilFunc(GL_ALWAYS, 0, 0xFF);
 	}
+
+	if (shouldDelete)
+	{
+		std::set<int>::iterator it; it = picked.find(pickedShape);
+		picked.erase(it);
+	}
+
 
 
 }
