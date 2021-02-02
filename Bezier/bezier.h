@@ -25,6 +25,7 @@ public:
 	inline void SetCounter() { counter = tmp; }
 	inline Bezier1D* get1D() { return bezier1D; }
 	void UpdatePosition( float xpos, float ypos);
+	void moveXYZ(glm::vec4 objLoc, int dir);
 	void setNewOffset(double xpos, double ypos, bool is3D, bool isRotate, float zoomCo);
 	std::vector<int> FindChilds(int parent);
 	void AlignPoints();

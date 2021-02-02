@@ -142,6 +142,13 @@ void bezier::UpdatePosition(float xpos,  float ypos)
 	y =  1 - ypos / viewport[3]; 
 }
 
+void bezier::moveXYZ(glm::vec4 objLoc,int dir) {
+	objLoc *= dir;
+	ShapeTransformation(xTranslate, objLoc.x);
+	ShapeTransformation(yTranslate, objLoc.y);
+	ShapeTransformation(zTranslate, objLoc.z);
+}
+
 void bezier::setNewOffset(double xpos, double ypos,bool is3D,bool isRotate,float zoomCo) {
 	if (pickedShape != -1) {
 		int viewport[4];
@@ -159,10 +166,10 @@ void bezier::setNewOffset(double xpos, double ypos,bool is3D,bool isRotate,float
 			}
 			else {
 				glm::vec4 objLoc = shapes[pickedShape]->MakeTrans() * glm::vec4(0.f, 0.f, 0.f, 1.f);
-				MyTranslate(glm::vec3(-objLoc.x, -objLoc.y, -objLoc.z), 1);
+				moveXYZ(objLoc, -1);
 				ShapeTransformation(xRotate, offset_y / 2.2f);
 				ShapeTransformation(yRotate, offset_x / 2.2f);
-				MyTranslate(glm::vec3(objLoc.x, objLoc.y, objLoc.z), 1);
+				moveXYZ(objLoc, 1);
 
 			}
 		}
