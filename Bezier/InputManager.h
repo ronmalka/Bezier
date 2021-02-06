@@ -39,7 +39,7 @@ void HandleInsidePoints(Renderer* rndr, bezier* scn, int button, double x , doub
 	case  GLFW_MOUSE_BUTTON_LEFT:
 		if (!leftPressedInside)
 		{
-			std::cout << "here" << std::endl;
+			scn->setAngel(true);
 			leftPressedInside = !leftPressedInside;
 		}
 		break;

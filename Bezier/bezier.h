@@ -36,8 +36,10 @@ public:
 	virtual void Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags);
 	inline bool getCont() { return cont; }
 	inline void setCont() { cont = !cont; }
+	inline void setAngel(bool angel) { new_angel = angel; }
 	void movePointWithAngel(float parentX, float parentY, float angle);
 	void HandleConvexHull(float xpos, float ypos);
+
 private:
 	unsigned int counter;
 	unsigned int tmp;
