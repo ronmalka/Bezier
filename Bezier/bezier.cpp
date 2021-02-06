@@ -449,8 +449,8 @@ void bezier::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, 
 		glStencilFunc(GL_ALWAYS, 1, 0xFF);
 	}*/
 	
-	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	//glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+	//glStencilFunc(GL_ALWAYS, 1, 0xFF);
 
 	Scene::Draw(shaderIndx, Projection, View, viewportIndx, flags);
 
@@ -461,20 +461,20 @@ void bezier::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, 
 		pckedToDel = pickedShape;
 	}
 
-	for (int p : picked)
-	{
-		glStencilOp(GL_KEEP, GL_KEEP, GL_ZERO);
-		glStencilFunc(GL_EQUAL, 1, 0xFF);
+	//for (int p : picked)
+	//{
+	//	glStencilOp(GL_KEEP, GL_KEEP, GL_ZERO);
+	//	glStencilFunc(GL_EQUAL, 1, 0xFF);
 
-		shapes[p]->MyScale(glm::vec3(scale, scale, scaleZ));
+	//	shapes[p]->MyScale(glm::vec3(scale, scale, scaleZ));
 
-		Scene::Draw(4, Projection, View, viewportIndx, flags);
+	//	Scene::Draw(4, Projection, View, viewportIndx, flags);
 
-		shapes[p]->MyScale(glm::vec3(1 / scale, 1 / scale, 1 / scaleZ));
+	//	shapes[p]->MyScale(glm::vec3(1 / scale, 1 / scale, 1 / scaleZ));
 
-		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-		glStencilFunc(GL_ALWAYS, 0, 0xFF);
-	}
+	//	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	//	glStencilFunc(GL_ALWAYS, 0, 0xFF);
+	//}
 
 	if (shouldDelete)
 	{

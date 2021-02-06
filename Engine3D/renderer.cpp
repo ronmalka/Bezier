@@ -54,14 +54,17 @@ void Renderer::Init(Scene* scene,  std::list<int>xViewport,  std::list<int>yView
 			for (++yit; yit != yViewport.end(); ++yit)
 			{
 				viewports.push_back(glm::ivec4(*std::prev(xit), *std::prev(yit), *xit - *std::prev(xit), *yit - *std::prev(yit)));
-				drawInfo.push_back(new DrawInfo(indx, indx, 0, 0, indx < 1 | inAction | depthTest | stencilTest | blackClear ));
-				drawInfo.push_back(new DrawInfo(indx, indx, 1, 0, indx < 1  | depthTest ));
+				drawInfo.push_back(new DrawInfo(indx, indx, 0, 0, indx < 1 | inAction | depthTest | stencilTest | blackClear | clearDepth | clearStencil | passStencil));
+				drawInfo.push_back(new DrawInfo(indx, indx, 1, 0, indx < 1  | depthTest | clearDepth));
 				indx++;
 			}
 		}
 	}
 	viewports.push_back(viewports[0]);
+	viewports.push_back(viewports[0]);
 	drawInfo.push_back(new DrawInfo(2, 0, 2, 0,  inAction2 | scissorTest | blend ));
+	drawInfo.push_back(new DrawInfo(2, 0, 2, 0,  inStencil | stencilTest | blend ));
+	drawInfo.push_back(new DrawInfo(2, 0, 2, 0,  inStencil | stencilTest | scaleAbit | stencil2 ));
 }
 
 void Renderer::Draw(int infoIndx)
@@ -80,8 +83,23 @@ void Renderer::Draw(int infoIndx)
 	else
 		glDisable(GL_SCISSOR_TEST);
 
-	if (info.flags & stencilTest)
+	if (info.flags & stencilTest) {
 		glEnable(GL_STENCIL_TEST);
+		if (info.flags & passStencil) {
+			glStencilFunc(GL_ALWAYS,1,0xFF);
+			glStencilOp(GL_KEEP,GL_KEEP,GL_INCR);
+		}
+		else{
+			if (info.flags & stencil2) {
+				glStencilFunc(GL_EQUAL, 1, 0xFF);
+				glStencilOp(GL_KEEP, GL_KEEP, GL_ZERO);
+			}
+			else {
+				glStencilFunc(GL_EQUAL, 0, 0xFF);
+				glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+			}
+		}
+	}
 	else
 		glDisable(GL_STENCIL_TEST);
 
@@ -104,11 +122,11 @@ void Renderer::Draw(int infoIndx)
 	if (info.flags & toClear)
 	{
 		if (info.flags & blackClear)
-			Clear(0, 0, 0, 0);
+			Clear(0, 0, 0, 0,info.flags);
 		else
-			Clear(1, 1, 1, 1);
+			Clear(1, 1, 1, 1,info.flags);
 	}
-	scn->Draw(info.shaderIndx, Projection, View, info.viewportIndx, debugMode);
+	scn->Draw(info.shaderIndx, Projection, View, info.viewportIndx, info.flags);
 
 }
 
@@ -116,7 +134,8 @@ void Renderer::DrawAll()
 {
 	for (int i =   0; i < drawInfo.size(); i++)
 	{
-		if (!(drawInfo[i]->flags & (inAction | inAction2)) || (drawInfo[i]->flags & (isClicked & inAction2))) // || (drawInfo[i]->flags & (isClicked & inAction2))
+		if (!(drawInfo[i]->flags & (inAction | inAction2 | inStencil)) || (drawInfo[i]->flags & (isClicked & inAction2))
+			|| (drawInfo[i]->flags & (isStencil & inStencil))) // || (drawInfo[i]->flags & (isClicked & inAction2))
 			Draw( i);
 	}
 }
@@ -299,11 +318,11 @@ Renderer::~Renderer()
 	
 }
 
-void Renderer::Clear(float r, float g, float b, float a)
+void Renderer::Clear(float r, float g, float b, float a,unsigned int flags)
 {
 	glClearColor(r, g, b, a);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | ((GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) & flags));
 }
 
 void Renderer::ActionDraw()

@@ -98,6 +98,16 @@ void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, i
 
 	for (pickedShape = 0; pickedShape < shapes.size(); pickedShape++)
 	{
+		/*if (flags & 8192) {
+			if (pickedShape >= 23) {
+				shapes[pickedShape]->MyScale(glm::vec3(1.2f, 1.2f, 1.2f));
+
+				Update(Projection, View, Normal * shapes[pickedShape]->MakeTrans(), shapes[pickedShape]->GetShader());
+				shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
+
+				shapes[pickedShape]->MyScale(glm::vec3(1 / 1.2f, 1 / 1.2f, 1 / 1.2f));
+			}
+		}*/
 		if (shapes[pickedShape]->Is2Render(viewportIndx))
 		{
 			glm::mat4 Model =  shapes[pickedShape]->MakeTrans();
@@ -107,15 +117,10 @@ void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, i
 			else {
 				Model = Normal * Model;
 			}
-			if (shaderIndx > 0 && shaderIndx != 4)
+			if (shaderIndx > 0)
 			{
-				Update(Projection, View, Model, shapes[pickedShape]->GetShader());
-				shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
-			}
-			else if (shaderIndx == 4)
-			{
-				Update(Projection, View, Model, 4);
-				shapes[pickedShape]->Draw(shaders[4], false);
+					Update(Projection, View, Model, shapes[pickedShape]->GetShader());
+					shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
 			}
 			else
 			{ //picking

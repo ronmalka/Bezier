@@ -79,6 +79,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		bezier* scn = (bezier*)rndr->GetScene();
 		scn->picked.clear();
 		movepickeds = false;
+		rndr->isStencil = 0;
 		if (action == GLFW_PRESS)
 		{
 			double x2, y2;
@@ -100,6 +101,8 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					threeDPressed = true;
 					if (button == GLFW_MOUSE_BUTTON_LEFT) { isRotate = true; } 
 					else isRotate = false;
+					rndr->isStencil = rndr->inStencil;
+
 				}
 				else {
 					//Blending
@@ -322,6 +325,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				scn->AddShape(scn->GetBezier1D()->GetSegmentsNum(), scn->GetBezier1D()->GetControlPoints(), -1, scn->TRIANGLES); // Add Bezier2D To Scene
 				scn->RemoveShapeViewport(globalID, 1);
 				scn->AddShapeViewport(globalID, 0);
+				//scn->AddShapeViewport(globalID, 3);
 				scn->SetShapeShader(globalID, 5);
 				scn->SetPickedShape(globalID);
 				scn->ShapeTransformation(scn->zRotate,-90.f);

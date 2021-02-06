@@ -39,7 +39,7 @@ class Renderer
 public:
 	enum buffersMode { COLOR, DEPTH, STENCIL, BACK, FRONT, NONE };
 	enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale, xCameraTranslate, yCameraTranslate, zCameraTranslate };
-	enum drawFlags { toClear = 1, is2D = 2, inAction = 4, scissorTest = 8, depthTest = 16, stencilTest = 32, blend = 64, blackClear = 128, debugMode = 256, inAction2 = 512};
+	enum drawFlags { toClear = 1, is2D = 2, inAction = 4, scissorTest = 8, depthTest = 16, stencilTest = 32, blend = 64, blackClear = 128, clearDepth = 256, inAction2 = 512, clearStencil = 1024, passStencil = 2048, stencil2 = 4096, scaleAbit = 8192, inStencil = 16384};
 
 	Renderer();
 	Renderer(float angle, float relationWH, float near, float far);
@@ -75,9 +75,11 @@ public:
 	inline int getxRel() { return xrel; }
 	inline int getyRel() { return yrel; }
 	int isClicked = 0;
+	int isStencil = 0;
 	bool checkViewport(int x, int y, int viewportIndx);
 	float xWhenBlend, yWhenBlend;
 	~Renderer();
+	void Clear(float r, float g, float b, float a, unsigned int flags);
 private:
 	std::vector<Camera*> cameras;
 	Scene* scn;
