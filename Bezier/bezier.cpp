@@ -105,7 +105,6 @@ void bezier::Update(const glm::mat4& Projection, const glm::mat4& View, const gl
 	if(counter)
 		counter++;
 	Shader *s = shaders[shaderIndx];
-	new_angel = true;
 	float r = ((pickedShape + 1) & 0x000000FF) >>  0;
 	float g = ((pickedShape + 1) & 0x0000FF00) >>  8;
 	float b = ((pickedShape + 1) & 0x00FF0000) >> 16;
