@@ -109,7 +109,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					}
 				}
 			}
-			if (x2 > 600 && button == GLFW_MOUSE_BUTTON_LEFT)
+			else if (x2 > 600 && button == GLFW_MOUSE_BUTTON_LEFT)
 			{
 				scn->GetBezier1D()->GetControlPointsWorld().clear();
 				for (int i = 0; i < scn->GetBezier1D()->GetControlPoints().size(); i++) {
