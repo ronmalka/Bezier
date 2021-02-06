@@ -42,12 +42,14 @@ public:
 	inline float getAngel() { return this->angel; }
 
 	inline std::vector<glm::vec3>& GetControlPoints() { return controlPoints; }
+	inline std::vector<glm::vec3>& GetControlPointsWorld() { return controlPointsWorld; }
 	inline void setRadius(float radius) { this->radius = radius; }
 	inline float getRadius() { return this->radius; }
 	virtual ~Shape(void);
 	Shape(int segNum, std::vector<glm::vec3> controlPoints, int mode, int viewport);
 protected:
 	std::vector<glm::vec3> controlPoints;
+	std::vector<glm::vec3> controlPointsWorld;
 	int segNum;
 	unsigned int mode;
 	MeshConstructor* mesh;

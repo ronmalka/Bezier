@@ -109,10 +109,19 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					}
 				}
 			}
-			else if (x2 > 600 && button == GLFW_MOUSE_BUTTON_LEFT)
+			if (x2 > 600 && button == GLFW_MOUSE_BUTTON_LEFT)
 			{
-				scn->HandleConvexHull((((x2 - 600) / 600) - 0.5) * 2, ((1 - y2 / 600) - 0.5) * 2);
+				scn->GetBezier1D()->GetControlPointsWorld().clear();
+				for (int i = 0; i < scn->GetBezier1D()->GetControlPoints().size(); i++) {
+
+					glm::vec4 pos = scn->shapes[i+2]->MakeTrans() * glm::vec4(0.f, 0.f, 0.f, 1.f);
+					glm::vec3 win_cor = rndr->DoProject(glm::vec3(pos.x, pos.y, pos.z),1,1);
+					scn->GetBezier1D()->GetControlPointsWorld().push_back(win_cor);
+
 				}
+
+				scn->HandleConvexHull(x2, 600 - y2);
+			}
 
 		}
 	}
@@ -217,7 +226,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					int hight = glm::abs((int)rndr->yWhenBlend - ypos);
 					for (int i = 0; i < (globalID - 23); i++) {
 						glm::vec4 pos = scn->shapes[23 + i]->MakeTrans() * glm::vec4(0.f,0.f,0.f,1.f);
-						glm::vec3 win_cor = rndr->DoProject(glm::vec3(pos.x,pos.y,pos.z));
+						glm::vec3 win_cor = rndr->DoProject(glm::vec3(pos.x,pos.y,pos.z),0,0);
 						if (win_cor.x >= x && win_cor.x <= x+width && win_cor.y >= y && win_cor.y <= y+width) {
 							scn->picked.insert(23+i);
 						}

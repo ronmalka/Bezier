@@ -6,7 +6,7 @@
 #include <vector>
 #include "Bezier/Bezier1D.h"
 #include "Bezier/Bezier2D.h"
-
+#include <set>
 
 class Scene : public MovableGLM
 {
@@ -71,8 +71,8 @@ public:
 	inline void ZeroShapeTrans(int shpIndx) { shapes[shpIndx]->ZeroTrans(); }
 	inline int getShapeSize() { return shapes.size(); }
 	bool drawPlane = true;
-	std::vector<Shape*> shapes;
-
+	std::vector<Shape*> shapes; 
+	std::set<int> picked;
 
 private:
 	float depth;

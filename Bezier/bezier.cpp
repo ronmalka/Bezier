@@ -24,7 +24,10 @@ bezier::bezier() : Scene()
 //}
 
 void bezier::Init()
-{		
+{
+	/*glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);*/
 	unsigned int texIDs[3] = { 0 , 1, 2 };
 	unsigned int slots[3] = { 0 , 1, 2 };
 	int N = 6;  // max segments
@@ -251,7 +254,7 @@ void bezier::setNewOffsetWithRotate(float x, float y)
 		angle = bezier1D->getAngel();
 	}
 
-	angle = (old_x < x) ? -angle : angle;
+	angle = (old_x < x) || (old_y < y) ? -angle : angle;
 	old_x = x;
 	old_y = y;
 
@@ -437,22 +440,9 @@ unsigned int bezier::TextureDesine(int width, int height)
 
 void bezier::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags) {
 
-	float trans = 3.0;
 	float scale = 1.1;
-	float scaleZ = 0.2;
 	bool shouldDelete = false;
 	int pckedToDel = -1;
-
-	/*if (pickedShape > 22)
-	{
-		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	}*/
-	
-	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-
-	Scene::Draw(shaderIndx, Projection, View, viewportIndx, flags);
 
 	if (pickedShape > 22 && !(picked.find(pickedShape) != picked.end()))
 	{
@@ -460,31 +450,19 @@ void bezier::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, 
 		shouldDelete = true;
 		pckedToDel = pickedShape;
 	}
-
-	for (int p : picked)
-	{
-		glStencilOp(GL_KEEP, GL_KEEP, GL_ZERO);
-		glStencilFunc(GL_EQUAL, 1, 0xFF);
-
-		shapes[p]->MyScale(glm::vec3(scale, scale, scaleZ));
-
-		Scene::Draw(4, Projection, View, viewportIndx, flags);
-
-		shapes[p]->MyScale(glm::vec3(1 / scale, 1 / scale, 1 / scaleZ));
-
-		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-		glStencilFunc(GL_ALWAYS, 0, 0xFF);
-	}
-
+	
+	Scene::Draw(shaderIndx, Projection, View, viewportIndx, flags);
+	
 	if (shouldDelete)
 	{
-		std::set<int>::iterator it; it = picked.find(pickedShape);
+		std::set<int>::iterator it; it = picked.find(pckedToDel );
 		picked.erase(it);
 	}
 
 
 
 }
+
 void bezier::HandleConvexHull(float xpos, float ypos)
 {
 	if (bezier1D->HandleConvexHull(xpos, ypos))

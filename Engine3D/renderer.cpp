@@ -55,7 +55,7 @@ void Renderer::Init(Scene* scene,  std::list<int>xViewport,  std::list<int>yView
 			{
 				viewports.push_back(glm::ivec4(*std::prev(xit), *std::prev(yit), *xit - *std::prev(xit), *yit - *std::prev(yit)));
 				drawInfo.push_back(new DrawInfo(indx, indx, 0, 0, indx < 1 | inAction | depthTest | stencilTest | blackClear ));
-				drawInfo.push_back(new DrawInfo(indx, indx, 1, 0, indx < 1  | depthTest ));
+				drawInfo.push_back(new DrawInfo(indx, indx, 1, 0, indx < 1  | depthTest));
 				indx++;
 			}
 		}
@@ -81,7 +81,9 @@ void Renderer::Draw(int infoIndx)
 		glDisable(GL_SCISSOR_TEST);
 
 	if (info.flags & stencilTest)
+	{
 		glEnable(GL_STENCIL_TEST);
+	}
 	else
 		glDisable(GL_STENCIL_TEST);
 
@@ -170,11 +172,11 @@ glm::vec3 Renderer::DoUnProject(glm::vec3 winloc)
 	return glm::unProject(winloc,Model,Projection, viewports[0]);
 }
 
-glm::vec3 Renderer::DoProject(glm::vec3 objloc)
+glm::vec3 Renderer::DoProject(glm::vec3 objloc,int camIndex, int viewIndex)
 {
-	glm::mat4 Projection = cameras[0]->GetViewProjection();
-	glm::mat4 Model = glm::inverse(cameras[0]->MakeTrans());
-	return glm::project(objloc, Model, Projection, viewports[0]);
+	glm::mat4 Projection = cameras[camIndex]->GetViewProjection();
+	glm::mat4 Model = glm::inverse(cameras[camIndex]->MakeTrans());
+	return glm::project(objloc, Model, Projection, viewports[viewIndex]);
 }
 
 unsigned int Renderer::AddBuffer(int infoIndx, bool stencil)
@@ -299,7 +301,7 @@ Renderer::~Renderer()
 	
 }
 
-void Renderer::Clear(float r, float g, float b, float a)
+void Renderer::Clear(float r, float g, float b, float a )
 {
 	glClearColor(r, g, b, a);
 

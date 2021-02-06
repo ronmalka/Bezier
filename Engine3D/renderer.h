@@ -57,7 +57,7 @@ public:
 	void AddCamera(const glm::vec3& pos, float fov, float relationWH, float zNear, float zFar, int infoIndx = -1);
 	void AddViewport(int left, int bottom, int width, int height);
 	glm::vec3 DoUnProject(glm::vec3 winloc);
-	glm::vec3 DoProject(glm::vec3 objloc);
+	glm::vec3 DoProject(glm::vec3 objloc, int camIndex, int viewIndex);
 	unsigned int AddBuffer(int infoIndx, bool stencil = false);
 	int Create2Dmaterial(int texsNum);
 	void AddDraw(int view, int camera, int shader, int buff, unsigned int flags);

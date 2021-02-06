@@ -2,6 +2,7 @@
 #include "GL/glew.h"
 #include "scene.h"
 #include <iostream>
+#include "glm/gtc/matrix_transform.hpp"
 
 
 static void printMat(const glm::mat4 mat)
@@ -95,6 +96,7 @@ void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, i
 	glm::mat4 Normal = MakeTrans();
 
 	int p = pickedShape;
+	float scale = 1.1;
 
 	for (pickedShape = 0; pickedShape < shapes.size(); pickedShape++)
 	{
@@ -107,15 +109,43 @@ void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, i
 			else {
 				Model = Normal * Model;
 			}
-			if (shaderIndx > 0 && shaderIndx != 4)
-			{
-				Update(Projection, View, Model, shapes[pickedShape]->GetShader());
-				shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
-			}
-			else if (shaderIndx == 4)
-			{
-				Update(Projection, View, Model, 4);
-				shapes[pickedShape]->Draw(shaders[4], false);
+			if (shaderIndx > 0 )
+			{	
+				if (!(picked.find(pickedShape) != picked.end()))
+				{
+					Update(Projection, View, Model, shapes[pickedShape]->GetShader());
+					shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
+				}
+				else
+				{
+					
+					glClear(GL_STENCIL_BUFFER_BIT);
+
+					glEnable(GL_STENCIL_TEST);
+					glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+					glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+					glStencilFunc(GL_ALWAYS, 1, 0xFF);
+					glStencilMask(0xFF);
+
+					Update(Projection, View, Model, shapes[pickedShape]->GetShader());
+					shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
+
+					glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+					glStencilMask(0x00);
+					glDisable(GL_DEPTH_TEST);
+
+					shapes[pickedShape]->MyScale(glm::vec3(scale, scale, scale));
+					Model = Normal * shapes[pickedShape]->MakeTrans();
+					Update(Projection, View, Model, 4);
+					shapes[pickedShape]->Draw(shaders[4], false);
+					shapes[pickedShape]->MyScale(glm::vec3(1 / scale, 1 / scale, 1 / scale));
+
+					glStencilMask(0xFF);
+					glStencilFunc(GL_ALWAYS, 0, 0xFF);
+					glEnable(GL_DEPTH_TEST);
+					glDisable(GL_STENCIL_TEST);
+				}
 			}
 			else
 			{ //picking

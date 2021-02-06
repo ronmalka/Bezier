@@ -1,7 +1,7 @@
 #pragma once
 #include "scene.h"
 #include "glm/gtx/rotate_vector.hpp"
-#include <set>
+
 
 class bezier : public Scene
 {
@@ -32,7 +32,7 @@ public:
 	int xPos, yPos;
 	int xWhenBlend, yWhenBlend;
 	int toUpdatePicked = 0;
-	std::set<int> picked;
+	
 	virtual void Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags);
 	inline bool getCont() { return cont; }
 	inline void setCont() { cont = !cont; }

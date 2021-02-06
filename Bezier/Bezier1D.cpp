@@ -65,14 +65,12 @@ int Bezier1D::findSegmentStartPoint(float xpos, float ypos)
 {
 
 	int start = -1;
-
-	for (size_t i = 0; i < controlPoints.size() - 3; i += 3)
+	
+	for (size_t i = 0; i < controlPointsWorld.size() - 3; i += 3)
 	{
-		if (controlPoints[i].x < xpos && xpos < controlPoints[i + 3].x)
-			/*||
-		   controlPoints[i].y < ypos && ypos < controlPoints[i + 3].y ||
-		   controlPoints[i].y > ypos && ypos > controlPoints[i + 3].y)*/
+		if (controlPointsWorld[i].x < xpos && xpos < controlPointsWorld[i + 3].x)
 		{
+			
 			start = i;
 			break;
 		}
@@ -82,12 +80,12 @@ int Bezier1D::findSegmentStartPoint(float xpos, float ypos)
 
 bool Bezier1D::sameLine(std::vector<glm::vec3> segment)
 {
-	float prevAngle = glm::atan(segment[0].y - segment[1].y, segment[0].x - segment[1].y);
+	float prevAngle = glm::degrees(glm::atan(segment[0].y - segment[1].y, segment[0].x - segment[1].y));
 	for (size_t i = 1; i < 3; i++)
 	{
-		float angle = glm::atan(segment[i].y - segment[i + 1].y, segment[i].x - segment[i + 1].y);
+		float angle = glm::degrees(glm::atan(segment[i].y - segment[i + 1].y, segment[i].x - segment[i + 1].y));
 
-		if (glm::abs(glm::abs(angle) - glm::abs(prevAngle)) > 0.1)
+		if (glm::abs(glm::abs(angle) - glm::abs(prevAngle)) > 1.)
 		{
 			return false;
 		}
@@ -109,30 +107,18 @@ float area(float x1, float y1, float x2, float y2, float x3, float y3)
    by A(x1, y1), B(x2, y2) and C(x3, y3) */
 bool isInside(float x1, float y1, float x2, float y2, float x3, float y3, float x, float y)
 {
+
 	/* Calculate area of triangle ABC */
 	float A = area(x1, y1, x2, y2, x3, y3);
-
 	/* Calculate area of triangle PBC */
 	float A1 = area(x, y, x2, y2, x3, y3);
-
 	/* Calculate area of triangle PAC */
 	float A2 = area(x1, y1, x, y, x3, y3);
-
 	/* Calculate area of triangle PAB */
 	float A3 = area(x1, y1, x2, y2, x, y);
-
 	/* Check if sum of A1, A2 and A3 is same as A */
-	return (A == A1 + A2 + A3);
+	return (glm::abs(A - (A1 + A2 + A3)) < 1);
 }
-
-//bool calcTriangle(glm::vec3 p0 , glm::vec3 p1 , glm::vec3 p2 , glm::vec3 p)
-//{
-//	//should be det(u v) = uxv = ux * vy - uy * vx 
-//	float a = (glm::dot(p, p2) - glm::dot(p0, p2)) / (glm::dot(p1, p2));
-//	float b = - (glm::dot(p, p1) - glm::dot(p0, p1)) / (glm::dot(p1, p2));
-//
-//	return (a > 0. && a < 1.) && (b > 0. && b < 1.) && (b + a < 1.);
-//}
 
 bool Bezier1D::isTriangle(std::vector<glm::vec3>& segment)
 {
@@ -172,7 +158,7 @@ std::vector<glm::vec2> Bezier1D::findRectangle(std::vector<glm::vec3> segment)
 
 	std::vector<glm::vec2> rec;
 
-	float unit = 1.;
+	float unit = 15.;
 	float x = glm::cos(angle) * unit;
 	float y = glm::sin(angle) * unit;
 
@@ -273,18 +259,20 @@ bool Bezier1D::HandleConvexHull(float xpos, float ypos)
 
 	int convexShape;
 	std::vector<glm::vec3> segment;
+	std::vector<glm::vec3> segmentWorld;
 
 	for (size_t i = 0; i < 4; i++)
 	{
 		segment.push_back(controlPoints[startPoint + i]);
+		segmentWorld.push_back(controlPointsWorld[startPoint + i]);
 	}
 
 
-	if (sameLine(segment))
+	if (sameLine(segmentWorld))
 	{
 		convexShape = CLINE;
 	}
-	else if (isTriangle(segment))
+	else if (isTriangle(segmentWorld))
 	{
 		convexShape = CTRIANGLE;
 	}
@@ -293,7 +281,7 @@ bool Bezier1D::HandleConvexHull(float xpos, float ypos)
 		convexShape = CSQUARE;
 	}
 
-	if (checkIfInsideShpae(segment, convexShape, xpos, ypos))
+	if (checkIfInsideShpae(segmentWorld, convexShape, xpos, ypos))
 	{
 		if (segNum == 6) return false;
 		SplitSegment(segment, 0.5f, startPoint);
