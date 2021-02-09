@@ -191,7 +191,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		scn->yPos = (int)ypos;
 
 			if (rightPressedInside) {
-				scn->setNewOffset((float)xpos, (float)ypos,false,false, zoomCo);
+				scn->setNewOffset((float)xpos, (float)ypos,false,false, 1);
 			}
 
 			if (leftPressedInside) {
