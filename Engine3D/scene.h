@@ -74,6 +74,30 @@ public:
 	std::vector<Shape*> shapes; 
 	std::set<int> picked;
 
+
+	float PI = 3.141592654;
+	float alpha = PI / 2;
+	float sinalpha = sin(alpha);
+	float cosalpha = cos(alpha);
+	float c = (4 * (1 - cos(0.5 * alpha))) / (3 * sin(0.5 * alpha)), t = (cosalpha + c * sinalpha);
+	std::vector<std::vector<float>> pts_x = {
+		{ -1,-1,-t    ,cosalpha   ,t,1,1 }, // n=2
+		{ -1.5f,-1.5f,-t - 0.5f,  -t - 0.25f ,  -t,  0  ,t + 0.25f  ,t + 0.5f,1.5f,1.5f}, //n=3
+		{ -1.5f,-1.5f,-t - 0.75f,  -t - 0.5f ,  -t - 0.25f, -t - 0.1f,  0 , t + 0.1f ,t + 0.25f  ,t + 0.5f  ,t + 0.75f,1.5f,1.5f}, //n=4
+		{ -1.5f,-1.5f,-t - 0.75f,  -t - 0.5f ,  -t - 0.25f, -t - 0.1f,  -t,-0.15f,0.15f  ,  t , t + 0.1f ,t + 0.25f  ,t + 0.5f  ,t + 0.75f,1.5f,1.5f}, //n=5
+		{ -1.5f,-1.5f,-t - 0.75f,  -t - 0.5f ,  -t - 0.25f, -t - 0.1f,  -t,-0.25f, -0.15f,  0,0.15f  , 0.25f  ,  t , t + 0.1f ,t + 0.25f  ,t + 0.5f  ,t + 0.75f,1.5f,1.5f}, //n=5
+
+	};
+	std::vector<std::vector<float>> pts_y = {
+		{ 0,c,sinalpha - c * cosalpha         ,sinalpha   ,sinalpha - c * cosalpha,c,0 },
+		{ 0,c,sinalpha - c * cosalpha        ,sinalpha,sinalpha,sinalpha ,sinalpha   ,sinalpha - c * cosalpha,c,0 },
+		{ 0,c,sinalpha - c * cosalpha        ,sinalpha,sinalpha,sinalpha ,sinalpha,sinalpha,sinalpha,sinalpha   ,sinalpha - c * cosalpha,c,0 },
+		{ 0,c,sinalpha - c * cosalpha        ,sinalpha,sinalpha,sinalpha ,sinalpha,sinalpha,sinalpha,sinalpha,sinalpha,sinalpha,sinalpha   ,sinalpha - c * cosalpha,c,0 },
+		{ 0,c,sinalpha - c * cosalpha        ,sinalpha,sinalpha,sinalpha,sinalpha,sinalpha,sinalpha ,sinalpha,sinalpha,sinalpha,sinalpha,sinalpha,sinalpha,sinalpha   ,sinalpha - c * cosalpha,c,0 },
+
+
+	};
+
 private:
 	float depth;
 

@@ -40,6 +40,7 @@ public:
 	void movePointWithAngel(float parentX, float parentY, float angle);
 	void HandleConvexHull(float xpos, float ypos);
 
+	
 private:
 	unsigned int counter;
 	unsigned int tmp;

@@ -25,9 +25,6 @@ bezier::bezier() : Scene()
 
 void bezier::Init()
 {
-	/*glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);*/
 	unsigned int texIDs[3] = { 0 , 1, 2 };
 	unsigned int slots[3] = { 0 , 1, 2 };
 	int N = 6;  // max segments
@@ -63,11 +60,11 @@ void bezier::Init()
 		SetShapeShader(i+2,1);
 		pickedShape = -1;
 	}
+
 	for (int i = 0; i < points; ++i) { 
 		pickedShape = i + 2;
-		float angle = PI * i / points;
-		float xTrans = (((float)-points / 2.f) + i)/8.8f;
-		float yTrans = i == (points - 1) || i == 0 ? 0 : (2.f + 3.f * sin(angle))/8.8f;
+		float xTrans = pts_x[seg-2][i];
+		float yTrans = pts_y[seg-2][i];
 		ShapeTransformation(xTranslate, xTrans);
 		ShapeTransformation(yTranslate, yTrans);
 		SetShapeMaterial(i+2,0);

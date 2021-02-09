@@ -127,17 +127,16 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 
 		}
 	}
-	void reDrawAll(int points, Scene* scn) {
+	void reDrawAll(int points,int seg, Scene* scn) {
 		float PI = 3.141592654;
 		for (size_t i = 0; i < points; i++)
 		{
 			scn->RemoveShapeViewport(i + 2, 1);
 			scn->ZeroShapeTrans(i + 2);
 			scn->SetShapeShader(i + 2, 1);
-			float angle = PI * i / points;
-			float xTrans = (((float)-points / 2.f) + i) / 8.8f;
-			float yTrans = i == (points - 1) || i == 0 ? 0 : (2.f + 3.f * sin(angle)) / 8.8f;
 			scn->SetPickedShape(i + 2);
+			float xTrans = scn->pts_x[seg - 2][i];
+			float yTrans = scn->pts_y[seg - 2][i];
 			scn->ShapeTransformation(scn->xTranslate, xTrans);
 			scn->ShapeTransformation(scn->yTranslate, yTrans);
 			scn->GetBezier1D()->GetControlPoints().push_back(glm::vec3(xTrans, yTrans, 0.f));
@@ -244,17 +243,17 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				if (rightPressedInside) {
 					rightPressedInside = !rightPressedInside;
 					scn->setNewOffset(xpos, ypos,false,false,zoomCo);
-					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
+					//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 				}
 				if (leftPressedInside) {
 					leftPressedInside = !leftPressedInside;
 					scn->setNewOffsetWithRotate(xpos, ypos);
-					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
+					//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
 				}
 				if (rightPressedEdges) {
 					rightPressedEdges = !rightPressedEdges;
 					scn->setNewOffsetWithChilds(xpos, ypos);
-					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
+					//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 				}
 				if (leftPressedEdges) {
 					leftPressedEdges = !leftPressedEdges;
@@ -298,7 +297,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		}
 
 		scn->GetBezier1D()->GetControlPoints().clear();
-		reDrawAll(points, scn);
+		reDrawAll(points,seg, scn);
 		scn->GetBezier1D()->AddSegment(seg);
 	}
 
