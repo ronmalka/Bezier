@@ -32,12 +32,14 @@ void HandleInsidePoints(Renderer* rndr, bezier* scn, int button, double x , doub
 	case  GLFW_MOUSE_BUTTON_RIGHT : 
 		if (!rightPressedInside)
 		{
+			
 			rightPressedInside = !rightPressedInside;
 		}
 		break;
 	case  GLFW_MOUSE_BUTTON_LEFT:
 		if (!leftPressedInside)
 		{
+			scn->setAngel(true);
 			leftPressedInside = !leftPressedInside;
 		}
 		break;
