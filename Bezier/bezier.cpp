@@ -231,7 +231,7 @@ void bezier::pickedMove(double xpos, double ypos,float zoomCo) {
 
 void bezier::setNewOffsetWithRotate(float x, float y)
 { 
-	if (pickedShape == -1) return;
+	if (pickedShape == -1 || pickedShape > 21) return;
 
 
 	float parentX = bezier1D->getControlX(chainParents[pickedShape] - 2);
