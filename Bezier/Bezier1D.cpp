@@ -251,11 +251,11 @@ void Bezier1D::SplitSegment(std::vector<glm::vec3> segment, float t, int start)
 	}
 }
 
-bool Bezier1D::HandleConvexHull(float xpos, float ypos)
+int Bezier1D::HandleConvexHull(float xpos, float ypos,bool btn_left)
 {
 	int startPoint = findSegmentStartPoint(xpos, ypos);
 
-	if (startPoint == -1) return false;
+	if (startPoint == -1) return startPoint;
 
 	int convexShape;
 	std::vector<glm::vec3> segment;
@@ -283,12 +283,17 @@ bool Bezier1D::HandleConvexHull(float xpos, float ypos)
 
 	if (checkIfInsideShpae(segmentWorld, convexShape, xpos, ypos))
 	{
-		if (segNum == 6) return false;
-		SplitSegment(segment, 0.5f, startPoint);
-		return true;
+		if (segNum == 6) return -1;
+		if (btn_left) {
+			SplitSegment(segment, 0.5f, startPoint);
+			return startPoint;
+		}
+		else {
+			return startPoint;
+		}
 	}
 
-	return false;
+	return -1;
 }
 
 

@@ -111,7 +111,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					}
 				}
 			}
-			else if (x2 > 600 && button == GLFW_MOUSE_BUTTON_LEFT)
+			else if (x2 > 600)
 			{
 				scn->GetBezier1D()->GetControlPointsWorld().clear();
 				for (int i = 0; i < scn->GetBezier1D()->GetControlPoints().size(); i++) {
@@ -121,8 +121,15 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					scn->GetBezier1D()->GetControlPointsWorld().push_back(win_cor);
 
 				}
-
-				scn->HandleConvexHull(x2, 600 - y2);
+				if (button == GLFW_MOUSE_BUTTON_LEFT) {
+					scn->HandleConvexHull(x2, 600 - y2, true);
+				}
+				else {
+					int startindx = scn->HandleConvexHull(x2, 600 - y2, false);
+					if (startindx != -1) { //Move All Curve
+						// StartIndex is the start index of the desirable curve
+					}
+				}
 			}
 
 		}
@@ -232,7 +239,6 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 							scn->picked.insert(23+i);
 						}
 					}
-					//scn->updatePickedShapes(from,to);
 					movepickeds = true;
 					scn->updatePressedPos(xpos, ypos);
 
@@ -243,21 +249,17 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				if (rightPressedInside) {
 					rightPressedInside = !rightPressedInside;
 					scn->setNewOffset(xpos, ypos,false,false,zoomCo);
-					//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 				}
 				if (leftPressedInside) {
 					leftPressedInside = !leftPressedInside;
 					scn->setNewOffsetWithRotate(xpos, ypos);
-					//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
 				}
 				if (rightPressedEdges) {
 					rightPressedEdges = !rightPressedEdges;
 					scn->setNewOffsetWithChilds(xpos, ypos);
-					//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 				}
 				if (leftPressedEdges) {
 					leftPressedEdges = !leftPressedEdges;
-					//rndr->MouseProccessing(GLFW_MOUSE_BUTTON_LEFT);
 				}
 				if (threeDPressed) {
 					threeDPressed = !threeDPressed;

@@ -16,7 +16,6 @@ glm::vec3 Bezier2D::calcDeriv(std::vector<glm::vec3>& p, float t)
 
 glm::vec3 Bezier2D::calcDerivU(std::vector<std::vector<glm::vec3>>& grid, float u, float v) {
 	//Gets 2D grid, Calculate V (Horizontal) and then Deriving By U
-	//Move Horizontal - V 
 	std::vector<glm::vec3> vMove;
 	for (int i = 0; i < 4; ++i) {
 		std::vector<glm::vec3> v_i_Move;
@@ -124,16 +123,6 @@ void Bezier2D::makeVertices(int curveIndex, int& startIndex, IndexedModel& model
 
 }
 
-void Bezier2D::Stitch(IndexedModel& model,int i,int j,int p) {
-	model.indices.push_back(i);
-	model.indices.push_back(j);
-	model.indices.push_back(j+ p);
-
-	model.indices.push_back(j+ p);
-	model.indices.push_back(i+ p);
-	model.indices.push_back(i);
-}
-
 IndexedModel Bezier2D::GetSurface()
 {
 	//makeVertices
@@ -142,7 +131,6 @@ IndexedModel Bezier2D::GetSurface()
 	for (int i = 0; i < segNum; ++i) {
 		makeVertices(i, cnt, model);
 	}
-	
 
 	return model;
 }

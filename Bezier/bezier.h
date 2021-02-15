@@ -15,7 +15,6 @@ public:
 	void WhenPicked();
 	void Motion();
 	void updatePressedPos(double xpos, double ypos);
-	void whenBlend(double xpos, double ypos);
 	void pickedMove(double xpos, double ypos, float zoomCo);
 	void setNewOffsetWithRotate(float x, float y);
 	void setNewOffsetWithChilds(double x, double y);
@@ -34,11 +33,11 @@ public:
 	int toUpdatePicked = 0;
 	
 	virtual void Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, int viewportIndx, unsigned int flags);
+	int HandleConvexHull(float xpos, float ypos, bool btn_left);
 	inline bool getCont() { return cont; }
 	inline void setCont() { cont = !cont; }
 	inline void setAngel(bool angel) { new_angel = angel; }
 	void movePointWithAngel(float parentX, float parentY, float angle);
-	void HandleConvexHull(float xpos, float ypos);
 
 	
 private:

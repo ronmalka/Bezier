@@ -358,12 +358,10 @@ void bezier::setNewOffsetWithChilds(double x, double y)
 
 	float parentX = bezier1D->getControlX(pickedShape - 2);
 	float parentY = bezier1D->getControlY(pickedShape - 2);
-
 	float childX_1 = bezier1D->getControlX(childs[0] - 2);
 	float childY_1 = bezier1D->getControlY(childs[0] - 2);
 
 	Shape* child1 = shapes[childs[0]];
-
 
 	int viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -394,28 +392,13 @@ void bezier::setNewOffsetWithChilds(double x, double y)
 	bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
 }
 
-void bezier::WhenRotate()
-{
-}
+void bezier::WhenRotate(){}
 
-void bezier::WhenTranslate()
-{
+void bezier::WhenTranslate() {}
 
-}
+void bezier::WhenPicked() {}
 
-void bezier::WhenPicked()
-{
-	
-}
-
-void bezier::Motion()
-{
-	//if(isActive)
-	//{
-	//	pickedShape = 3;
-	//	ShapeTransformation(yRotate, 0.07);
-	//}
-}
+void bezier::Motion() {}
 
 unsigned int bezier::TextureDesine(int width, int height)
 {
@@ -462,28 +445,34 @@ void bezier::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, 
 
 }
 
-void bezier::HandleConvexHull(float xpos, float ypos)
+int bezier::HandleConvexHull(float xpos, float ypos,bool btn_left)
 {
-	if (bezier1D->HandleConvexHull(xpos, ypos))
+	int ret = bezier1D->HandleConvexHull(xpos, ypos, btn_left);
+	if (ret != -1)
 	{
-		for (size_t i = 0; i < bezier1D->GetControlPoints().size(); i++)
-		{
-			RemoveShapeViewport(i + 2, 1);
-			ZeroShapeTrans(i + 2);
-			SetShapeShader(i + 2, 1);
+		if (btn_left) {
+			for (size_t i = 0; i < bezier1D->GetControlPoints().size(); i++)
+			{
+				RemoveShapeViewport(i + 2, 1);
+				ZeroShapeTrans(i + 2);
+				SetShapeShader(i + 2, 1);
 
-			SetPickedShape(i + 2);
-			ShapeTransformation(xTranslate, bezier1D->GetControlPoints()[i].x);
-			ShapeTransformation(yTranslate, bezier1D->GetControlPoints()[i].y);
+				SetPickedShape(i + 2);
+				ShapeTransformation(xTranslate, bezier1D->GetControlPoints()[i].x);
+				ShapeTransformation(yTranslate, bezier1D->GetControlPoints()[i].y);
 
-			SetPickedShape(-1);
-			AddShapeViewport(i + 2, 1);
+				SetPickedShape(-1);
+				AddShapeViewport(i + 2, 1);
+			}
+
+			GetBezier1D()->AddSegment(GetBezier1D()->GetSegmentsNum() + 1);
 		}
-
-		GetBezier1D()->AddSegment(GetBezier1D()->GetSegmentsNum() + 1);
+		else {
+			std::cout << "right convex" << ret << std::endl;
+			return ret;
+		}
 	}
-
-
+	return -1;
 
 }
 
