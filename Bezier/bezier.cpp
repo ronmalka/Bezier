@@ -292,11 +292,8 @@ std::vector<int> bezier::FindChilds(int parent)
 
 	for (size_t i = 0; i < points; i++)
 	{
-		//std::cout << "id: " << i <<" his child: " << chainParents[i] << std::endl;
-		
 		if (chainParents[i] == parent)
 		{
-			//std::cout << "child: " << i <<  std::endl;
 			res.push_back(i);
 		}
 	}
