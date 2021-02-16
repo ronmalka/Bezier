@@ -9,6 +9,7 @@ bool leftPressedInside = false;
 bool rightPressedInside = false;
 bool leftPressedEdges = false;
 bool rightPressedEdges = false;
+bool rightPressedConvexHull = false;
 bool threeDPressed = false;
 bool isRotate = false;
 bool movepickeds = false;
@@ -16,6 +17,7 @@ float zoomCo = 1.f;
 float twoDzoom = 0.f;
 float threeDzoom = 0.f;
 int globalID = 23;
+int startPoint = -1;
 
 void movePlane(Scene* scn,int action,float amt) {
 	scn->SetPickedShape(MY_PLANE);
@@ -111,7 +113,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					}
 				}
 			}
-			else if (x2 > 600)
+			if (x2 > 600)
 			{
 				scn->GetBezier1D()->GetControlPointsWorld().clear();
 				for (int i = 0; i < scn->GetBezier1D()->GetControlPoints().size(); i++) {
@@ -125,9 +127,11 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					scn->HandleConvexHull(x2, 600 - y2, true);
 				}
 				else {
-					int startindx = scn->HandleConvexHull(x2, 600 - y2, false);
-					if (startindx != -1) { //Move All Curve
-						// StartIndex is the start index of the desirable curve
+					startPoint = scn->HandleConvexHull(x2, 600 - y2, false);
+					if (startPoint != -1) { //Move All Curve
+						scn->updatePressedPos(x2, y2);
+						rndr->UpdatePosition(x2, y2);
+						rightPressedConvexHull = true;
 					}
 				}
 			}
@@ -212,6 +216,10 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 			if (threeDPressed) {
 				scn->setNewOffset((float)xpos, (float)ypos,true,isRotate,zoomCo);
 			}
+			if (rightPressedConvexHull)
+			{
+				scn->setNewOffsetWithConvex((float)xpos, (float)ypos,startPoint);
+			}
 
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
@@ -257,6 +265,11 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				if (rightPressedEdges) {
 					rightPressedEdges = !rightPressedEdges;
 					scn->setNewOffsetWithChilds(xpos, ypos);
+				}
+				if (rightPressedConvexHull) {
+					rightPressedConvexHull = !rightPressedConvexHull;
+					scn->setNewOffsetWithConvex(xpos, ypos, startPoint);
+					startPoint = -1;
 				}
 				if (leftPressedEdges) {
 					leftPressedEdges = !leftPressedEdges;

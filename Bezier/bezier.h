@@ -18,6 +18,7 @@ public:
 	void pickedMove(double xpos, double ypos, float zoomCo);
 	void setNewOffsetWithRotate(float x, float y);
 	void setNewOffsetWithChilds(double x, double y);
+	void setNewOffsetWithConvex(double x, double y, int strartPoint);
 	unsigned int TextureDesine(int width, int height);
 	~bezier(void);
 	inline void ResetCounter() { tmp = counter; counter = 0; }

@@ -389,6 +389,33 @@ void bezier::setNewOffsetWithChilds(double x, double y)
 	bezier1D->CurveUpdate(pickedShape - 2, offset_x, offset_y);
 }
 
+void bezier::setNewOffsetWithConvex(double x, double y, int strartPoint)
+{
+	std::vector<glm::vec3> points;
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		points.push_back(bezier1D->GetControlPoints()[strartPoint + i]);
+	}
+
+	offset_x = (x - old_x) * 0.0045f;
+	offset_y = (old_y - y) * 0.0045f;
+	offset_y = ((points [0].y + offset_y) < 0 || (points[3].y + offset_y) < 0) ? 0 : offset_y;
+	old_x = x;
+	old_y = y;
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		Shape* point = shapes[strartPoint + i + 2];
+		point ->MyTranslate(glm::vec3(offset_x, offset_y, 0), 0);
+		bezier1D->setControlX(strartPoint + i, offset_x + points[i].x);
+		bezier1D->setControlY(strartPoint + i, offset_y + points[i].y);
+	}
+
+	bezier1D->CurveUpdate(strartPoint, 0, 0);
+
+}
+
 void bezier::WhenRotate(){}
 
 void bezier::WhenTranslate() {}
