@@ -44,8 +44,8 @@ void bezier::Init()
 	AddTexture("../res/textures/", 3);
 	AddTexture("../res/textures/grass.bmp", 2);
 	
-	AddShape(Cube, -1, TRIANGLES); //0
-	AddShape(Axis, -1, LINES); // 1
+	AddShape(Cube, -1, TRIANGLES); //CubeMap
+	AddShape(Axis, -1, LINES); // XY Axis (2D)
 
 	AddMaterial(texIDs, slots, 1);
 	AddMaterial(texIDs + 1, slots + 1, 1);
@@ -53,6 +53,7 @@ void bezier::Init()
 
 	for (size_t i = 0; i < maxPoints; i++) // init max points shape
 	{
+		//Add Control Points with Parents
 		AddShape(Octahedron, i%3 == 0 ? -1 : (i%3 == 1 ? (i+1) : (i+3)), TRIANGLES);
 		pickedShape = i + 2;
 		RemoveShapeViewport(i + 2, 0);
@@ -61,6 +62,7 @@ void bezier::Init()
 		pickedShape = -1;
 	}
 
+	//Init Curve on 2D
 	for (int i = 0; i < points; ++i) { 
 		pickedShape = i + 2;
 		float xTrans = pts_x[seg-2][i];
@@ -90,6 +92,7 @@ void bezier::Init()
 	AddShapeViewport(maxPoints + 2, 1);
 	RemoveShapeViewport(maxPoints + 2, 0);
 
+	//Add Plane of Scissor
 	AddShape(Plane,-1,TRIANGLES);
 	SetShapeShader(maxPoints + 3, 2);
 	RemoveShapeViewport(maxPoints + 3, 1);
@@ -214,6 +217,7 @@ void bezier::movePointWithAngel(float parentX, float parentY, float angle)
 
 
 void bezier::pickedMove(double xpos, double ypos,float zoomCo) {
+	//Move all shapes in picked (Scissor)
 		int viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
 		offset_x = (xpos - old_x) * 0.0045f * zoomCo;

@@ -42,6 +42,7 @@ glm::vec3 Bezier2D::calcDerivV(std::vector<std::vector<glm::vec3>>& grid, float 
 }
 
 glm::vec3 Bezier2D::crossDeriv(std::vector<std::vector<glm::vec3>>& grid, float u, float v) {
+	//Calcs normal using cross(f'(u),f'(v))
 	glm::vec3 res = (glm::cross(calcDerivV(grid, u, v), calcDerivU(grid, u, v)));
 	return res == glm::vec3(0.f, 0.f, 0.f) ? res : -glm::normalize(res);
 }
@@ -73,7 +74,7 @@ glm::vec3 Bezier2D::evalBezierPatch(std::vector<std::vector<glm::vec3>>& grid, c
 
 void Bezier2D::make2DCtrlPoints(int curveIndex, float startAngle, std::vector<std::vector<glm::vec3>>& grid)
 { //Input: 1D Control Points of Bezier1D (shape->controlPoints[curveIndex*3 + i])
-  //Output: 2D Control Points of Bezier2D (1/4 Sphere) in 0deg,30deg,60deg,90deg
+  //Output: 2D Control Points of Bezier2D (1/4 Sphere) in 0deg,30deg,60deg,90deg (grid)
 	std::vector<glm::vec3> pts;
 	for (int i = 0; i < 4; i++) {
 		pts.push_back(glm::rotateZ(glm::vec3(controlPoints[curveIndex * 3 + i].x, controlPoints[curveIndex * 3 + i].y, 0.f), -90.f));

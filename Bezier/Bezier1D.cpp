@@ -38,6 +38,7 @@ void Bezier1D::GetControlPoint(int segment, int indx, std::vector<glm::vec3> &li
 
 }
 
+//calculates point using bezier cubic formula
 glm::vec3 Bezier1D::GetPointOnCurve(int indx, float t)
 {
 	glm::vec3 p0 = controlPoints[indx];
@@ -53,6 +54,7 @@ glm::vec3 Bezier1D::GetPointOnCurve(int indx, float t)
 	return bezier;
 }
 
+//creates a new segment by creating a new mesh with seg segments
 void Bezier1D::AddSegment(int seg)
 {
 	segNum = seg;

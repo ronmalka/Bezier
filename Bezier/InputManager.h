@@ -108,12 +108,13 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				else {
 					//Blending
 					if (button == GLFW_MOUSE_BUTTON_LEFT && x2 < 600) {
+						//Update start position of blending click, and start rendering the plane in viewport2
 						rndr->whenBlend(x2,y2);
 						rndr->isClicked = rndr->inAction2;
 					}
 				}
 			}
-			if (x2 > 600)
+			if (x2 > 600) //This is For Convex Hull
 			{
 				scn->GetBezier1D()->GetControlPointsWorld().clear();
 				for (int i = 0; i < scn->GetBezier1D()->GetControlPoints().size(); i++) {
@@ -138,6 +139,8 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 
 		}
 	}
+
+	//Re-Init the curve after update 
 	void reDrawAll(int points,int seg, Scene* scn) {
 		float PI = 3.141592654;
 		for (size_t i = 0; i < points; i++)
@@ -155,6 +158,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 			scn->AddShapeViewport(i + 2, 1);
 		}
 	}
+
 	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
@@ -163,7 +167,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		glfwGetCursorPos(window, &xpos, &ypos);
 		bezier* scn = (bezier*)rndr->GetScene();
 		if (xpos < 600) {
-			if (yoffset > 0) {
+			if (yoffset > 0) { //3D Zoom
 				if (zoomCo < 10.2f) {
 					rndr->MoveCamera(0, rndr->zTranslate, 0.4f);
 					movePlane(scn, scn->zTranslate, 0.4f);
@@ -178,7 +182,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 				}
 			}
 		}
-		else {
+		else { //2D Zoom
 			if (yoffset > 0) {
 				rndr->MoveCamera(1, scn->zTranslate, 0.2f);
 				twoDzoom += 0.2f;
@@ -233,13 +237,19 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 			{
-				if (rndr->isClicked) {
+				if (rndr->isClicked) { 
+					//Finish Scissor Test and pick several items.
 					rndr->isClicked = 0;
 					scn->picked.clear();
+
+					//Get window size
 					int x = glm::min(rndr->xWhenBlend, (float)xpos); //x is xWhenPressed
 					int y = glm::min(600.f - rndr->yWhenBlend, 600.f - (float)ypos); //y is yWhenPressed
 					int width = glm::abs((int)rndr->xWhenBlend - xpos);
 					int hight = glm::abs((int)rndr->yWhenBlend - ypos);
+
+					//For each shape in 3D : Get World 3D Coordinates (4th column in maketrans), get the 2d screen location (project them) 
+					//And check if they are inside the window.
 					for (int i = 0; i < (globalID - 23); i++) {
 						glm::vec4 pos = scn->shapes[23 + i]->MakeTrans() * glm::vec4(0.f,0.f,0.f,1.f);
 						glm::vec3 win_cor = rndr->DoProject(glm::vec3(pos.x,pos.y,pos.z),0,0);
@@ -247,6 +257,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 							scn->picked.insert(23+i);
 						}
 					}
+
 					movepickeds = true;
 					scn->updatePressedPos(xpos, ypos);
 
@@ -296,11 +307,11 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 		int oldSize = scn->GetBezier1D()->GetControlPoints().size();
 
 		if (add)
-		{
+		{ //Curve Addition
 			points = oldSize + (3 * diffSeg);
 		}
 		else
-		{
+		{ //Curve substraction
 			points = oldSize - (3 * diffSeg);
 		}
 
