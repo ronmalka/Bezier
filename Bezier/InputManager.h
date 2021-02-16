@@ -114,7 +114,7 @@ void HandleEdgesPoints(Renderer* rndr, bezier* scn, int button, double x, double
 					}
 				}
 			}
-			if (x2 > 600) //This is For Convex Hull
+			else if (x2 > 600) //This is For Convex Hull
 			{
 				scn->GetBezier1D()->GetControlPointsWorld().clear();
 				for (int i = 0; i < scn->GetBezier1D()->GetControlPoints().size(); i++) {
