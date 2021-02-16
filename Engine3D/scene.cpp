@@ -116,31 +116,37 @@ void Scene::Draw(int shaderIndx, const glm::mat4& Projection, glm::mat4& View, i
 					Update(Projection, View, Model, shapes[pickedShape]->GetShader());
 					shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
 				}
-				else
+				else //If the shape is in picked
 				{
-					
+					//Clean Stencil Buffer
 					glClear(GL_STENCIL_BUFFER_BIT);
 
 					glEnable(GL_STENCIL_TEST);
 					glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 					glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
+					//Add 1 to every shape drawn
 					glStencilFunc(GL_ALWAYS, 1, 0xFF);
 					glStencilMask(0xFF);
 
+					//Draw the shape
 					Update(Projection, View, Model, shapes[pickedShape]->GetShader());
 					shapes[pickedShape]->Draw(shaders[shapes[pickedShape]->GetShader()], false);
 
+					//Disable Stencil and draw all not equal to 1
 					glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 					glStencilMask(0x00);
 					glDisable(GL_DEPTH_TEST);
 
+					//Draw the slightly bigger green shape (shader4)
 					shapes[pickedShape]->MyScale(glm::vec3(scale, scale, scale));
 					Model = Normal * shapes[pickedShape]->MakeTrans();
 					Update(Projection, View, Model, 4);
 					shapes[pickedShape]->Draw(shaders[4], false);
+					//Return to the original size
 					shapes[pickedShape]->MyScale(glm::vec3(1 / scale, 1 / scale, 1 / scale));
 
+					//Finish Stencil
 					glStencilMask(0xFF);
 					glStencilFunc(GL_ALWAYS, 0, 0xFF);
 					glEnable(GL_DEPTH_TEST);
