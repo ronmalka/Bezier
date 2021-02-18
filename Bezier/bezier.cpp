@@ -237,6 +237,7 @@ void bezier::setNewOffsetWithRotate(float x, float y)
 { 
 	if (pickedShape == -1 || chainParents[pickedShape] == -1) return;
 
+	if (pickedShape - 2 > bezier1D->GetControlPoints().size()) return;
 
 	float parentX = bezier1D->getControlX(chainParents[pickedShape] - 2);
 	float parentY = bezier1D->getControlY(chainParents[pickedShape] - 2);
@@ -496,7 +497,6 @@ int bezier::HandleConvexHull(float xpos, float ypos,bool btn_left)
 			GetBezier1D()->AddSegment(GetBezier1D()->GetSegmentsNum() + 1);
 		}
 		else {
-			std::cout << "right convex" << ret << std::endl;
 			return ret;
 		}
 	}
