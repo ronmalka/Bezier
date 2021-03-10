@@ -1,4 +1,4 @@
-#Bezier 
+# Bezier
 
 This assignment has been made as a part of the Computer Graphics course that I took in my bachelor's degree in computer science at Ben-Gurion University. This assignment was made with OpenGL and C++.
 
